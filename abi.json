@@ -1,0 +1,173 @@
+[
+  {
+    "name": "UpgradableImpl",
+    "type": "impl",
+    "interface_name": "/opt/app/api/upload/temp/39639156acce925c498ee53f313e62ea9c4e19bb0e47f9eced882ddcda51e90f/src::UpgradableTrait"
+  },
+  {
+    "name": "/opt/app/api/upload/temp/39639156acce925c498ee53f313e62ea9c4e19bb0e47f9eced882ddcda51e90f/src::UpgradableTrait",
+    "type": "interface",
+    "items": [
+      {
+        "name": "upgrade_class_hash",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "new_class_hash",
+            "type": "core::starknet::class_hash::ClassHash"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      }
+    ]
+  },
+  {
+    "name": "OwnableImpl",
+    "type": "impl",
+    "interface_name": "/opt/app/api/upload/temp/39639156acce925c498ee53f313e62ea9c4e19bb0e47f9eced882ddcda51e90f/src::OwnableTrait"
+  },
+  {
+    "name": "/opt/app/api/upload/temp/39639156acce925c498ee53f313e62ea9c4e19bb0e47f9eced882ddcda51e90f/src::OwnableTrait",
+    "type": "interface",
+    "items": [
+      {
+        "name": "transfer_ownership",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "new_owner",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "name": "get_owner",
+        "type": "function",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "state_mutability": "view"
+      }
+    ]
+  },
+  {
+    "name": "CrewHolderImpl",
+    "type": "impl",
+    "interface_name": "/opt/app/api/upload/temp/39639156acce925c498ee53f313e62ea9c4e19bb0e47f9eced882ddcda51e90f/src::CrewHolderTrait"
+  },
+  {
+    "name": "/opt/app/api/upload/temp/39639156acce925c498ee53f313e62ea9c4e19bb0e47f9eced882ddcda51e90f/src::CrewHolderTrait",
+    "type": "interface",
+    "items": [
+      {
+        "name": "set_crew_id",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "new_crew_id",
+            "type": "core::integer::u64"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "name": "get_crew_id",
+        "type": "function",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::integer::u64"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "name": "refill_crew_rations",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "inventory_type",
+            "type": "core::integer::u64"
+          },
+          {
+            "name": "inventory_id",
+            "type": "core::integer::u64"
+          },
+          {
+            "name": "inventory_slot",
+            "type": "core::integer::u64"
+          },
+          {
+            "name": "food_kg",
+            "type": "core::integer::u64"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "name": "refuel_ship",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "inventory_type",
+            "type": "core::integer::u64"
+          },
+          {
+            "name": "inventory_id",
+            "type": "core::integer::u64"
+          },
+          {
+            "name": "inventory_slot",
+            "type": "core::integer::u64"
+          },
+          {
+            "name": "ship_id",
+            "type": "core::integer::u64"
+          },
+          {
+            "name": "fuel_kg",
+            "type": "core::integer::u64"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "name": "set_influence_dispatcher",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "influence_dispatcher_address",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      }
+    ]
+  },
+  {
+    "name": "constructor",
+    "type": "constructor",
+    "inputs": [
+      {
+        "name": "init_owner",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ]
+  },
+  {
+    "kind": "enum",
+    "name": "/opt/app/api/upload/temp/39639156acce925c498ee53f313e62ea9c4e19bb0e47f9eced882ddcda51e90f/src::TestPlayground::Event",
+    "type": "event",
+    "variants": []
+  }
+]
