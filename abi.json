@@ -1,16 +1,16 @@
 [
   {
-    "name": "UpgradableImpl",
     "type": "impl",
-    "interface_name": "/opt/app/api/upload/temp/39639156acce925c498ee53f313e62ea9c4e19bb0e47f9eced882ddcda51e90f/src::UpgradableTrait"
+    "name": "UpgradableImpl",
+    "interface_name": "influenceoverfueler::UpgradableTrait"
   },
   {
-    "name": "/opt/app/api/upload/temp/39639156acce925c498ee53f313e62ea9c4e19bb0e47f9eced882ddcda51e90f/src::UpgradableTrait",
     "type": "interface",
+    "name": "influenceoverfueler::UpgradableTrait",
     "items": [
       {
-        "name": "upgrade_class_hash",
         "type": "function",
+        "name": "upgrade_class_hash",
         "inputs": [
           {
             "name": "new_class_hash",
@@ -23,17 +23,17 @@
     ]
   },
   {
-    "name": "OwnableImpl",
     "type": "impl",
-    "interface_name": "/opt/app/api/upload/temp/39639156acce925c498ee53f313e62ea9c4e19bb0e47f9eced882ddcda51e90f/src::OwnableTrait"
+    "name": "OwnableImpl",
+    "interface_name": "influenceoverfueler::OwnableTrait"
   },
   {
-    "name": "/opt/app/api/upload/temp/39639156acce925c498ee53f313e62ea9c4e19bb0e47f9eced882ddcda51e90f/src::OwnableTrait",
     "type": "interface",
+    "name": "influenceoverfueler::OwnableTrait",
     "items": [
       {
-        "name": "transfer_ownership",
         "type": "function",
+        "name": "transfer_ownership",
         "inputs": [
           {
             "name": "new_owner",
@@ -44,8 +44,8 @@
         "state_mutability": "external"
       },
       {
-        "name": "get_owner",
         "type": "function",
+        "name": "get_owner",
         "inputs": [],
         "outputs": [
           {
@@ -57,17 +57,17 @@
     ]
   },
   {
-    "name": "CrewHolderImpl",
     "type": "impl",
-    "interface_name": "/opt/app/api/upload/temp/39639156acce925c498ee53f313e62ea9c4e19bb0e47f9eced882ddcda51e90f/src::CrewHolderTrait"
+    "name": "CrewHolderImpl",
+    "interface_name": "influenceoverfueler::CrewHolderTrait"
   },
   {
-    "name": "/opt/app/api/upload/temp/39639156acce925c498ee53f313e62ea9c4e19bb0e47f9eced882ddcda51e90f/src::CrewHolderTrait",
     "type": "interface",
+    "name": "influenceoverfueler::CrewHolderTrait",
     "items": [
       {
-        "name": "set_crew_id",
         "type": "function",
+        "name": "set_crew_id",
         "inputs": [
           {
             "name": "new_crew_id",
@@ -78,8 +78,8 @@
         "state_mutability": "external"
       },
       {
-        "name": "get_crew_id",
         "type": "function",
+        "name": "get_crew_id",
         "inputs": [],
         "outputs": [
           {
@@ -89,8 +89,8 @@
         "state_mutability": "view"
       },
       {
-        "name": "refill_crew_rations",
         "type": "function",
+        "name": "refill_crew_rations",
         "inputs": [
           {
             "name": "inventory_type",
@@ -113,8 +113,8 @@
         "state_mutability": "external"
       },
       {
-        "name": "refuel_ship",
         "type": "function",
+        "name": "refuel_ship",
         "inputs": [
           {
             "name": "inventory_type",
@@ -141,8 +141,8 @@
         "state_mutability": "external"
       },
       {
-        "name": "set_influence_dispatcher",
         "type": "function",
+        "name": "set_influence_dispatcher",
         "inputs": [
           {
             "name": "influence_dispatcher_address",
@@ -155,8 +155,8 @@
     ]
   },
   {
-    "name": "constructor",
     "type": "constructor",
+    "name": "constructor",
     "inputs": [
       {
         "name": "init_owner",
@@ -165,9 +165,9 @@
     ]
   },
   {
-    "kind": "enum",
-    "name": "/opt/app/api/upload/temp/39639156acce925c498ee53f313e62ea9c4e19bb0e47f9eced882ddcda51e90f/src::TestPlayground::Event",
     "type": "event",
+    "name": "influenceoverfueler::InfluenceOverfueler::Event",
+    "kind": "enum",
     "variants": []
   }
 ]

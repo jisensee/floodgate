@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "contract:export-abi": "cat contract/target/dev/influenceoverfueler_InfluenceOverfueler.contract_class.json | jq '.abi' > abi.json",
+    "contract:build": "cd contract && scarb build && cd .. && bun contract:export-abi"
   },
   "dependencies": {
     "@influenceth/sdk": "^2.1.0-beta.85",
