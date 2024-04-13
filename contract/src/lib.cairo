@@ -15,6 +15,14 @@ trait UpgradableTrait<T>
 }
 
 #[starknet::interface]
+trait LockableTrait<T>
+{
+    fn lock(ref self: T);
+    fn unlock(ref self: T);
+    fn is_locked(self: @T) -> bool;
+}
+
+#[starknet::interface]
 trait CrewHolderTrait<T>
 {
     fn set_crew_id(ref self: T, new_crew_id: u64);
@@ -33,6 +41,7 @@ mod InfluenceOverfueler
 
     #[storage]
     struct Storage {
+        lock_status: bool,
         owner: ContractAddress,
         dispatcher_address: ContractAddress,
         crew_id: u64,
@@ -41,6 +50,7 @@ mod InfluenceOverfueler
     #[constructor]
     fn constructor(ref self: ContractState, init_owner: ContractAddress) {
         self.owner.write(init_owner);
+        self.lock_status.write(true);
     }
 
     #[abi(embed_v0)]
@@ -66,11 +76,30 @@ mod InfluenceOverfueler
         }
     }
 
+    #[abi(embed_v0)]
+    impl LockableImpl of super::LockableTrait<ContractState>
+    {
+        fn lock(ref self: ContractState) {
+            self.lock_status.write(true);
+        }
+
+        fn unlock(ref self: ContractState) {
+            self.lock_status.write(false);
+        }
+
+        fn is_locked(self: @ContractState) -> bool {
+            self.lock_status.read()
+        }
+    }
+
     #[generate_trait]
     impl PrivateMethods of PrivateMethodsTrait {
         fn only_owner(self: @ContractState) {
             let caller = get_caller_address();
             assert(caller == self.owner.read(), 'Caller is not the owner');
+        }
+        fn only_unlocked(self: @ContractState) {
+            assert(self.is_locked() == false, 'The service is unavailable')
         }
     }
 
@@ -87,6 +116,8 @@ mod InfluenceOverfueler
         }
 
         fn refill_crew_rations(ref self: ContractState, inventory_type: u64, inventory_id: u64, inventory_slot: u64, food_kg: u64) {
+
+            self.only_unlocked();
 
             let mut call_data: Array<felt252> = ArrayTrait::new();
             call_data.append('ResupplyFood');
@@ -108,6 +139,8 @@ mod InfluenceOverfueler
         }
 
         fn refuel_ship(ref self: ContractState, inventory_type: u64, inventory_id: u64, inventory_slot: u64, ship_id:u64, fuel_kg: u64) {
+
+            self.only_unlocked();
             
             let mut call_data: Array<felt252> = ArrayTrait::new();
             call_data.append('SendDelivery');
