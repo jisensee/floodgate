@@ -10,6 +10,9 @@ import {
   useInjectedConnectors,
   voyager,
 } from '@starknet-react/core'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+const queryClient = new QueryClient()
 
 export const Providers: FC<PropsWithChildren> = ({ children }) => {
   const { connectors } = useInjectedConnectors({
@@ -18,13 +21,16 @@ export const Providers: FC<PropsWithChildren> = ({ children }) => {
     order: 'alphabetical',
   })
   return (
-    <StarknetConfig
-      chains={[sepolia]}
-      provider={publicProvider()}
-      connectors={connectors}
-      explorer={voyager}
-    >
-      {children}
-    </StarknetConfig>
+    <QueryClientProvider client={queryClient}>
+      <StarknetConfig
+        chains={[sepolia]}
+        provider={publicProvider()}
+        connectors={connectors}
+        explorer={voyager}
+        autoConnect
+      >
+        {children}
+      </StarknetConfig>
+    </QueryClientProvider>
   )
 }

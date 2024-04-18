@@ -38,3 +38,5 @@ next-env.d.ts
 # contract artifacts
 contract/src/artifacts
 target
+
+.env

@@ -1,42 +1,17 @@
-'use client'
-
-import { useAccount } from '@starknet-react/core'
-import { ConnectWalletButton } from './connect-wallet-button'
-import { WalletInfo } from './wallet-info'
-import { TransactionButton } from './transaction-button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import Link from 'next/link'
+import { ContractCrewDisplay } from './contract-crew-display'
+import { Page } from '@/components/page'
+import { Button } from '@/components/ui/button'
 
 export default function Home() {
-  const { address } = useAccount()
-
   return (
-    <main className='flex min-h-screen items-center justify-center'>
-      <Card>
-        <CardHeader>
-          <CardTitle>Rent a Crew</CardTitle>
-          {address && <CardDescription>Submit a transaction.</CardDescription>}
-          {!address && (
-            <CardDescription>
-              Connect your wallet to get started.
-            </CardDescription>
-          )}
-        </CardHeader>
-        <CardContent className='flex justify-center'>
-          {!address && <ConnectWalletButton />}
-          {address && (
-            <div>
-              <WalletInfo address={address} />
-              <TransactionButton />
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </main>
+    <Page title='Influence Ship Refueler' hideBorder>
+      <div className='flex flex-col items-center gap-y-10'>
+        <ContractCrewDisplay />
+        <Link href='/refuel'>
+          <Button size='lg'>Refuel your ship now</Button>
+        </Link>
+      </div>
+    </Page>
   )
 }

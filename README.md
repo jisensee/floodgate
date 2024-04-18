@@ -1,6 +1,8 @@
 # Getting Started
 
 ```bash
+# Don't forget to fill in missing values in .env
+cp template.env .env
 bun i
 bun dev
 ```
