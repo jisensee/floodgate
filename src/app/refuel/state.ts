@@ -1,11 +1,13 @@
 import { Dispatch, Reducer, useReducer } from 'react'
 import { Ship, Warehouse } from '@/actions'
+import { CrewData } from '@/hooks/contract'
 
 export type State = {
   selectedShip?: Ship
   selectedWarehouse?: Warehouse
   ships: Ship[]
   warehouses: Warehouse[]
+  crewData?: CrewData
   dataLoading: boolean
 }
 
@@ -23,6 +25,7 @@ export type SetData = {
   type: 'set-data'
   ships: Ship[]
   warehouses: Warehouse[]
+  crewData: CrewData
 }
 
 export type Action = SelectShip | SelectWarehouse | SetData
@@ -44,6 +47,7 @@ export const useRefuelWizardState = () =>
             ...state,
             ships: action.ships,
             warehouses: action.warehouses,
+            crewData: action.crewData,
             dataLoading: false,
           }
       }

@@ -1,7 +1,7 @@
 import {
   makeInfluenceApi,
   preReleaseInfluenceApiUrl,
-} from 'influence-typed-sdk'
+} from 'influence-typed-sdk/api'
 import { env } from '@/env'
 
 export const influenceApi = makeInfluenceApi({

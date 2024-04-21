@@ -2,7 +2,7 @@
 
 import { Entity } from '@influenceth/sdk'
 import { Inventory, ShipType } from '@influenceth/sdk'
-import { InfluenceEntity } from 'influence-typed-sdk'
+import { InfluenceEntity } from 'influence-typed-sdk/api'
 import { influenceApi } from '@/lib/influence-api'
 
 export const getCrew = async (crewId: number) => {
@@ -22,6 +22,12 @@ export const getCrew = async (crewId: number) => {
 
   return { crew, crewmates }
 }
+
+export const getBuilding = async (buildingId: number) =>
+  influenceApi.entity({
+    id: buildingId,
+    label: Entity.IDS.BUILDING,
+  })
 
 export type Warehouse = {
   id: number

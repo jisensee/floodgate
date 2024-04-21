@@ -23,7 +23,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "get-starknet-core": "^3.2.0",
-    "influence-typed-sdk": "1.1.0",
+    "influence-typed-sdk": "^1.2.0",
     "lucide-react": "^0.367.0",
     "next": "latest",
     "react": "^18",

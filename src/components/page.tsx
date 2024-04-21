@@ -11,7 +11,7 @@ export const Page: FC<PageProps> = ({ title, hideBorder, children }) => (
     <h1>{title}</h1>
     <div
       className={cn(
-        'h-[85vh] w-full p-3 md:h-[60vh] md:w-[30rem] md:rounded md:border md:border-border',
+        'h-[85vh] w-full p-3 md:h-[60vh] md:w-[34rem] md:rounded md:border md:border-border',
         {
           'border-none': hideBorder,
         }

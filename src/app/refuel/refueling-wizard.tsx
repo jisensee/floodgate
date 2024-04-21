@@ -9,6 +9,7 @@ import { WarehouseSelection } from './warehouse-selection'
 import { Confirmation } from './confirmation'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getShips, getWarehouses } from '@/actions'
+import { useContractCrew } from '@/hooks/contract'
 
 export type RefuelingWizardProps = {
   address: string
@@ -17,17 +18,18 @@ export type RefuelingWizardProps = {
 export const RefuelingWizard: FC<RefuelingWizardProps> = ({ address }) => {
   const [state, dispatch] = useRefuelWizardState()
 
-  const { data } = useQuery({
+  const { data: userData } = useQuery({
     queryKey: ['ships-warehouses', address],
     queryFn: () => Promise.all([getShips(address), getWarehouses(address)]),
   })
+  const { crewData } = useContractCrew()
 
   useEffect(() => {
-    if (data) {
-      const [ships, warehouses] = data
-      dispatch({ type: 'set-data', ships, warehouses })
+    if (userData && crewData && state.dataLoading) {
+      const [ships, warehouses] = userData
+      dispatch({ type: 'set-data', ships, warehouses, crewData })
     }
-  }, [data, dispatch])
+  }, [userData, crewData, dispatch, state.dataLoading])
 
   const steps = useSteps(state)
   const stepProps = { state, dispatch }

@@ -6,12 +6,22 @@ import { WarehouseImage } from '@/components/asset-images'
 import { Warehouse } from '@/actions'
 
 export const WarehouseSelection: FC<StepProps> = ({ state, dispatch }) => {
+  const transportBonus =
+    state.crewData?.bonuses?.transportTimeBonus?.totalBonus ?? 1
+
   const getShipDistance = (warehouse: Warehouse) =>
     Asteroid.getLotDistance(
       1,
       warehouse.lotIndex,
       state.selectedShip?.lotIndex ?? 0
     )
+  const getTransportTime = (warehouse: Warehouse) =>
+    Asteroid.getLotTravelTime(
+      1,
+      warehouse.lotIndex,
+      state.selectedShip?.lotIndex ?? 0,
+      transportBonus
+    ) / 24
 
   return (
     <ul className='flex flex-col gap-2 overflow-y-auto'>
@@ -42,7 +52,11 @@ export const WarehouseSelection: FC<StepProps> = ({ state, dispatch }) => {
                 <span className='text-foreground'>
                   {Format.distance(getShipDistance(warehouse))}
                 </span>{' '}
-                to ship
+                to ship (
+                <span className='text-foreground'>
+                  {Format.duration(getTransportTime(warehouse))}
+                </span>
+                )
               </p>
             </div>
           </div>

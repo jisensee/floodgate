@@ -9,19 +9,26 @@ import { Format } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
 export const Confirmation: FC<StepProps> = ({ state }) => {
+  const transportBonus =
+    state.crewData?.bonuses?.transportTimeBonus?.totalBonus ?? 1
   const ship = state.selectedShip
   const warehouse = state.selectedWarehouse
   if (!ship || !warehouse) {
     return null
   }
-  const overfuelBonus = 0.05
-  const missingFuel = ship.fuelCapacity * (1 + overfuelBonus) - ship.fuelAmount
+  const overfuelBonus = state.crewData?.bonuses.volumeBonus.totalBonus ?? 1
+  const missingFuel = ship.fuelCapacity * overfuelBonus - ship.fuelAmount
   const usedFuel = Math.min(missingFuel, warehouse.fuelAmount)
   const newFuelAmount = ship.fuelAmount + usedFuel
   const newFuelPercentage = (newFuelAmount / ship.fuelCapacity) * 100
   const distance = Asteroid.getLotDistance(1, warehouse.lotIndex, ship.lotIndex)
   const transferSeconds =
-    Asteroid.getLotTravelTime(1, warehouse.lotIndex, ship.lotIndex) / 24
+    Asteroid.getLotTravelTime(
+      1,
+      warehouse.lotIndex,
+      ship.lotIndex,
+      transportBonus
+    ) / 24
 
   return (
     <div className='flex flex-col items-center gap-y-3'>
