@@ -6,8 +6,9 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import abi from '../../abi.json'
 import { getCrew } from '@/actions'
+import { env } from '@/env'
 
-const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
+const contractAddress = env.NEXT_PUBLIC_CONTRACT_ADDRESS
 
 export const useContractCrew = () => {
   const { data: crewId, isLoading: crewIdLoading } = useContractRead({

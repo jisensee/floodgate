@@ -4,9 +4,10 @@ import {
   type ProductType,
   type ShipType,
 } from '@influenceth/sdk'
+import { env } from '@/env'
 
 const defaultCloudfrontBucket = 'unstoppablegames'
-const defaultCloudfrontImageHost = `https://${process.env.NEXT_PUBLIC_INFLUENCE_CLOUDFRONT_IMAGE_HOST}`
+const defaultCloudfrontImageHost = `https://${env.NEXT_PUBLIC_INFLUENCE_CLOUDFRONT_IMAGE_HOST}`
 
 export type ImageSize = {
   w?: number
