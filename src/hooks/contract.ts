@@ -43,8 +43,9 @@ export const useContractCrew = () => {
           population: station.Station?.population ?? 0,
           stationType: station.Station?.stationType.i ?? 0,
         },
-        (new Date().getTime() -
-          (crewData.crew?.Crew?.lastFed?.getTime() ?? 0)) *
+        ((new Date().getTime() -
+          (crewData.crew?.Crew?.lastFed?.getTime() ?? 0)) /
+          1000) *
           24
       )
 
