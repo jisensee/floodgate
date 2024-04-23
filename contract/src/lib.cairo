@@ -2,6 +2,18 @@ use starknet::ContractAddress;
 use starknet::ClassHash;
 
 #[starknet::interface]
+pub trait ISwayContract<T> {
+    fn balance_of(self: @T, account: ContractAddress) -> u256;
+    fn transfer(ref self: T, recipient: ContractAddress, amount: u256) -> bool;
+    fn transfer_from(ref self: T, sender: ContractAddress, recipient: ContractAddress, amount: u256) -> bool;
+}
+
+#[starknet::interface]
+pub trait IInfluenceDispatcherContract<T> {
+    fn run_system(ref self: T, name: felt252, calldata: Array<felt252>) -> felt252;
+}
+
+#[starknet::interface]
 trait OwnableTrait<T>
 {
     fn transfer_ownership(ref self: T, new_owner: ContractAddress);
@@ -38,7 +50,7 @@ trait ChargeableServiceTrait<T>
     fn set_sway_address(ref self: T, sway_address: ContractAddress);
     fn set_sway_fee(ref self: T, amount: u64);
     fn get_sway_fee(self: @T) -> u64;
-    //fn get_current_sway_balance(self: @T) -> u256;
+    fn get_current_sway_balance(self: @T) -> u256;
     fn withdraw_sway_balance(ref self: T, amount: u256);
 }
 
@@ -47,9 +59,16 @@ mod InfluenceOverfueler
 {
     use super::{ ContractAddress, ClassHash };
     use starknet::{ SyscallResultTrait, syscalls };
+
     use starknet::get_caller_address;
     use starknet::get_contract_address;
+    
     use starknet::contract_address_to_felt252;
+
+    use super::IInfluenceDispatcherContractDispatcher;
+    use super::IInfluenceDispatcherContractDispatcherTrait;
+    use super::ISwayContractDispatcher;
+    use super::ISwayContractDispatcherTrait;
 
     #[storage]
     struct Storage {
@@ -119,12 +138,7 @@ mod InfluenceOverfueler
         }
 
         fn charge_service_fee(self: @ContractState, amount: u64) {
-            let mut call_data: Array<felt252> = ArrayTrait::new();
-            call_data.append(contract_address_to_felt252(get_caller_address()));
-            call_data.append(contract_address_to_felt252(get_contract_address()));
-            call_data.append(amount.try_into().unwrap());
-            call_data.append(0);
-            let mut _res = syscalls::call_contract_syscall(self.sway_address.read(), selector!("transfer_from"), call_data.span()).unwrap_syscall();
+            ISwayContractDispatcher { contract_address: self.sway_address.read() }.transfer_from(get_caller_address(), get_contract_address(), amount.into());
         }
     }
 
@@ -145,8 +159,6 @@ mod InfluenceOverfueler
             self.only_unlocked();
 
             let mut call_data: Array<felt252> = ArrayTrait::new();
-            call_data.append('ResupplyFood');
-            call_data.append(6);
 
             // source inventory
             call_data.append(inventory_type.into());
@@ -160,7 +172,7 @@ mod InfluenceOverfueler
             call_data.append(1);
             call_data.append(self.crew_id.read().into());
 
-            let mut _res = syscalls::call_contract_syscall(self.dispatcher_address.read(), selector!("run_system"), call_data.span()).unwrap_syscall();
+            IInfluenceDispatcherContractDispatcher { contract_address: self.dispatcher_address.read() }.run_system('ResupplyFood', call_data);
         }
 
         fn refuel_ship(ref self: ContractState, inventory_type: u64, inventory_id: u64, inventory_slot: u64, ship_id:u64, fuel_kg: u64) {
@@ -168,8 +180,6 @@ mod InfluenceOverfueler
             self.only_unlocked();
             
             let mut call_data: Array<felt252> = ArrayTrait::new();
-            call_data.append('SendDelivery');
-            call_data.append(11);
 
             // source inventory
             call_data.append(inventory_type.into());
@@ -190,12 +200,12 @@ mod InfluenceOverfueler
             call_data.append(1);
             call_data.append(self.crew_id.read().into());
 
-            let mut _res = syscalls::call_contract_syscall(self.dispatcher_address.read(), selector!("run_system"), call_data.span()).unwrap_syscall();
+            IInfluenceDispatcherContractDispatcher { contract_address: self.dispatcher_address.read() }.run_system('SendDelivery', call_data);
 
             let fee = self.service_fee_sway.read();
             if fee > 0
             {
-                self.charge_service_fee(self.service_fee_sway.read());
+                self.charge_service_fee(fee);
             }
         }
 
@@ -222,23 +232,13 @@ mod InfluenceOverfueler
             self.service_fee_sway.read()
         }
 
-        // Cannot get this to work, but it is not really useful anyway
-        //fn get_current_sway_balance(self: @ContractState) -> u256 {
-        //    self.only_owner();
-        //    let mut call_data: Array<felt252> = ArrayTrait::new();
-        //    call_data.append(contract_address_to_felt252(get_contract_address()));
-        //    let mut _res = syscalls::call_contract_syscall(self.sway_address.read(), selector!("balance_of"), call_data.span()).unwrap_syscall();
-        //    let bal: u256 = (*res.get(0).unwrap().unbox()).into();
-        //    bal
-        //}
+        fn get_current_sway_balance(self: @ContractState) -> u256 {
+            ISwayContractDispatcher { contract_address: self.sway_address.read() }.balance_of(get_contract_address())
+        }
 
         fn withdraw_sway_balance(ref self: ContractState, amount: u256) {
             self.only_owner();
-            let mut call_data: Array<felt252> = ArrayTrait::new();
-            call_data.append(contract_address_to_felt252(get_caller_address()));
-            call_data.append(amount.try_into().unwrap());
-            call_data.append(0);
-            let mut _res = syscalls::call_contract_syscall(self.sway_address.read(), selector!("transfer"), call_data.span()).unwrap_syscall();
+            ISwayContractDispatcher { contract_address: self.sway_address.read() }.transfer(get_caller_address(), amount);
         }
     }
 }
