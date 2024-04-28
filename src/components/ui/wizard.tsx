@@ -51,7 +51,7 @@ const Header: FC<HeaderProps> = ({ steps }) => {
           <Fragment key={step.title}>
             {index > 0 && (
               <Separator
-                className={cn('w-12 md:w-32', { 'bg-sucess': isCompleted })}
+                className={cn('w-12 md:w-32', { 'bg-success': isCompleted })}
               />
             )}
             <div
@@ -61,7 +61,7 @@ const Header: FC<HeaderProps> = ({ steps }) => {
               {isCompleted ? (
                 <CheckCircle
                   size={32}
-                  className={cn({ 'text-sucess': isCompleted })}
+                  className={cn({ 'text-success': isCompleted })}
                 />
               ) : (
                 <Circle size={32} />

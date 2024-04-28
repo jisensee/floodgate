@@ -58,7 +58,7 @@ const CrewStatistic: FC<CrewStatisticProps> = ({ value, label }) => (
   <div className='flex flex-col items-center rounded-md border border-primary px-2 py-1'>
     <span
       className={cn('text-3xl', {
-        'text-sucess': value >= 0,
+        'text-success': value >= 0,
         'text-destructive': value < 0,
       })}
     >

@@ -58,6 +58,56 @@
   },
   {
     "type": "impl",
+    "name": "LockableImpl",
+    "interface_name": "influenceoverfueler::LockableTrait"
+  },
+  {
+    "type": "enum",
+    "name": "core::bool",
+    "variants": [
+      {
+        "name": "False",
+        "type": "()"
+      },
+      {
+        "name": "True",
+        "type": "()"
+      }
+    ]
+  },
+  {
+    "type": "interface",
+    "name": "influenceoverfueler::LockableTrait",
+    "items": [
+      {
+        "type": "function",
+        "name": "lock",
+        "inputs": [],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "unlock",
+        "inputs": [],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "is_locked",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::bool"
+          }
+        ],
+        "state_mutability": "view"
+      }
+    ]
+  },
+  {
+    "type": "impl",
     "name": "CrewHolderImpl",
     "interface_name": "influenceoverfueler::CrewHolderTrait"
   },
@@ -147,6 +197,89 @@
           {
             "name": "influence_dispatcher_address",
             "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      }
+    ]
+  },
+  {
+    "type": "impl",
+    "name": "ChargeableServiceImpl",
+    "interface_name": "influenceoverfueler::ChargeableServiceTrait"
+  },
+  {
+    "type": "struct",
+    "name": "core::integer::u256",
+    "members": [
+      {
+        "name": "low",
+        "type": "core::integer::u128"
+      },
+      {
+        "name": "high",
+        "type": "core::integer::u128"
+      }
+    ]
+  },
+  {
+    "type": "interface",
+    "name": "influenceoverfueler::ChargeableServiceTrait",
+    "items": [
+      {
+        "type": "function",
+        "name": "set_sway_address",
+        "inputs": [
+          {
+            "name": "sway_address",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "set_sway_fee",
+        "inputs": [
+          {
+            "name": "amount",
+            "type": "core::integer::u64"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "get_sway_fee",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::integer::u64"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "get_current_sway_balance",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::integer::u256"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "withdraw_sway_balance",
+        "inputs": [
+          {
+            "name": "amount",
+            "type": "core::integer::u256"
           }
         ],
         "outputs": [],

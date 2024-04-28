@@ -1,0 +1,832 @@
+[
+  {
+    "name": "constructor",
+    "type": "constructor",
+    "inputs": [
+      {
+        "name": "name",
+        "type": "core::felt252"
+      },
+      {
+        "name": "symbol",
+        "type": "core::felt252"
+      },
+      {
+        "name": "decimals",
+        "type": "core::integer::u8"
+      },
+      {
+        "name": "admin",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ]
+  },
+  {
+    "name": "upgrade",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "class_hash",
+        "type": "core::starknet::class_hash::ClassHash"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "core::integer::u256",
+    "type": "struct",
+    "members": [
+      {
+        "name": "low",
+        "type": "core::integer::u128"
+      },
+      {
+        "name": "high",
+        "type": "core::integer::u128"
+      }
+    ]
+  },
+  {
+    "name": "mint",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "recipient",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "amount",
+        "type": "core::integer::u256"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "core::bool",
+    "type": "enum",
+    "variants": [
+      {
+        "name": "False",
+        "type": "()"
+      },
+      {
+        "name": "True",
+        "type": "()"
+      }
+    ]
+  },
+  {
+    "name": "transfer_and_forward",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "recipient",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "amount",
+        "type": "core::integer::u128"
+      },
+      {
+        "name": "target_contract",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "entry_point_selector",
+        "type": "core::felt252"
+      },
+      {
+        "name": "data",
+        "type": "core::array::Array::<core::felt252>"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "core::bool"
+      }
+    ],
+    "state_mutability": "external"
+  },
+  {
+    "name": "transfer_with_confirmation",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "recipient",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "amount",
+        "type": "core::integer::u128"
+      },
+      {
+        "name": "memo",
+        "type": "core::felt252"
+      },
+      {
+        "name": "consumer",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "core::bool"
+      }
+    ],
+    "state_mutability": "external"
+  },
+  {
+    "name": "transfer_from_with_confirmation",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "sender",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "recipient",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "amount",
+        "type": "core::integer::u128"
+      },
+      {
+        "name": "memo",
+        "type": "core::felt252"
+      },
+      {
+        "name": "consumer",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "core::bool"
+      }
+    ],
+    "state_mutability": "external"
+  },
+  {
+    "name": "confirm_receipt",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "sender",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "recipient",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "amount",
+        "type": "core::integer::u128"
+      },
+      {
+        "name": "memo",
+        "type": "core::felt252"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "confirmReceipt",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "sender",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "recipient",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "amount",
+        "type": "core::integer::u128"
+      },
+      {
+        "name": "memo",
+        "type": "core::felt252"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "core::starknet::eth_address::EthAddress",
+    "type": "struct",
+    "members": [
+      {
+        "name": "address",
+        "type": "core::felt252"
+      }
+    ]
+  },
+  {
+    "name": "get_l1_bridge",
+    "type": "function",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "core::starknet::eth_address::EthAddress"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "get_l2_token",
+    "type": "function",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "set_l1_bridge",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "l1_bridge",
+        "type": "core::starknet::eth_address::EthAddress"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "initiate_withdrawal",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "l1_recipient",
+        "type": "core::starknet::eth_address::EthAddress"
+      },
+      {
+        "name": "amount",
+        "type": "core::integer::u256"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "handle_deposit",
+    "type": "l1_handler",
+    "inputs": [
+      {
+        "name": "from_address",
+        "type": "core::felt252"
+      },
+      {
+        "name": "to_address",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "amount_low",
+        "type": "core::felt252"
+      },
+      {
+        "name": "amount_high",
+        "type": "core::felt252"
+      },
+      {
+        "name": "sender",
+        "type": "core::felt252"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "add_grant",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "account",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "role",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "has_grant",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "account",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "role",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "core::bool"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "revoke_grant",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "account",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "role",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "allowance",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "owner",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "spender",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "core::integer::u256"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "approve",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "spender",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "amount",
+        "type": "core::integer::u256"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "core::bool"
+      }
+    ],
+    "state_mutability": "external"
+  },
+  {
+    "name": "balance_of",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "account",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "core::integer::u256"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "balanceOf",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "account",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "core::integer::u256"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "decimals",
+    "type": "function",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "core::integer::u8"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "decrease_allowance",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "spender",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "subtracted_value",
+        "type": "core::integer::u256"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "decreaseAllowance",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "spender",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "subtracted_value",
+        "type": "core::integer::u256"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "increase_allowance",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "spender",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "added_value",
+        "type": "core::integer::u256"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "increaseAllowance",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "spender",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "added_value",
+        "type": "core::integer::u256"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "name",
+    "type": "function",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "core::felt252"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "symbol",
+    "type": "function",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "core::felt252"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "total_supply",
+    "type": "function",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "core::integer::u256"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "totalSupply",
+    "type": "function",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "core::integer::u256"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "transfer",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "recipient",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "amount",
+        "type": "core::integer::u256"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "core::bool"
+      }
+    ],
+    "state_mutability": "external"
+  },
+  {
+    "name": "transfer_from",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "sender",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "recipient",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "amount",
+        "type": "core::integer::u256"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "core::bool"
+      }
+    ],
+    "state_mutability": "external"
+  },
+  {
+    "name": "transferFrom",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "sender",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "recipient",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "amount",
+        "type": "core::integer::u256"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "core::bool"
+      }
+    ],
+    "state_mutability": "external"
+  },
+  {
+    "name": "set_l1_sway_volume_address",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "l1_sway_volume_address",
+        "type": "core::starknet::eth_address::EthAddress"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "send_sway_volume_to_l1",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "period",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "kind": "struct",
+    "name": "influence::contracts::sway::Sway::Transfer",
+    "type": "event",
+    "members": [
+      {
+        "kind": "key",
+        "name": "from",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "kind": "key",
+        "name": "to",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "kind": "data",
+        "name": "value",
+        "type": "core::integer::u256"
+      }
+    ]
+  },
+  {
+    "kind": "struct",
+    "name": "influence::contracts::sway::Sway::Approval",
+    "type": "event",
+    "members": [
+      {
+        "kind": "key",
+        "name": "owner",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "kind": "key",
+        "name": "spender",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "kind": "data",
+        "name": "value",
+        "type": "core::integer::u256"
+      }
+    ]
+  },
+  {
+    "kind": "struct",
+    "name": "influence::contracts::sway::Sway::DepositHandled",
+    "type": "event",
+    "members": [
+      {
+        "kind": "data",
+        "name": "account",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "kind": "data",
+        "name": "amount",
+        "type": "core::integer::u256"
+      },
+      {
+        "kind": "data",
+        "name": "sender",
+        "type": "core::starknet::eth_address::EthAddress"
+      }
+    ]
+  },
+  {
+    "kind": "struct",
+    "name": "influence::contracts::sway::Sway::WithdrawInitiated",
+    "type": "event",
+    "members": [
+      {
+        "kind": "data",
+        "name": "l1_recipient",
+        "type": "core::starknet::eth_address::EthAddress"
+      },
+      {
+        "kind": "data",
+        "name": "amount",
+        "type": "core::integer::u256"
+      },
+      {
+        "kind": "data",
+        "name": "caller_address",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ]
+  },
+  {
+    "kind": "struct",
+    "name": "influence::contracts::sway::Sway::ConfirmationCreated",
+    "type": "event",
+    "members": [
+      {
+        "kind": "data",
+        "name": "from",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "kind": "data",
+        "name": "to",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "kind": "data",
+        "name": "value",
+        "type": "core::integer::u128"
+      },
+      {
+        "kind": "data",
+        "name": "memo",
+        "type": "core::felt252"
+      },
+      {
+        "kind": "data",
+        "name": "consumer",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ]
+  },
+  {
+    "kind": "struct",
+    "name": "influence::contracts::sway::Sway::ReceiptConfirmed",
+    "type": "event",
+    "members": [
+      {
+        "kind": "data",
+        "name": "from",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "kind": "data",
+        "name": "to",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "kind": "data",
+        "name": "value",
+        "type": "core::integer::u128"
+      },
+      {
+        "kind": "data",
+        "name": "memo",
+        "type": "core::felt252"
+      },
+      {
+        "kind": "data",
+        "name": "consumer",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ]
+  },
+  {
+    "kind": "enum",
+    "name": "influence::contracts::sway::Sway::Event",
+    "type": "event",
+    "variants": [
+      {
+        "kind": "nested",
+        "name": "Transfer",
+        "type": "influence::contracts::sway::Sway::Transfer"
+      },
+      {
+        "kind": "nested",
+        "name": "Approval",
+        "type": "influence::contracts::sway::Sway::Approval"
+      },
+      {
+        "kind": "nested",
+        "name": "DepositHandled",
+        "type": "influence::contracts::sway::Sway::DepositHandled"
+      },
+      {
+        "kind": "nested",
+        "name": "WithdrawInitiated",
+        "type": "influence::contracts::sway::Sway::WithdrawInitiated"
+      },
+      {
+        "kind": "nested",
+        "name": "ConfirmationCreated",
+        "type": "influence::contracts::sway::Sway::ConfirmationCreated"
+      },
+      {
+        "kind": "nested",
+        "name": "ReceiptConfirmed",
+        "type": "influence::contracts::sway::Sway::ReceiptConfirmed"
+      }
+    ]
+  }
+]

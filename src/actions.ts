@@ -34,6 +34,7 @@ export type Warehouse = {
   name: string
   lotIndex: number
   fuelAmount: number
+  owningCrewId: number
 }
 
 export const getWarehouses = async (address: string): Promise<Warehouse[]> => {
@@ -43,6 +44,7 @@ export const getWarehouses = async (address: string): Promise<Warehouse[]> => {
       id: wh.id,
       name: wh.Name ?? `Warehouse#${wh.id}`,
       lotIndex: wh.Location?.locations?.lot?.lotIndex ?? 0,
+      owningCrewId: wh.Control?.controller?.id ?? 0,
       fuelAmount:
         wh.Inventories.find(
           (i) => i.inventoryType === Inventory.IDS.WAREHOUSE_PRIMARY
@@ -58,6 +60,7 @@ export type Ship = {
   fuelAmount: number
   fuelCapacity: number
   lotIndex: number
+  owningCrewId: number
 }
 
 const getFuelCapacity = (ship: ShipType) =>
@@ -81,6 +84,7 @@ export const getShips = async (address: string): Promise<Ship[]> => {
             type: ship.Ship?.shipType,
             fuelAmount: getFuelAmount(ship),
             fuelCapacity: getFuelCapacity(ship.Ship.shipType),
+            owningCrewId: ship.Control?.controller?.id ?? 0,
             lotIndex,
           },
         ]

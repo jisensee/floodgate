@@ -7,15 +7,14 @@ import { Progress } from '@/components/ui/progress'
 import { SwayAmount } from '@/components/sway-amount'
 import { Format } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { useFuelShipTransaction, useSwayFee } from '@/hooks/contract'
 
 export const Confirmation: FC<StepProps> = ({ state }) => {
   const transportBonus =
     state.crewData?.bonuses?.transportTimeBonus?.totalBonus ?? 1
-  const ship = state.selectedShip
-  const warehouse = state.selectedWarehouse
-  if (!ship || !warehouse) {
-    return null
-  }
+  const ship = state.selectedShip!
+  const warehouse = state.selectedWarehouse!
+
   const overfuelBonus = state.crewData?.bonuses.volumeBonus.totalBonus ?? 1
   const missingFuel = ship.fuelCapacity * overfuelBonus - ship.fuelAmount
   const usedFuel = Math.min(missingFuel, warehouse.fuelAmount)
@@ -30,7 +29,19 @@ export const Confirmation: FC<StepProps> = ({ state }) => {
       transportBonus
     ) / 24
 
-  return (
+  const swayFee = useSwayFee()
+
+  const { write: fuelShip } = useFuelShipTransaction({
+    warehouseId: warehouse?.id ?? 0,
+    shipId: ship?.id ?? 0,
+    contractCrewId: state.crewData?.crew?.id ?? 0,
+    warehouseOwnerCrewId: warehouse?.owningCrewId ?? 0,
+    shipOwnerCrewId: ship?.owningCrewId ?? 0,
+    fuelAmount: usedFuel,
+    swayFee: swayFee ?? 0n,
+  })
+
+  return ship && warehouse ? (
     <div className='flex flex-col items-center gap-y-3'>
       <div className='flex flex-col items-center'>
         <div className='flex flex-col items-center gap-y-1 pb-3'>
@@ -56,20 +67,33 @@ export const Confirmation: FC<StepProps> = ({ state }) => {
         <p>
           Transport over{' '}
           <span className='text-foreground'>{Format.distance(distance)}</span>{' '}
-          will take{' '}
-          <span className='text-foreground'>
-            {Format.duration(transferSeconds)}
-          </span>
+          {transferSeconds === 0 ? (
+            <>
+              will be <span className='text-success'>instant.</span>
+            </>
+          ) : (
+            <>
+              will take{' '}
+              <span className='text-foreground'>
+                {Format.duration(transferSeconds)}
+              </span>
+            </>
+          )}
         </p>
-        <div className='flex items-center gap-x-2'>
-          You will pay a fee of{' '}
-          <SwayAmount className='text-foreground' amount={3000} />
-        </div>
+        {!!swayFee && (
+          <div className='flex items-center gap-x-2'>
+            You will pay a fee of{' '}
+            <SwayAmount
+              className='text-destructive'
+              amount={Number(swayFee / 1_000_000n)}
+            />
+          </div>
+        )}
       </div>
-      <Button className='mt-3 h-14 gap-x-2'>
+      <Button className='mt-3 h-14 gap-x-2' onClick={() => fuelShip()}>
         <Fuel size={24} />
         Fuel Ship
       </Button>
     </div>
-  )
+  ) : null
 }

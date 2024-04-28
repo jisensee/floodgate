@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "contract:export-abi": "cat contract/target/dev/influenceoverfueler_InfluenceOverfueler.contract_class.json | jq '.abi' > abi.json",
+    "contract:export-abi": "cat contract/target/dev/influenceoverfueler_InfluenceOverfueler.contract_class.json | jq '.abi' > abis/overfueler.json",
     "contract:build": "cd contract && scarb build && cd .. && bun contract:export-abi"
   },
   "dependencies": {
@@ -23,7 +23,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "get-starknet-core": "^3.2.0",
-    "influence-typed-sdk": "^1.2.0",
+    "influence-typed-sdk": "1.3.0",
     "lucide-react": "^0.367.0",
     "next": "latest",
     "react": "^18",
