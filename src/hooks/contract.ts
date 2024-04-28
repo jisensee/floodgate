@@ -118,7 +118,7 @@ export const useFuelShipTransaction = (args: {
       overfuelerContract?.populateTransaction?.['refuel_ship']?.(
         Entity.IDS.BUILDING,
         args.warehouseId,
-        1,
+        2,
         args.shipId,
         args.fuelAmount
       ),
