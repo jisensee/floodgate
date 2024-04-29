@@ -17,7 +17,7 @@ export const Confirmation: FC<StepProps> = ({ state }) => {
 
   const overfuelBonus = state.crewData?.bonuses.volumeBonus.totalBonus ?? 1
   const missingFuel = ship.fuelCapacity * overfuelBonus - ship.fuelAmount
-  const usedFuel = Math.min(missingFuel, warehouse.fuelAmount)
+  const usedFuel = Math.min(missingFuel, warehouse.fuelAmount) - 1
   const newFuelAmount = ship.fuelAmount + usedFuel
   const newFuelPercentage = (newFuelAmount / ship.fuelCapacity) * 100
   const distance = Asteroid.getLotDistance(1, warehouse.lotIndex, ship.lotIndex)

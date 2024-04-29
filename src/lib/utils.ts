@@ -34,7 +34,7 @@ export const Format = {
     kilometers.toLocaleString(undefined, { maximumFractionDigits: 1 }) + 'km',
   mass: (kilograms: number) => {
     if (kilograms < 1000) {
-      return `${kilograms}g`
+      return `${kilograms}kg`
     }
     if (kilograms < 1_000_000) {
       return Math.round(kilograms / 1000) + 't'

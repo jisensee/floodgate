@@ -34,7 +34,7 @@ export const ShipSelection: FC<StepProps> = ({ state, dispatch }) => {
               </p>
               <p className='text-sm text-muted-foreground'>
                 Fuel: {Format.mass(ship.fuelAmount)} /{' '}
-                {Format.mass(ship.fuelCapacity)}t (
+                {Format.mass(ship.fuelCapacity)} (
                 {Math.round(
                   (ship.fuelAmount / ship.fuelCapacity) * 100
                 ).toLocaleString()}
