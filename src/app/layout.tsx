@@ -8,7 +8,7 @@ import { Header } from '@/components/header'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Rent a crew',
+  title: 'Floodgate',
 }
 
 export default async function RootLayout({
