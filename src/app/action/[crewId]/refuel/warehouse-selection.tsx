@@ -37,8 +37,8 @@ export const WarehouseSelection: FC<WarehouseSelectionProps> = ({
       {warehouses.map((warehouse) => (
         <li
           key={warehouse.id}
-          className={cn('flex cursor-pointer rounded p-2 hover:bg-secondary', {
-            'bg-secondary': selectedWarehouse?.id === warehouse.id,
+          className={cn('flex cursor-pointer rounded p-2 hover:bg-muted', {
+            'bg-muted': selectedWarehouse?.id === warehouse.id,
           })}
           onClick={() => onWarehouseSelect(warehouse)}
         >

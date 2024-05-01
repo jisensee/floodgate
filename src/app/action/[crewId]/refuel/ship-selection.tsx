@@ -21,9 +21,9 @@ export const ShipSelection: FC<ShipSelectionProps> = ({
         <div
           key={ship.id}
           className={cn(
-            'flex cursor-pointer flex-col gap-y-1 rounded px-1 py-2 hover:bg-secondary',
+            'flex cursor-pointer flex-col gap-y-1 rounded px-1 py-2 hover:bg-muted',
             {
-              'bg-secondary': selectedShip?.id === ship.id,
+              'bg-muted': selectedShip?.id === ship.id,
             }
           )}
         >
