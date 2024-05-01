@@ -10,15 +10,20 @@ import {
   DialogHeader,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
+import { Button, ButtonProps } from '@/components/ui/button'
 
-export const ConnectWalletButton = () => {
+export const ConnectWalletButton = (props: ButtonProps) => {
   const { connect, connectors, status } = useConnect()
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant='accent' loading={status === 'pending'} icon={<User />}>
+        <Button
+          variant='accent'
+          loading={status === 'pending'}
+          icon={<User />}
+          {...props}
+        >
           Connect Wallet
         </Button>
       </DialogTrigger>

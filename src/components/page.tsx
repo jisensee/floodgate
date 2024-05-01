@@ -13,17 +13,14 @@ export const Page: FC<PageProps> = ({
   fullSize,
   children,
 }) => (
-  <main className='flex min-h-screen flex-col items-center gap-y-2 pt-14 md:pt-32'>
+  <main className='flex flex-col items-center gap-y-2 pt-14 md:pt-32'>
     {typeof title === 'string' ? <h1>{title}</h1> : title}
     <div
-      className={cn(
-        'h-[85vh] w-full p-3 md:rounded md:border md:border-border',
-        {
-          'border-none': hideBorder,
-          'md:w-[34rem]': !fullSize,
-          'md:h-[60vh]': !fullSize,
-        }
-      )}
+      className={cn('w-full p-3 md:rounded md:border md:border-border', {
+        'border-none': hideBorder,
+        'md:w-[34rem]': !fullSize,
+        'md:h-[60vh]': !fullSize,
+      })}
     >
       {children}
     </div>
