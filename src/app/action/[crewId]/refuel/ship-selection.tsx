@@ -1,31 +1,33 @@
 import { FC } from 'react'
-import { ShipImage } from '../../components/asset-images'
-import { Progress } from '../../components/ui/progress'
-import { StepProps } from './state'
+import { ShipImage } from '../../../../components/asset-images'
+import { Progress } from '../../../../components/ui/progress'
 import { Format, cn } from '@/lib/utils'
+import { Ship } from '@/actions'
 
-export const ShipSelection: FC<StepProps> = ({ state, dispatch }) => {
+export type ShipSelectionProps = {
+  ships: Ship[]
+  selectedShip?: Ship
+  onShipSelect: (ship: Ship) => void
+}
+
+export const ShipSelection: FC<ShipSelectionProps> = ({
+  ships,
+  selectedShip,
+  onShipSelect,
+}) => {
   return (
     <div className='flex flex-col gap-2 overflow-y-auto'>
-      {state.ships.map((ship) => (
+      {ships.map((ship) => (
         <div
           key={ship.id}
           className={cn(
             'flex cursor-pointer flex-col gap-y-1 rounded px-1 py-2 hover:bg-secondary',
             {
-              'bg-secondary': state.selectedShip?.id === ship.id,
+              'bg-secondary': selectedShip?.id === ship.id,
             }
           )}
         >
-          <div
-            className='flex'
-            onClick={() =>
-              dispatch({
-                type: 'select-ship',
-                ship,
-              })
-            }
-          >
+          <div className='flex' onClick={() => onShipSelect(ship)}>
             <ShipImage type={ship.type} size={150} />
             <div className='flex flex-col gap-y-1'>
               <p className='font-bold'>{ship.name}</p>

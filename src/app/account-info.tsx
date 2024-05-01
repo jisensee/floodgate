@@ -17,7 +17,7 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address }) => {
   const swayBalance = data ? parseFloat(data.formatted) : undefined
 
   return (
-    <div className='flex flex-row gap-x-3 rounded-md border border-primary px-3 py-1'>
+    <div className='flex flex-row items-center gap-x-3 rounded-md border border-primary px-3 py-1'>
       {swayBalance && (
         <>
           <SwayAmount amount={swayBalance} />|

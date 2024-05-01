@@ -3,6 +3,7 @@
 import NextImage from 'next/image'
 import { DialogTitle } from '@radix-ui/react-dialog'
 import { useConnect } from '@starknet-react/core'
+import { User } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -17,7 +18,9 @@ export const ConnectWalletButton = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button disabled={status === 'pending'}>Connect Wallet</Button>
+        <Button variant='accent' loading={status === 'pending'} icon={<User />}>
+          Connect Wallet
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

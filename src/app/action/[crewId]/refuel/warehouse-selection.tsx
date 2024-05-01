@@ -1,42 +1,46 @@
 import { FC } from 'react'
 import { Asteroid } from '@influenceth/sdk'
-import { StepProps } from './state'
 import { Format, cn } from '@/lib/utils'
 import { WarehouseImage } from '@/components/asset-images'
-import { Warehouse } from '@/actions'
+import { Ship, Warehouse } from '@/actions'
+import { ContractCrew } from '@/lib/contract'
 
-export const WarehouseSelection: FC<StepProps> = ({ state, dispatch }) => {
-  const transportBonus =
-    state.crewData?.bonuses?.transportTimeBonus?.totalBonus ?? 1
+export type WarehouseSelectionProps = {
+  warehouses: Warehouse[]
+  selectedShip?: Ship
+  selectedWarehouse?: Warehouse
+  onWarehouseSelect: (warehouse: Warehouse) => void
+  crew: ContractCrew
+}
+
+export const WarehouseSelection: FC<WarehouseSelectionProps> = ({
+  warehouses,
+  selectedShip,
+  selectedWarehouse,
+  onWarehouseSelect,
+  crew,
+}) => {
+  const transportBonus = crew.bonuses.transportTime.totalBonus
 
   const getShipDistance = (warehouse: Warehouse) =>
-    Asteroid.getLotDistance(
-      1,
-      warehouse.lotIndex,
-      state.selectedShip?.lotIndex ?? 0
-    )
+    Asteroid.getLotDistance(1, warehouse.lotIndex, selectedShip?.lotIndex ?? 0)
   const getTransportTime = (warehouse: Warehouse) =>
     Asteroid.getLotTravelTime(
       1,
       warehouse.lotIndex,
-      state.selectedShip?.lotIndex ?? 0,
+      selectedShip?.lotIndex ?? 0,
       transportBonus
     ) / 24
 
   return (
     <ul className='flex flex-col gap-2 overflow-y-auto'>
-      {state.warehouses.map((warehouse) => (
+      {warehouses.map((warehouse) => (
         <li
           key={warehouse.id}
           className={cn('flex cursor-pointer rounded p-2 hover:bg-secondary', {
-            'bg-secondary': state.selectedWarehouse?.id === warehouse.id,
+            'bg-secondary': selectedWarehouse?.id === warehouse.id,
           })}
-          onClick={() =>
-            dispatch({
-              type: 'select-warehouse',
-              warehouse,
-            })
-          }
+          onClick={() => onWarehouseSelect(warehouse)}
         >
           <div className='flex gap-x-3'>
             <WarehouseImage size={100} />

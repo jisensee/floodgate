@@ -4,16 +4,24 @@ import { cn } from '@/lib/utils'
 type PageProps = {
   title: ReactNode
   hideBorder?: boolean
+  fullSize?: boolean
 } & PropsWithChildren
 
-export const Page: FC<PageProps> = ({ title, hideBorder, children }) => (
+export const Page: FC<PageProps> = ({
+  title,
+  hideBorder,
+  fullSize,
+  children,
+}) => (
   <main className='flex min-h-screen flex-col items-center gap-y-2 pt-14 md:pt-32'>
-    <h1>{title}</h1>
+    {typeof title === 'string' ? <h1>{title}</h1> : title}
     <div
       className={cn(
-        'h-[85vh] w-full p-3 md:h-[60vh] md:w-[34rem] md:rounded md:border md:border-border',
+        'h-[85vh] w-full p-3 md:rounded md:border md:border-border',
         {
           'border-none': hideBorder,
+          'md:w-[34rem]': !fullSize,
+          'md:h-[60vh]': !fullSize,
         }
       )}
     >

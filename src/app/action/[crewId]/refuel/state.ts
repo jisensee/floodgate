@@ -1,13 +1,12 @@
 import { Dispatch, Reducer, useReducer } from 'react'
 import { Ship, Warehouse } from '@/actions'
-import { CrewData } from '@/hooks/contract'
+import { ContractCrew } from '@/lib/contract'
 
 export type State = {
   selectedShip?: Ship
   selectedWarehouse?: Warehouse
   ships: Ship[]
   warehouses: Warehouse[]
-  crewData?: CrewData
   dataLoading: boolean
 }
 
@@ -25,10 +24,13 @@ export type SetData = {
   type: 'set-data'
   ships: Ship[]
   warehouses: Warehouse[]
-  crewData: CrewData
 }
 
-export type Action = SelectShip | SelectWarehouse | SetData
+export type Reset = {
+  type: 'reset'
+}
+
+export type Action = SelectShip | SelectWarehouse | SetData | Reset
 
 export const useRefuelWizardState = () =>
   useReducer<Reducer<State, Action>>(
@@ -47,8 +49,13 @@ export const useRefuelWizardState = () =>
             ...state,
             ships: action.ships,
             warehouses: action.warehouses,
-            crewData: action.crewData,
             dataLoading: false,
+          }
+        case 'reset':
+          return {
+            ...state,
+            selectedShip: undefined,
+            selectedWarehouse: undefined,
           }
       }
     },
@@ -58,4 +65,5 @@ export const useRefuelWizardState = () =>
 export type StepProps = {
   state: State
   dispatch: Dispatch<Action>
+  crew: ContractCrew
 }
