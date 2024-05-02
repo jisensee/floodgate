@@ -15,7 +15,7 @@ import { AccountInfo } from '@/app/account-info'
 
 export const Header = () => {
   return (
-    <div className='fixed top-0 flex w-full items-center justify-between px-3 py-2'>
+    <div className='fixed top-0 flex w-full items-center justify-between bg-background px-3 py-2'>
       <div className='flex w-full items-center justify-between'>
         <Link href='/' className='flex gap-x-2 hover:text-primary'>
           <Home size={24} />

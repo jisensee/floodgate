@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import NextLink from 'next/link'
+import { SiGithub } from '@icons-pack/react-simple-icons'
 import { Inter } from 'next/font/google'
 import './globals.css'
 
@@ -41,9 +43,19 @@ const Footer = () => (
     <Separator />
     <Link href='/faq'>FAQs</Link>
     <Separator className='w-32' />
-    <p className='text-muted-foreground'>
-      Built by <span className='text-foreground'>Cheveuxxx</span> and{' '}
-      <span className='text-foreground'>Denker</span>
-    </p>
+    <div className='flex items-center gap-x-2'>
+      <p className='text-muted-foreground'>
+        Built by <span className='text-foreground'>Cheveuxxx</span> and{' '}
+        <span className='text-foreground'>Denker</span> on{' '}
+      </p>
+      <NextLink
+        className='inline-flex'
+        href='https://github.com/jisensee/floodgate'
+        target='_blank'
+      >
+        {' '}
+        <SiGithub />
+      </NextLink>
+    </div>
   </footer>
 )

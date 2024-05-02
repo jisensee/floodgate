@@ -5,6 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import { Link } from '@/components/ui/link'
 
 export default function FaqPage() {
   return (
@@ -60,6 +61,29 @@ export default function FaqPage() {
           <AccordionContent>
             All paid fees are split between us developers to keep the service
             running and the crew owner.
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value='safety'>
+          <AccordionTrigger>Is this safe?</AccordionTrigger>
+          <AccordionContent>
+            Yes! Ultimately, most of the logic is fairly simple and easy to
+            verify. We ensure that your warehouse and ship inventories stay safe
+            by adding and revoking any neccessary permissions in one multicall.
+            You can also check the{' '}
+            <Link
+              href='https://github.com/jisensee/floodgate/blob/main/contract/src/lib.cairo'
+              target='_blank'
+            >
+              smart contract code
+            </Link>{' '}
+            and also the{' '}
+            <Link
+              href='https://github.com/jisensee/floodgate/blob/a0fd3bed8d4ecf836cfc5d117ae01bf52119c816/src/hooks/contract.ts#L38'
+              target='_blank'
+            >
+              multicall
+            </Link>{' '}
+            that the frontend submits for some additional peace of mind.
           </AccordionContent>
         </AccordionItem>
       </Accordion>

@@ -41,7 +41,7 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
           className='flex flex-row items-center gap-x-3 border-primary'
           size='sm'
         >
-          {swayBalance && (
+          {swayBalance !== undefined && (
             <>
               <SwayAmount amount={swayBalance} />|
             </>
@@ -66,7 +66,7 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
           </DialogHeader>
         </DialogHeader>
         <p className='break-all'>{address}</p>
-        {swayBalance && (
+        {swayBalance !== undefined && (
           <div className='flex items-center gap-x-2'>
             <span>Balance:</span>
             <SwayAmount amount={swayBalance} />

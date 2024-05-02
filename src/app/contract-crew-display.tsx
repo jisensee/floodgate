@@ -39,7 +39,7 @@ export const ContractCrewDisplay = ({ crew }: ContractCrewDisplayProps) => {
       <div className='flex gap-x-2'>
         <CrewmateImage crewmateId={captainId} width={150} />
         <div className='flex flex-col justify-between'>
-          <div className='flex flex-wrap items-center gap-3 pr-2'>
+          <div className='flex flex-wrap items-center gap-x-3 gap-y-1 pr-2'>
             <h2 className='grow'>{crew.name}</h2>
             <SwayAmount amount={Number(crew.swayFee)} convert />
             <div className='flex items-center gap-x-1 text-sm'>
@@ -58,7 +58,7 @@ export const ContractCrewDisplay = ({ crew }: ContractCrewDisplayProps) => {
           <FuelLink crewId={crew.id} className='w-full md:hidden' />
         </div>
 
-        <div className='hidden flex-col gap-y-1 md:flex'>
+        <div className='hidden flex-col gap-y-3 md:flex'>
           <FuelLink crewId={crew.id} className='hidden w-full md:block' />
           <div className='hidden grid-cols-[min-content,1fr] items-center gap-x-1 md:grid'>
             {stats}
@@ -77,7 +77,7 @@ type CrewStatisticProps = {
 const CrewStatistic: FC<CrewStatisticProps> = ({ value, label }) => (
   <>
     <span
-      className={cn('text-2xl', {
+      className={cn('text-xl md:text-2xl', {
         'text-success': value >= 0,
         'text-destructive': value < 0,
       })}
@@ -95,7 +95,7 @@ type FuelLinkProps = {
 
 const FuelLink = ({ crewId, className }: FuelLinkProps) => (
   <Link href={`/action/${crewId}/refuel`} className={className}>
-    <Button size='lg' className='w-full gap-x-1'>
+    <Button className='w-full gap-x-1'>
       <Fuel />
       Fuel Ship
     </Button>
