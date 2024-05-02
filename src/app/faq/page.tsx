@@ -30,17 +30,17 @@ export default function FaqPage() {
             </p>
             <p>
               Additionally, the frontend will prompt for some additional
-              transactions to temporarily permit the crew to acces your
+              transactions to temporarily permit the crew to access your
               warehouse and ship. The full multicall looks like this:
             </p>
             <ol className='list list-decimal pl-5'>
               <li>Permit crew to remove products from source inventory</li>
               <li>Permit crew to add products to destination inventory</li>
               <li>
-                Increase SWAY allowance by the fee amout with the contract as
+                Increase SWAY allowance by the fee amount with the contract as
                 spender
               </li>
-              <li>Call our contract to handle the transport and fee paymant</li>
+              <li>Call our contract to handle the transport and fee payment</li>
               <li>Remove permission from source inventory</li>
               <li>Remove permission from destination inventory</li>
             </ol>
