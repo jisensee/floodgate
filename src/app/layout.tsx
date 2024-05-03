@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import NextLink from 'next/link'
 import { SiGithub } from '@icons-pack/react-simple-icons'
 import { Inter } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/react'
 import './globals.css'
 
 import { Providers } from './providers'
@@ -25,6 +26,7 @@ export default async function RootLayout({
   return (
     <html lang='en' className='h-full'>
       <body className={cn(inter.className, 'h-full')}>
+        <Analytics />
         <Providers>
           <div className='flex h-full flex-col'>
             <Header />
