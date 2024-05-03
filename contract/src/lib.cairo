@@ -113,10 +113,12 @@ mod InfluenceOverfueler
     impl LockableImpl of super::LockableTrait<ContractState>
     {
         fn lock(ref self: ContractState) {
+            self.only_owner();
             self.lock_status.write(true);
         }
 
         fn unlock(ref self: ContractState) {
+            self.only_owner();
             self.lock_status.write(false);
         }
 
