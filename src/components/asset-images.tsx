@@ -2,6 +2,7 @@ import { Building, ShipType } from '@influenceth/sdk'
 import NextImage from 'next/image'
 import { makeInfluenceImageUrls } from 'influence-typed-sdk/images'
 import { FC } from 'react'
+import { cn } from '@/lib/utils'
 
 type ShipImageProps = {
   type: ShipType
@@ -29,14 +30,16 @@ export const WarehouseImage: FC<WarehouseImageProps> = ({ size }) => {
 type CrewmateImageProps = {
   crewmateId: number
   width: number
+  className?: string
 }
 
-export const CrewmateImage: FC<CrewmateImageProps> = ({
+export const CrewmateImage = ({
   crewmateId,
   width,
-}) => (
+  className,
+}: CrewmateImageProps) => (
   <NextImage
-    className='rounded border border-border'
+    className={cn('rounded border border-border', className)}
     src={imageUrls.crewmate(crewmateId)}
     alt='crewmate'
     width={width}

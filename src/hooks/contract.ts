@@ -86,3 +86,19 @@ export const useFuelShipTransaction = (args: {
 
   return write
 }
+
+export const useRegisterCrew = (crewId: number) => {
+  const { contract: dispatcherContract } = useContract({
+    abi: dispatcherAbi,
+    address: dispatcherAddress,
+  })
+
+  return useContractWrite({
+    calls: [
+      dispatcherContract?.populateTransaction?.['run_system']?.(
+        'DelegateCrew',
+        [env.NEXT_PUBLIC_REFUELER_CONTRACT_ADDRESS, Entity.IDS.CREW, crewId]
+      ),
+    ],
+  })
+}

@@ -1,7 +1,8 @@
 import * as R from 'remeda'
-import { AbilityBonusDetails, Crew, Crewmate, Entity } from '@influenceth/sdk'
+import { AbilityBonusDetails, Entity } from '@influenceth/sdk'
 import { influenceApi } from './influence-api'
 import { overfuelerContract } from './contracts'
+import { getCrewBonuses } from './utils'
 
 export type ContractCrew = {
   id: number
@@ -17,7 +18,7 @@ export type ContractCrew = {
   }
 }
 
-const getContractCrewData = async () => {
+export const getRegisteredCrews = async () => {
   const [swayFee, crewId] = await Promise.all([
     overfuelerContract.get_sway_fee(),
     overfuelerContract.get_crew_id(),
@@ -27,7 +28,7 @@ const getContractCrewData = async () => {
 }
 
 export const getContractCrews = async (): Promise<ContractCrew[]> => {
-  const contractCrewData = await getContractCrewData()
+  const contractCrewData = await getRegisteredCrews()
   const apiCrews = await influenceApi.entities({
     id: contractCrewData.map(({ id }) => id),
     label: Entity.IDS.CREW,
@@ -70,18 +71,6 @@ export const getContractCrews = async (): Promise<ContractCrew[]> => {
       const crewmates = allCrewmates.filter((c) =>
         crew.Crew?.roster?.includes(c.id)
       )
-      const getBonus = (abilityId: number) =>
-        Crew.getAbilityBonus(
-          abilityId,
-          crewmates,
-          {
-            population: station.Station?.population ?? 0,
-            stationType: station.Station?.stationType.i ?? 0,
-          },
-          ((new Date().getTime() - (crew?.Crew?.lastFed?.getTime() ?? 0)) /
-            1000) *
-            24
-        )
 
       return {
         id: id,
@@ -90,13 +79,7 @@ export const getContractCrews = async (): Promise<ContractCrew[]> => {
         asteroidName,
         crewmateIds: crew.Crew?.roster ?? [],
         swayFee,
-        bonuses: {
-          transportTime: getBonus(Crewmate.ABILITY_IDS.HOPPER_TRANSPORT_TIME),
-          massCapacity: getBonus(Crewmate.ABILITY_IDS.INVENTORY_MASS_CAPACITY),
-          volumeCapacity: getBonus(
-            Crewmate.ABILITY_IDS.INVENTORY_VOLUME_CAPACITY
-          ),
-        },
+        bonuses: getCrewBonuses(crew, crewmates, station),
       }
     }),
     R.filter(R.isTruthy)

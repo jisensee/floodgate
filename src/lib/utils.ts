@@ -1,4 +1,6 @@
+import { Crew, Crewmate } from '@influenceth/sdk'
 import { type ClassValue, clsx } from 'clsx'
+import { InfluenceEntity } from 'influence-typed-sdk/api'
 import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
@@ -46,3 +48,29 @@ export const Format = {
     )
   },
 }
+
+export const getCrewBonuses = (
+  crew: InfluenceEntity,
+  crewmates: InfluenceEntity[],
+  station: InfluenceEntity
+) => {
+  const getBonus = (abilityId: number) =>
+    Crew.getAbilityBonus(
+      abilityId,
+      crewmates,
+      {
+        population: station.Station?.population ?? 0,
+        stationType: station.Station?.stationType.i ?? 0,
+      },
+      ((new Date().getTime() - (crew?.Crew?.lastFed?.getTime() ?? 0)) / 1000) *
+        24
+    )
+
+  return {
+    transportTime: getBonus(Crewmate.ABILITY_IDS.HOPPER_TRANSPORT_TIME),
+    massCapacity: getBonus(Crewmate.ABILITY_IDS.INVENTORY_MASS_CAPACITY),
+    volumeCapacity: getBonus(Crewmate.ABILITY_IDS.INVENTORY_VOLUME_CAPACITY),
+  }
+}
+
+export type CrewBonuses = ReturnType<typeof getCrewBonuses>
