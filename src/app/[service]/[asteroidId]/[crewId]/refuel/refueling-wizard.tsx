@@ -2,31 +2,35 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { FC, useEffect } from 'react'
-import { Wizard, WizardStep } from '../../../../components/ui/wizard'
 import { State, useRefuelWizardState } from './state'
 import { ShipSelection } from './ship-selection'
 import { WarehouseSelection } from './warehouse-selection'
 import { Confirmation } from './confirmation'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getShips, getWarehouses } from '@/actions'
-import { ContractCrew } from '@/lib/contract'
+import { FloodgateCrew } from '@/lib/contract-types'
+import { Wizard, WizardStep } from '@/components/ui/wizard'
 
 export type RefuelingWizardProps = {
   address: string
-  crew: ContractCrew
+  crew: FloodgateCrew
+  actionFee: bigint
 }
 
 export const RefuelingWizard: FC<RefuelingWizardProps> = ({
   address,
   crew,
+  actionFee,
 }) => {
   const [state, dispatch] = useRefuelWizardState()
 
+  const volumeBonus = crew.bonuses.volumeCapacity
+
   const { data: userData, refetch } = useQuery({
-    queryKey: ['ships-warehouses', address],
+    queryKey: ['ships-warehouses', address, crew.asteroidId],
     queryFn: () =>
       Promise.all([
-        getShips(address, crew.asteroidId),
+        getShips(address, crew.asteroidId, volumeBonus.totalBonus),
         getWarehouses(address, crew.asteroidId),
       ]),
   })
@@ -81,6 +85,7 @@ export const RefuelingWizard: FC<RefuelingWizardProps> = ({
                   crew={crew}
                   selectedShip={state.selectedShip}
                   selectedWarehouse={state.selectedWarehouse}
+                  actionFee={actionFee}
                   onReset={() => {
                     refetch()
                     dispatch({ type: 'reset' })

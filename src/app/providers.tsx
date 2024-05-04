@@ -4,15 +4,18 @@ import { FC, PropsWithChildren } from 'react'
 import { sepolia } from '@starknet-react/chains'
 import {
   StarknetConfig,
-  publicProvider,
   argent,
   braavos,
   useInjectedConnectors,
   voyager,
+  jsonRpcProvider,
 } from '@starknet-react/core'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { WebWalletConnector } from '@/lib/web-wallet-connector'
 
 const queryClient = new QueryClient()
+
+const webWalletConnector = new WebWalletConnector()
 
 export const Providers: FC<PropsWithChildren> = ({ children }) => {
   const { connectors } = useInjectedConnectors({
@@ -24,8 +27,12 @@ export const Providers: FC<PropsWithChildren> = ({ children }) => {
     <QueryClientProvider client={queryClient}>
       <StarknetConfig
         chains={[sepolia]}
-        provider={publicProvider()}
-        connectors={connectors}
+        provider={jsonRpcProvider({
+          rpc: () => ({
+            nodeUrl: 'https://starknet-sepolia.public.blastapi.io',
+          }),
+        })}
+        connectors={[...connectors, webWalletConnector]}
         explorer={voyager}
         autoConnect
       >

@@ -6,7 +6,7 @@ export const Link = (props: ComponentProps<typeof NextLink>) => (
   <NextLink
     {...props}
     className={cn(
-      'font-bold text-secondary hover:text-primary',
+      'font-bold text-primary hover:text-secondary',
       props.className
     )}
   />

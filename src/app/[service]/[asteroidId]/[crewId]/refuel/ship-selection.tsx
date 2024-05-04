@@ -1,8 +1,8 @@
 import { FC } from 'react'
-import { ShipImage } from '../../../../components/asset-images'
-import { Progress } from '../../../../components/ui/progress'
 import { Format, cn } from '@/lib/utils'
 import { Ship } from '@/actions'
+import { ShipImage } from '@/components/asset-images'
+import { Progress } from '@/components/ui/progress'
 
 export type ShipSelectionProps = {
   ships: Ship[]

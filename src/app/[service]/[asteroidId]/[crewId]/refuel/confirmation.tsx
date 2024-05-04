@@ -1,22 +1,31 @@
-import { FC, useEffect, useState } from 'react'
-import { Fuel, LoaderCircle, MoveDown } from 'lucide-react'
+import { FC, useState } from 'react'
+import { Fuel, MoveDown } from 'lucide-react'
 import { Asteroid } from '@influenceth/sdk'
-import { toast } from 'sonner'
-import { useWaitForTransaction } from '@starknet-react/core'
 import { useWizard } from 'react-use-wizard'
 import { ShipImage, WarehouseImage } from '@/components/asset-images'
 import { Progress } from '@/components/ui/progress'
 import { SwayAmount } from '@/components/sway-amount'
 import { Format, cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { useFuelShipTransaction } from '@/hooks/contract'
+import { useDevteamShare, useFuelShipTransaction } from '@/hooks/contract'
 import { Slider } from '@/components/ui/slider'
 import { Label } from '@/components/ui/label'
-import { ContractCrew } from '@/lib/contract'
 import { Ship, Warehouse } from '@/actions'
+import { FloodgateCrew } from '@/lib/contract-types'
+import { useTransactionToast } from '@/hooks/transaction-toast'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { InfoTooltip } from '@/components/ui/tooltip'
 
 export type ConfirmationProps = {
-  crew: ContractCrew
+  crew: FloodgateCrew
+  actionFee: bigint
   selectedShip: Ship
   selectedWarehouse: Warehouse
   onReset: () => void
@@ -24,12 +33,14 @@ export type ConfirmationProps = {
 
 export const Confirmation: FC<ConfirmationProps> = ({
   crew,
+  actionFee,
   selectedShip,
   selectedWarehouse,
   onReset,
 }) => {
   const transportBonus = crew.bonuses.transportTime.totalBonus
   const { goToStep } = useWizard()
+  const devteamShare = useDevteamShare()
 
   const overfuelBonus = crew.bonuses.volumeCapacity.totalBonus
   const missingFuel =
@@ -63,41 +74,17 @@ export const Confirmation: FC<ConfirmationProps> = ({
     warehouseOwnerCrewId: selectedWarehouse.owningCrewId,
     shipOwnerCrewId: selectedShip.owningCrewId,
     fuelAmount: usedFuel - 1,
-    swayFee: crew.swayFee,
+    swayFee: actionFee,
   })
 
-  const {
-    isLoading: txLoading,
-    error: txError,
-    status: txStatus,
-  } = useWaitForTransaction({ hash: data?.transaction_hash })
-
-  const [successToastId, setSuccessToastId] = useState<
-    number | string | undefined
-  >()
+  const { isLoading, status: txStatus } = useTransactionToast({
+    txHash: data?.transaction_hash,
+    submitStatus,
+    submitError,
+    pendingMessage: 'Fueling ship...',
+  })
 
   const fuelSuccess = txStatus === 'success'
-
-  useEffect(() => {
-    if (fuelSuccess) {
-      toast.dismiss(successToastId)
-    }
-  }, [fuelSuccess, successToastId])
-
-  useEffect(() => {
-    if (submitStatus === 'success') {
-      setSuccessToastId(
-        toast.success('Transaction submitted, waiting for confirmation...', {
-          icon: <LoaderCircle className='animate-spin' />,
-          duration: 1e9,
-        })
-      )
-    } else if (submitError) {
-      toast.error(`Error when submitting tx: ${submitError.message}`)
-    } else if (txError) {
-      toast.error(`Error when executing tx: ${txError.message}`)
-    }
-  }, [submitError, submitStatus, txError])
 
   return (
     <div className='flex flex-col items-center gap-y-3'>
@@ -169,9 +156,17 @@ export const Confirmation: FC<ConfirmationProps> = ({
               You will pay a fee of{' '}
               <SwayAmount
                 className='text-destructive'
-                amount={Number(crew.swayFee)}
+                amount={Number(actionFee)}
                 convert
               />
+              {devteamShare && (
+                <InfoTooltip>
+                  <FeeBreakdown
+                    devteamShare={devteamShare}
+                    actionFee={actionFee}
+                  />
+                </InfoTooltip>
+              )}
             </div>
           </div>
           <Button
@@ -179,7 +174,7 @@ export const Confirmation: FC<ConfirmationProps> = ({
             variant='accent'
             onClick={() => fuelShip()}
             icon={<Fuel size={24} />}
-            loading={submitStatus === 'pending' || txLoading}
+            loading={isLoading}
           >
             Fuel Ship
           </Button>
@@ -197,6 +192,64 @@ export const Confirmation: FC<ConfirmationProps> = ({
           Fuel another ship
         </Button>
       )}
+    </div>
+  )
+}
+
+const FeeBreakdown = ({
+  devteamShare,
+  actionFee,
+}: {
+  devteamShare: number
+  actionFee: bigint
+}) => {
+  const managerShare = 1 - devteamShare
+  const devteamAmount = Math.floor(Number(actionFee) * devteamShare)
+  const managerAmount = Math.floor(Number(actionFee) * managerShare)
+
+  return (
+    <div>
+      <p className='text-muted-foreground'>
+        The fee you pay is split the following way:
+      </p>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead />
+            <TableHead>Share</TableHead>
+            <TableHead>Amount</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell className='font-medium text-muted-foreground'>
+              Dev team
+            </TableCell>
+            <TableCell>{Math.round(devteamShare * 100)}%</TableCell>
+            <TableCell>
+              <SwayAmount amount={devteamAmount} convert />
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className='font-medium text-muted-foreground'>
+              Crew manager
+            </TableCell>
+            <TableCell>{Math.round(managerShare * 100)}%</TableCell>
+            <TableCell>
+              <SwayAmount amount={managerAmount} convert />
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className='font-medium text-muted-foreground'>
+              Total
+            </TableCell>
+            <TableCell>100%</TableCell>
+            <TableCell>
+              <SwayAmount amount={actionFee} convert />
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     </div>
   )
 }
