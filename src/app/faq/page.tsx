@@ -9,7 +9,7 @@ import { Link } from '@/components/ui/link'
 
 export default function FaqPage() {
   return (
-    <Page title='Frequently Asked Questions' hideBorder>
+    <Page title='Frequently Asked Questions'>
       <Accordion type='single' collapsible defaultValue='what'>
         <AccordionItem value='what'>
           <AccordionTrigger>What is Floodgate?</AccordionTrigger>

@@ -1,6 +1,5 @@
-import { Dispatch, Reducer, useReducer } from 'react'
+import { Reducer, useReducer } from 'react'
 import { Ship, Warehouse } from '@/actions'
-import { ContractCrew } from '@/lib/contract'
 
 export type State = {
   selectedShip?: Ship
@@ -61,9 +60,3 @@ export const useRefuelWizardState = () =>
     },
     { ships: [], warehouses: [], dataLoading: true }
   )
-
-export type StepProps = {
-  state: State
-  dispatch: Dispatch<Action>
-  crew: ContractCrew
-}

@@ -3,23 +3,18 @@
 import { Home, Plus } from 'lucide-react'
 import { useAccount } from '@starknet-react/core'
 import { ConnectWalletButton } from './connect-wallet-button'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from './ui/tooltip'
+
 import { Button } from './ui/button'
 import { Link } from './ui/link'
 import { AccountInfo } from '@/app/account-info'
 
 export const Header = () => {
   return (
-    <div className='fixed top-0 flex w-full items-center justify-between bg-background px-3 py-2'>
+    <div className='fixed top-0 z-50 flex w-full items-center justify-between bg-background px-3 py-2'>
       <div className='flex w-full items-center justify-between'>
         <Link href='/' className='flex gap-x-2 hover:text-primary'>
           <Home size={24} />
-          Home
+          <span className='hidden md:block'>Home</span>
         </Link>
         <div className='flex gap-x-2'>
           <RegisterCrewButton />
@@ -43,14 +38,9 @@ const WalletSection = () => {
 }
 
 const RegisterCrewButton = () => (
-  <TooltipProvider delayDuration={0}>
-    <Tooltip>
-      <TooltipTrigger asChild className='hidden md:flex'>
-        <Button className='opacity-50' icon={<Plus />} size='sm'>
-          Register your crew
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>Coming soon</TooltipContent>
-    </Tooltip>
-  </TooltipProvider>
+  <Link className='hidden md:block' href='/register'>
+    <Button icon={<Plus />} size='sm'>
+      Register your crew
+    </Button>
+  </Link>
 )

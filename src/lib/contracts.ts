@@ -1,14 +1,14 @@
 import { Contract, RpcProvider } from 'starknet'
-import { ABI as overfuelerAbi } from '../abis/overfueler'
+import { ABI as floodgateAbi } from '../abis/floodgate'
 import { env } from '@/env'
 
 const provider = new RpcProvider({
-  nodeUrl: 'https://free-rpc.nethermind.io/sepolia-juno/',
+  nodeUrl: 'https://starknet-sepolia.public.blastapi.io',
 })
 
-export const overfuelerContract = new Contract(
-  // @ts-expect-error typed are weird
-  overfuelerAbi,
-  env.NEXT_PUBLIC_REFUELER_CONTRACT_ADDRESS,
+export const floodgateContract = new Contract(
+  // @ts-expect-error type
+  floodgateAbi,
+  env.NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS,
   provider
-).typed(overfuelerAbi)
+).typed(floodgateAbi)

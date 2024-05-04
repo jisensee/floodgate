@@ -1,28 +1,42 @@
-import { FC, PropsWithChildren, ReactNode } from 'react'
+import { PropsWithChildren, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 type PageProps = {
   title: ReactNode
-  hideBorder?: boolean
+  subtitle?: ReactNode
   fullSize?: boolean
+  scrollable?: boolean
 } & PropsWithChildren
 
-export const Page: FC<PageProps> = ({
+export const Page = ({
   title,
-  hideBorder,
+  subtitle,
   fullSize,
+  scrollable,
   children,
-}) => (
-  <main className='flex flex-col items-center gap-y-2 pt-14 md:pt-32'>
-    {typeof title === 'string' ? <h1>{title}</h1> : title}
+}: PageProps) => (
+  <main className='flex h-full justify-center px-2 pt-14 md:pt-20'>
     <div
-      className={cn('w-full p-3 md:rounded md:border md:border-border', {
-        'border-none': hideBorder,
+      className={cn('flex flex-col items-center gap-y-2', {
         'md:w-[34rem]': !fullSize,
-        'md:h-[60vh]': !fullSize,
       })}
     >
-      {children}
+      {typeof title === 'string' ? (
+        <h1 className='text-center'>{title}</h1>
+      ) : (
+        title
+      )}
+      {subtitle && (
+        <p className='text-center text-muted-foreground'>{subtitle}</p>
+      )}
+      <div
+        className={cn('w-full p-3 ', {
+          'overflow-y-auto': scrollable,
+          'md:h-[65vh]': !fullSize,
+        })}
+      >
+        {children}
+      </div>
     </div>
   </main>
 )

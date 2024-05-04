@@ -6,7 +6,7 @@ export const env = createEnv({
     PRERELEASE_INFLUENCE_API_ACCESS_TOKEN: z.string().startsWith('ey'),
   },
   client: {
-    NEXT_PUBLIC_REFUELER_CONTRACT_ADDRESS: z.string().startsWith('0x'),
+    NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS: z.string().startsWith('0x'),
     NEXT_PUBLIC_INFLUENCE_DISPATCHER_CONTRACT_ADDRESS: z
       .string()
       .startsWith('0x'),
@@ -14,8 +14,8 @@ export const env = createEnv({
     NEXT_PUBLIC_INFLUENCE_CLOUDFRONT_IMAGE_HOST: z.string().min(1),
   },
   experimental__runtimeEnv: {
-    NEXT_PUBLIC_REFUELER_CONTRACT_ADDRESS:
-      process.env.NEXT_PUBLIC_REFUELER_CONTRACT_ADDRESS,
+    NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS:
+      process.env.NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS,
     NEXT_PUBLIC_INFLUENCE_DISPATCHER_CONTRACT_ADDRESS:
       process.env.NEXT_PUBLIC_INFLUENCE_DISPATCHER_CONTRACT_ADDRESS,
     NEXT_PUBLIC_SWAY_CONTRACT_ADDRESS:

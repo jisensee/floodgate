@@ -3,14 +3,14 @@ import { Asteroid } from '@influenceth/sdk'
 import { Format, cn } from '@/lib/utils'
 import { WarehouseImage } from '@/components/asset-images'
 import { Ship, Warehouse } from '@/actions'
-import { ContractCrew } from '@/lib/contract'
+import { FloodgateCrew } from '@/lib/contract-types'
 
 export type WarehouseSelectionProps = {
   warehouses: Warehouse[]
   selectedShip?: Ship
   selectedWarehouse?: Warehouse
   onWarehouseSelect: (warehouse: Warehouse) => void
-  crew: ContractCrew
+  crew: FloodgateCrew
 }
 
 export const WarehouseSelection: FC<WarehouseSelectionProps> = ({

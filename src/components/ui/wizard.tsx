@@ -92,7 +92,7 @@ const Footer: FC<FooterProps> = ({ steps }) => {
   const nextLabel = step?.nextLabel ?? 'Next'
   const completed = step?.completed
   return (
-    <div className='flex justify-between'>
+    <div className='flex w-full justify-between'>
       <Button
         className={cn({ invisible: isFirstStep })}
         onClick={previousStep}
