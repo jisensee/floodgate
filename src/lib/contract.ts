@@ -1,19 +1,7 @@
-import { Contract, RpcProvider } from 'starknet'
 import * as R from 'remeda'
 import { AbilityBonusDetails, Crew, Crewmate, Entity } from '@influenceth/sdk'
 import { influenceApi } from './influence-api'
-import { env } from '@/env'
-
-const provider = new RpcProvider({
-  nodeUrl: 'https://free-rpc.nethermind.io/sepolia-juno/',
-})
-
-const getContract = async () => {
-  const { abi } = await provider.getClassAt(
-    env.NEXT_PUBLIC_REFUELER_CONTRACT_ADDRESS
-  )
-  return new Contract(abi, env.NEXT_PUBLIC_REFUELER_CONTRACT_ADDRESS, provider)
-}
+import { overfuelerContract } from './contracts'
 
 export type ContractCrew = {
   id: number
@@ -30,11 +18,9 @@ export type ContractCrew = {
 }
 
 const getContractCrewData = async () => {
-  const contract = await getContract()
-
   const [swayFee, crewId] = await Promise.all([
-    contract.call('get_sway_fee'),
-    contract.call('get_crew_id'),
+    overfuelerContract.get_sway_fee(),
+    overfuelerContract.get_crew_id(),
   ])
 
   return [{ id: Number(crewId), swayFee: BigInt(Number(swayFee)) }]

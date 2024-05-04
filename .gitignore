@@ -40,3 +40,4 @@ contract/src/artifacts
 target
 
 .env
+tsconfig.tsbuildinfo

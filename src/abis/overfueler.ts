@@ -1,4 +1,4 @@
-[
+export const ABI = [
   {
     "type": "impl",
     "name": "UpgradableImpl",
@@ -303,4 +303,4 @@
     "kind": "enum",
     "variants": []
   }
-]
+] as const;

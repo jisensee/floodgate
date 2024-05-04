@@ -1,13 +1,9 @@
-import {
-  useContract,
-  useContractRead,
-  useContractWrite,
-} from '@starknet-react/core'
+import { useContract, useContractWrite } from '@starknet-react/core'
 import { Entity, Permission } from '@influenceth/sdk'
-import overfuelerAbi from '../../abis/overfueler.json'
-import dispatcherAbi from '../../abis/influence-dispatcher.json'
-import swayAbi from '../../abis/sway.json'
+import dispatcherAbi from '../abis/influence-dispatcher.json'
+import swayAbi from '../abis/sway.json'
 import { env } from '@/env'
+import { overfuelerContract } from '@/lib/contracts'
 
 const overfuelerAddress = env.NEXT_PUBLIC_REFUELER_CONTRACT_ADDRESS
 const dispatcherAddress = env.NEXT_PUBLIC_INFLUENCE_DISPATCHER_CONTRACT_ADDRESS
@@ -21,10 +17,6 @@ export const useFuelShipTransaction = (args: {
   swayFee: bigint
   fuelAmount: number
 }) => {
-  const { contract: overfuelerContract } = useContract({
-    abi: overfuelerAbi,
-    address: overfuelerAddress,
-  })
   const { contract: dispatcherContract } = useContract({
     abi: dispatcherAbi,
     address: dispatcherAddress,
@@ -58,7 +50,7 @@ export const useFuelShipTransaction = (args: {
         overfuelerAddress,
         args.swayFee
       ),
-      overfuelerContract?.populateTransaction?.['refuel_ship']?.(
+      overfuelerContract.populateTransaction.refuel_ship(
         Entity.IDS.BUILDING,
         args.warehouseId,
         2,
@@ -93,14 +85,4 @@ export const useFuelShipTransaction = (args: {
   })
 
   return write
-}
-
-export const useSwayFee = () => {
-  const { data } = useContractRead({
-    abi: overfuelerAbi,
-    functionName: 'get_sway_fee',
-    address: overfuelerAddress,
-  })
-
-  return data ? BigInt(data.toString()) : undefined
 }
