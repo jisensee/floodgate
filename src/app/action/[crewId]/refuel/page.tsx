@@ -1,17 +1,20 @@
 import { notFound } from 'next/navigation'
 import { Wrapper } from './wrapper'
 import { Page } from '@/components/page'
-import { getContractCrews } from '@/lib/contract'
+import { getFloodgateCrews } from '@/actions'
 
 export default async function RefuelingPage({
   params,
 }: {
   params: { crewId: string }
 }) {
-  const contractCrews = await getContractCrews()
+  const contractCrews = await getFloodgateCrews()
   const crewId = parseInt(params.crewId, 10)
   const crew = contractCrews.find((c) => c.id === crewId)
-  if (!crew) {
+  const service = crew?.services?.find((s) => s.serviceType === 'RefuelShip')
+  const actionFee = service?.actionSwayFee
+
+  if (!crew || !actionFee || service?.enabled === false) {
     notFound()
   }
 
@@ -27,7 +30,7 @@ export default async function RefuelingPage({
         </div>
       }
     >
-      <Wrapper crew={crew} />
+      <Wrapper crew={crew} actionFee={actionFee} />
     </Page>
   )
 }

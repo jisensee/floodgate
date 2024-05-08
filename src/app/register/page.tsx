@@ -1,6 +1,6 @@
 import { AccountCrewList } from './account-crew-list'
+import { getRegisteredCrews } from '@/actions'
 import { Page } from '@/components/page'
-import { getRegisteredCrews } from '@/lib/contract'
 
 export default async function RegisterCrewPage() {
   const registeredCrews = await getRegisteredCrews()
@@ -8,10 +8,12 @@ export default async function RegisterCrewPage() {
   return (
     <Page
       title='Register Crew'
-      subtitle='Register one of your crews and earn some SWAY when others use them.'
+      subtitle='Register one of your crews and earn SWAY when others use them.'
     >
       <AccountCrewList
-        registeredCrewIds={new Set(registeredCrews.map((c) => c.id))}
+        registeredCrewIds={
+          new Set(registeredCrews.map((c) => Number(c.crew_id)))
+        }
       />
     </Page>
   )

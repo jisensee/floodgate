@@ -1,15 +1,13 @@
 'use client'
 
-import { Fuel, MapPin } from 'lucide-react'
-import Link from 'next/link'
+import { MapPin } from 'lucide-react'
 import { CrewmateImage } from '@/components/asset-images'
-import { ContractCrew } from '@/lib/contract'
-import { Button } from '@/components/ui/button'
-import { SwayAmount } from '@/components/sway-amount'
+import { FloodgateCrew } from '@/lib/contract-types'
 import { CrewBonusStatistics } from '@/components/statistic'
+import { ServiceButton } from '@/components/service-button'
 
 export type ContractCrewDisplayProps = {
-  crew: ContractCrew
+  crew: FloodgateCrew
 }
 
 export const ContractCrewDisplay = ({ crew }: ContractCrewDisplayProps) => {
@@ -23,7 +21,6 @@ export const ContractCrewDisplay = ({ crew }: ContractCrewDisplayProps) => {
         <div className='flex flex-col justify-between'>
           <div className='flex flex-wrap items-center gap-x-3 gap-y-1 pr-2'>
             <h2 className='grow'>{crew.name}</h2>
-            <SwayAmount amount={Number(crew.swayFee)} convert />
             <div className='flex items-center gap-x-1 text-sm'>
               <MapPin />
               {crew.asteroidName}
@@ -37,11 +34,11 @@ export const ContractCrewDisplay = ({ crew }: ContractCrewDisplayProps) => {
           <div className='grid grid-cols-[min-content,1fr] items-center gap-x-1 md:hidden'>
             <CrewBonusStatistics bonuses={crew.bonuses} />
           </div>
-          <FuelLink crewId={crew.id} className='w-full md:hidden' />
+          <FuelLink crew={crew} className='w-full md:hidden' />
         </div>
 
         <div className='hidden flex-col gap-y-3 md:flex'>
-          <FuelLink crewId={crew.id} className='hidden w-full md:block' />
+          <FuelLink crew={crew} className='hidden w-full md:block' />
           <div className='hidden grid-cols-[min-content,1fr] items-center gap-x-1 md:grid'>
             <CrewBonusStatistics bonuses={crew.bonuses} />
           </div>
@@ -52,15 +49,20 @@ export const ContractCrewDisplay = ({ crew }: ContractCrewDisplayProps) => {
 }
 
 type FuelLinkProps = {
-  crewId: number
   className?: string
+  crew: FloodgateCrew
 }
 
-const FuelLink = ({ crewId, className }: FuelLinkProps) => (
-  <Link href={`/action/${crewId}/refuel`} className={className}>
-    <Button className='w-full gap-x-1'>
-      <Fuel />
-      Fuel Ship
-    </Button>
-  </Link>
-)
+const FuelLink = ({ crew, className }: FuelLinkProps) => {
+  const fuelService = crew.services.find(
+    (service) => service.serviceType === 'RefuelShip'
+  )
+  return fuelService ? (
+    <ServiceButton
+      className={className}
+      crewLocked={crew.locked}
+      crewId={crew.id}
+      service={fuelService}
+    />
+  ) : null
+}

@@ -29,13 +29,22 @@ const List = ({
 
   return (
     <div className='flex flex-col gap-y-2'>
-      {crews
-        ?.filter((c) => !registeredCrewIds.has(c.id))
-        .map((crew) => (
-          <Link key={crew.id} href={`/register/${crew.id}` as Route}>
+      {crews?.map((crew) => (
+        <Link
+          key={crew.id}
+          className='flex items-center gap-3'
+          href={`/register/${crew.id}` as Route}
+        >
+          <span>
             {crew.Name ?? crew.id} ({crew.asteroidName ?? ''})
-          </Link>
-        ))}
+          </span>
+          {registeredCrewIds.has(crew.id) && (
+            <span className='text-sm text-yellow-500'>
+              (Already registered)
+            </span>
+          )}
+        </Link>
+      ))}
     </div>
   )
 }

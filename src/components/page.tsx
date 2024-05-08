@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, ReactNode } from 'react'
+import { PropsWithChildren, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 type PageProps = {
@@ -9,15 +9,15 @@ type PageProps = {
   scrollable?: boolean
 } & PropsWithChildren
 
-export const Page: FC<PageProps> = ({
+export const Page = ({
   title,
   subtitle,
   hideBorder,
   fullSize,
   scrollable,
   children,
-}) => (
-  <main className='flex h-full justify-center px-2 pt-14 md:pt-24'>
+}: PageProps) => (
+  <main className='flex h-full justify-center px-2 pt-14 md:pt-20'>
     <div
       className={cn('flex flex-col items-center gap-y-2', {
         'md:w-[34rem]': !fullSize,
@@ -31,7 +31,7 @@ export const Page: FC<PageProps> = ({
         className={cn('w-full p-3 md:rounded md:border md:border-border', {
           'overflow-y-auto': scrollable,
           'border-none': hideBorder,
-          'md:h-[60vh]': !fullSize,
+          'md:h-[65vh]': !fullSize,
         })}
       >
         {children}

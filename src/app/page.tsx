@@ -1,9 +1,9 @@
 import { ContractCrewDisplay } from './contract-crew-display'
+import { getFloodgateCrews } from '@/actions'
 import { Page } from '@/components/page'
-import { getContractCrews } from '@/lib/contract'
 
 export default async function Home() {
-  const crews = await getContractCrews()
+  const crews = await getFloodgateCrews()
 
   return (
     <Page title='Floodgate' hideBorder fullSize>

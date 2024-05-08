@@ -9,16 +9,18 @@ import { WarehouseSelection } from './warehouse-selection'
 import { Confirmation } from './confirmation'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getShips, getWarehouses } from '@/actions'
-import { ContractCrew } from '@/lib/contract'
+import { FloodgateCrew } from '@/lib/contract-types'
 
 export type RefuelingWizardProps = {
   address: string
-  crew: ContractCrew
+  crew: FloodgateCrew
+  actionFee: bigint
 }
 
 export const RefuelingWizard: FC<RefuelingWizardProps> = ({
   address,
   crew,
+  actionFee,
 }) => {
   const [state, dispatch] = useRefuelWizardState()
 
@@ -81,6 +83,7 @@ export const RefuelingWizard: FC<RefuelingWizardProps> = ({
                   crew={crew}
                   selectedShip={state.selectedShip}
                   selectedWarehouse={state.selectedWarehouse}
+                  actionFee={actionFee}
                   onReset={() => {
                     refetch()
                     dispatch({ type: 'reset' })

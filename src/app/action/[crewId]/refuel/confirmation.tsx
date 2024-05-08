@@ -12,11 +12,12 @@ import { Button } from '@/components/ui/button'
 import { useFuelShipTransaction } from '@/hooks/contract'
 import { Slider } from '@/components/ui/slider'
 import { Label } from '@/components/ui/label'
-import { ContractCrew } from '@/lib/contract'
 import { Ship, Warehouse } from '@/actions'
+import { FloodgateCrew } from '@/lib/contract-types'
 
 export type ConfirmationProps = {
-  crew: ContractCrew
+  crew: FloodgateCrew
+  actionFee: bigint
   selectedShip: Ship
   selectedWarehouse: Warehouse
   onReset: () => void
@@ -24,6 +25,7 @@ export type ConfirmationProps = {
 
 export const Confirmation: FC<ConfirmationProps> = ({
   crew,
+  actionFee,
   selectedShip,
   selectedWarehouse,
   onReset,
@@ -63,7 +65,7 @@ export const Confirmation: FC<ConfirmationProps> = ({
     warehouseOwnerCrewId: selectedWarehouse.owningCrewId,
     shipOwnerCrewId: selectedShip.owningCrewId,
     fuelAmount: usedFuel - 1,
-    swayFee: crew.swayFee,
+    swayFee: actionFee,
   })
 
   const {
@@ -169,7 +171,7 @@ export const Confirmation: FC<ConfirmationProps> = ({
               You will pay a fee of{' '}
               <SwayAmount
                 className='text-destructive'
-                amount={Number(crew.swayFee)}
+                amount={Number(actionFee)}
                 convert
               />
             </div>

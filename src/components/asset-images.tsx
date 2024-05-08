@@ -46,3 +46,31 @@ export const CrewmateImage = ({
     height={(width * 4) / 3}
   />
 )
+
+export type CrewImagesProps = {
+  crewmateIds: number[]
+  width: number
+}
+export const CrewImages = ({ crewmateIds, width }: CrewImagesProps) => (
+  <div className='flex flex-row flex-wrap justify-center'>
+    {crewmateIds.map((id) => (
+      <CrewmateImage key={id} crewmateId={id} width={width} />
+    ))}
+  </div>
+)
+
+export type SwayIconProps = {
+  className?: string
+  size: number
+}
+
+export const SwayIcon = ({ className, size }: SwayIconProps) => (
+  <NextImage
+    className={className}
+    src='/sway-logo.png'
+    alt='SWAY logo'
+    width={size}
+    height={size}
+    style={{ objectFit: 'contain' }}
+  />
+)

@@ -1,6 +1,7 @@
 import { Connector, useBalance, useDisconnect } from '@starknet-react/core'
 import NextImage from 'next/image'
 import { FC, useEffect, useState } from 'react'
+import Link from 'next/link'
 import { SwayAmount } from '@/components/sway-amount'
 import { Address } from '@/components/address'
 import { env } from '@/env'
@@ -11,6 +12,8 @@ import {
   DialogHeader,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { useAccountCrews } from '@/hooks/queries'
+import { Separator } from '@/components/ui/separator'
 
 type AccountInfoProps = {
   address: string
@@ -24,6 +27,7 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
     address,
     token: env.NEXT_PUBLIC_SWAY_CONTRACT_ADDRESS,
   })
+  const { data: crews } = useAccountCrews(address)
 
   useEffect(() => {
     if (disconnectStatus === 'success') {
@@ -65,20 +69,36 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
             </div>
           </DialogHeader>
         </DialogHeader>
-        <p className='break-all'>{address}</p>
-        {swayBalance !== undefined && (
-          <div className='flex items-center gap-x-2'>
-            <span>Balance:</span>
-            <SwayAmount amount={swayBalance} />
+        <div className='flex flex-col items-center gap-y-5'>
+          <p className='break-all text-sm'>{address}</p>
+          {swayBalance !== undefined && (
+            <div className='flex items-center gap-x-2'>
+              <span>Balance:</span>
+              <SwayAmount amount={swayBalance} />
+            </div>
+          )}
+          <div className='flex w-6/12 flex-col items-center gap-y-5'>
+            {crews && crews.length > 0 && (
+              <>
+                <Link
+                  className='w-full'
+                  href='/my-crews'
+                  onClick={() => setOpen(false)}
+                >
+                  <Button className='w-full'>My Crews</Button>
+                </Link>
+                <Separator />
+              </>
+            )}
+            <Button
+              variant='destructive'
+              onClick={() => disconnect()}
+              loading={disconnectStatus === 'pending'}
+            >
+              Disconnect
+            </Button>
           </div>
-        )}
-        <Button
-          variant='destructive'
-          onClick={() => disconnect()}
-          loading={disconnectStatus === 'pending'}
-        >
-          Disconnect
-        </Button>
+        </div>
       </DialogContent>
     </Dialog>
   )

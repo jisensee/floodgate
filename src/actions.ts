@@ -1,8 +1,13 @@
 'use server'
 
+import * as R from 'remeda'
 import { Entity } from '@influenceth/sdk'
 import { Inventory, ShipType } from '@influenceth/sdk'
 import { InfluenceEntity } from 'influence-typed-sdk/api'
+import { shortString } from 'starknet'
+import { floodgateContract } from './lib/contracts'
+import { FloodgateCrew, FloodgateServiceType } from './lib/contract-types'
+import { getCrewBonuses } from './lib/utils'
 import { influenceApi } from '@/lib/influence-api'
 
 export const getCrew = async (crewId: number) => {
@@ -104,4 +109,84 @@ export const getShips = async (
         ]
       : []
   })
+}
+
+export type GetCrewArgs = {
+  includeLocked?: boolean
+  manager?: string
+}
+
+export const getRegisteredCrews = async (manager?: string) =>
+  floodgateContract.get_crews(manager ?? '0x0')
+
+export const getFloodgateCrews = async (
+  args?: GetCrewArgs
+): Promise<FloodgateCrew[]> => {
+  const registeredCrews = await getRegisteredCrews(args?.manager)
+
+  const apiCrews = await influenceApi.entities({
+    id: registeredCrews.map(({ crew_id }) => Number(crew_id)),
+    label: Entity.IDS.CREW,
+  })
+  const crewmateIds = apiCrews.flatMap((c) => c.Crew?.roster ?? [])
+
+  const [asteroidNames, stations, allCrewmates] = await Promise.all([
+    influenceApi.util.asteroidNames(
+      R.pipe(
+        R.map(apiCrews, (c) => c.Location?.locations?.asteroid?.id),
+        R.filter(R.isTruthy)
+      )
+    ),
+    influenceApi.entities({
+      id: R.pipe(
+        R.map(apiCrews, (c) => c.Location?.locations?.building?.id),
+        R.filter(R.isTruthy),
+        R.unique()
+      ),
+      label: Entity.IDS.BUILDING,
+    }),
+    influenceApi.entities({
+      id: crewmateIds,
+      label: Entity.IDS.CREWMATE,
+    }),
+  ])
+
+  return R.pipe(
+    R.map(registeredCrews, (registeredCrew) => {
+      const crew = apiCrews.find((c) => c.id === Number(registeredCrew.crew_id))
+      if (!crew) return
+
+      const station = stations.find(
+        (s) => s.id === crew.Location?.locations?.building?.id
+      )
+      if (!station) return
+
+      const asteroidId = crew.Location?.locations?.asteroid?.id ?? 1
+      const asteroidName = asteroidNames.get(asteroidId) ?? ''
+      const crewmates = allCrewmates.filter((c) =>
+        crew.Crew?.roster?.includes(c.id)
+      )
+
+      return {
+        id: Number(registeredCrew.crew_id),
+        locked: registeredCrew.is_locked,
+        managerAddress: BigInt(registeredCrew.manager_address),
+        name: crew.Name ?? `Crew#${registeredCrew.crew_id}`,
+        asteroidId,
+        asteroidName,
+        stationName: station.Name ?? `Station#${station.id}`,
+        crewmateIds: crew.Crew?.roster ?? [],
+        services: registeredCrew.services.map((service) => ({
+          enabled: service.is_enabled,
+          actionSwayFee: BigInt(service.sway_fee_per_action),
+          secondsSwayFee: BigInt(service.sway_fee_per_second),
+          serviceType: shortString.decodeShortString(
+            service.service_type?.toString()
+          ) as FloodgateServiceType,
+        })),
+        bonuses: getCrewBonuses(crew, crewmates, station),
+      }
+    }),
+    R.filter(R.isTruthy)
+  )
 }

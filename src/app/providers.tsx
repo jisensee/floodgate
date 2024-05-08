@@ -4,11 +4,11 @@ import { FC, PropsWithChildren } from 'react'
 import { sepolia } from '@starknet-react/chains'
 import {
   StarknetConfig,
-  publicProvider,
   argent,
   braavos,
   useInjectedConnectors,
   voyager,
+  jsonRpcProvider,
 } from '@starknet-react/core'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
@@ -24,7 +24,11 @@ export const Providers: FC<PropsWithChildren> = ({ children }) => {
     <QueryClientProvider client={queryClient}>
       <StarknetConfig
         chains={[sepolia]}
-        provider={publicProvider()}
+        provider={jsonRpcProvider({
+          rpc: () => ({
+            nodeUrl: 'https://starknet-sepolia.public.blastapi.io',
+          }),
+        })}
         connectors={connectors}
         explorer={voyager}
         autoConnect
