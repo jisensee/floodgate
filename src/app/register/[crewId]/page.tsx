@@ -13,7 +13,7 @@ export default async function RegisterCrewPage({
     id: parseInt(params.crewId, 10),
     label: Entity.IDS.CREW,
   })
-  if (!crew) {
+  if (!crew || crew.Crew?.roster.length === 0) {
     notFound()
   }
 

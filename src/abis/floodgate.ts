@@ -2,11 +2,11 @@ export const ABI = [
   {
     "type": "impl",
     "name": "UpgradableImpl",
-    "interface_name": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::UpgradableTrait"
+    "interface_name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::UpgradableTrait"
   },
   {
     "type": "interface",
-    "name": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::UpgradableTrait",
+    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::UpgradableTrait",
     "items": [
       {
         "type": "function",
@@ -25,11 +25,11 @@ export const ABI = [
   {
     "type": "impl",
     "name": "OwnableImpl",
-    "interface_name": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::OwnableTrait"
+    "interface_name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::OwnableTrait"
   },
   {
     "type": "interface",
-    "name": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::OwnableTrait",
+    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::OwnableTrait",
     "items": [
       {
         "type": "function",
@@ -58,8 +58,35 @@ export const ABI = [
   },
   {
     "type": "impl",
+    "name": "FixScrewedDataImpl",
+    "interface_name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FixScrewedDataTrait"
+  },
+  {
+    "type": "interface",
+    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FixScrewedDataTrait",
+    "items": [
+      {
+        "type": "function",
+        "name": "reset_crew_list",
+        "inputs": [
+          {
+            "name": "start_id",
+            "type": "core::integer::u64"
+          },
+          {
+            "name": "end_id",
+            "type": "core::integer::u64"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      }
+    ]
+  },
+  {
+    "type": "impl",
     "name": "FloodgateApplicationInterfaceImpl",
-    "interface_name": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateApplicationInterfaceTrait"
+    "interface_name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateApplicationInterfaceTrait"
   },
   {
     "type": "enum",
@@ -77,7 +104,7 @@ export const ABI = [
   },
   {
     "type": "struct",
-    "name": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::InfluenceInventory",
+    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::InfluenceInventory",
     "members": [
       {
         "name": "inventory_type",
@@ -95,7 +122,7 @@ export const ABI = [
   },
   {
     "type": "struct",
-    "name": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateService",
+    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateService",
     "members": [
       {
         "name": "service_type",
@@ -117,17 +144,17 @@ export const ABI = [
   },
   {
     "type": "struct",
-    "name": "core::array::Span::</opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateService>",
+    "name": "core::array::Span::</opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateService>",
     "members": [
       {
         "name": "snapshot",
-        "type": "@core::array::Array::</opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateService>"
+        "type": "@core::array::Array::</opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateService>"
       }
     ]
   },
   {
     "type": "struct",
-    "name": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateAppServiceCrew",
+    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateAppServiceCrew",
     "members": [
       {
         "name": "crew_id",
@@ -147,28 +174,44 @@ export const ABI = [
       },
       {
         "name": "default_feeding_inventory",
-        "type": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::InfluenceInventory"
+        "type": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::InfluenceInventory"
       },
       {
         "name": "services",
-        "type": "core::array::Span::</opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateService>"
+        "type": "core::array::Span::</opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateService>"
       }
     ]
   },
   {
     "type": "struct",
-    "name": "core::array::Span::</opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateAppServiceCrew>",
+    "name": "core::array::Span::</opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateAppServiceCrew>",
     "members": [
       {
         "name": "snapshot",
-        "type": "@core::array::Array::</opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateAppServiceCrew>"
+        "type": "@core::array::Array::</opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateAppServiceCrew>"
       }
     ]
   },
   {
     "type": "interface",
-    "name": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateApplicationInterfaceTrait",
+    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateApplicationInterfaceTrait",
     "items": [
+      {
+        "type": "function",
+        "name": "get_crew",
+        "inputs": [
+          {
+            "name": "service_crew_id",
+            "type": "core::integer::u64"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateAppServiceCrew"
+          }
+        ],
+        "state_mutability": "view"
+      },
       {
         "type": "function",
         "name": "get_crews",
@@ -180,7 +223,7 @@ export const ABI = [
         ],
         "outputs": [
           {
-            "type": "core::array::Span::</opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateAppServiceCrew>"
+            "type": "core::array::Span::</opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateAppServiceCrew>"
           }
         ],
         "state_mutability": "view"
@@ -190,11 +233,11 @@ export const ABI = [
   {
     "type": "impl",
     "name": "FloodgateAdministrationImpl",
-    "interface_name": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateAdministrationTrait"
+    "interface_name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateAdministrationTrait"
   },
   {
     "type": "interface",
-    "name": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateAdministrationTrait",
+    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateAdministrationTrait",
     "items": [
       {
         "type": "function",
@@ -239,6 +282,18 @@ export const ABI = [
         "inputs": [
           {
             "name": "sway_contract_address",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "set_influence_crews_contract_address",
+        "inputs": [
+          {
+            "name": "influence_crews_contract_address",
             "type": "core::starknet::contract_address::ContractAddress"
           }
         ],
@@ -377,11 +432,11 @@ export const ABI = [
   {
     "type": "impl",
     "name": "FloodgateManagementInterfaceImpl",
-    "interface_name": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateManagementTrait"
+    "interface_name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateManagementTrait"
   },
   {
     "type": "struct",
-    "name": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateServiceCrew",
+    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateServiceCrew",
     "members": [
       {
         "name": "crew_id",
@@ -407,7 +462,7 @@ export const ABI = [
   },
   {
     "type": "interface",
-    "name": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateManagementTrait",
+    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateManagementTrait",
     "items": [
       {
         "type": "function",
@@ -435,15 +490,15 @@ export const ABI = [
           },
           {
             "name": "crew_configuration",
-            "type": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateServiceCrew"
+            "type": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateServiceCrew"
           },
           {
             "name": "default_feeding_inventory",
-            "type": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::InfluenceInventory"
+            "type": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::InfluenceInventory"
           },
           {
             "name": "services",
-            "type": "core::array::Array::</opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateService>"
+            "type": "core::array::Array::</opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateService>"
           }
         ],
         "outputs": [],
@@ -507,7 +562,7 @@ export const ABI = [
           },
           {
             "name": "default_feeding_inventory",
-            "type": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::InfluenceInventory"
+            "type": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::InfluenceInventory"
           }
         ],
         "outputs": [],
@@ -523,7 +578,7 @@ export const ABI = [
           },
           {
             "name": "services",
-            "type": "core::array::Array::</opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateService>"
+            "type": "core::array::Array::</opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateService>"
           }
         ],
         "outputs": [],
@@ -562,7 +617,7 @@ export const ABI = [
           },
           {
             "name": "source_inventory",
-            "type": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::InfluenceInventory"
+            "type": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::InfluenceInventory"
           },
           {
             "name": "food_kg",
@@ -593,11 +648,11 @@ export const ABI = [
   {
     "type": "impl",
     "name": "FloodgateUsageInterfaceImpl",
-    "interface_name": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateUsageTrait"
+    "interface_name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateUsageTrait"
   },
   {
     "type": "interface",
-    "name": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::FloodgateUsageTrait",
+    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateUsageTrait",
     "items": [
       {
         "type": "function",
@@ -609,7 +664,7 @@ export const ABI = [
           },
           {
             "name": "source_inventory",
-            "type": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::InfluenceInventory"
+            "type": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::InfluenceInventory"
           },
           {
             "name": "ship_id",
@@ -637,7 +692,7 @@ export const ABI = [
   },
   {
     "type": "event",
-    "name": "/opt/app/api/upload/temp/c19f9feb93cd551c394335f1b007a1c1053819278893bf84e2d1ef9eef90857e/src::Floodgate::Event",
+    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::Floodgate::Event",
     "kind": "enum",
     "variants": []
   }

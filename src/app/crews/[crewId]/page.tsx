@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { MapPin } from 'lucide-react'
 import { CrewDetails } from './crew-details'
-import { getFloodgateCrews } from '@/actions'
+import { getFloodgateCrew } from '@/actions'
 import { Page } from '@/components/page'
 
 export default async function CrewDetailPage({
@@ -9,8 +9,7 @@ export default async function CrewDetailPage({
 }: {
   params: { crewId: string }
 }) {
-  const crews = await getFloodgateCrews({ includeLocked: true })
-  const crew = crews.find((c) => c.id === parseInt(params.crewId, 10))
+  const crew = await getFloodgateCrew(parseInt(params.crewId, 10))
 
   if (!crew) {
     notFound()

@@ -90,19 +90,30 @@ export const useFuelShipTransaction = (args: {
 
   return write
 }
-
-export const useRegisterCrew = (crewId: number, manager: string) => {
-  const { contract: dispatcherContract } = useContract({
+const useInfluenceDispatcher = () =>
+  useContract({
     abi: dispatcherAbi,
     address: dispatcherAddress,
-  })
+  }).contract
+
+const useDelegateCrewCall = (crewId: number, targetAddress: string) => {
+  const influenceDispatcher = useInfluenceDispatcher()
+
+  return influenceDispatcher?.populateTransaction?.['run_system']?.(
+    'DelegateCrew',
+    [targetAddress, Entity.IDS.CREW, crewId]
+  )
+}
+
+export const useRegisterCrew = (crewId: number, manager: string) => {
+  const delegateCrewCall = useDelegateCrewCall(
+    crewId,
+    env.NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS
+  )
 
   return useContractWrite({
     calls: [
-      dispatcherContract?.populateTransaction?.['run_system']?.(
-        'DelegateCrew',
-        [env.NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS, Entity.IDS.CREW, crewId]
-      ),
+      delegateCrewCall,
       floodgateContract.populateTransaction.register_crew(crewId, manager),
     ],
   })
@@ -125,10 +136,16 @@ export const useSetCrewServicesConfig = (
     ],
   })
 
-export const useUnregisterCrew = (crewId: number) =>
-  useContractWrite({
-    calls: [floodgateContract.populateTransaction.unregister_crew(crewId)],
+export const useUnregisterCrew = (crewId: number, delegateBackTo?: string) => {
+  const delegateCrewCall = useDelegateCrewCall(crewId, delegateBackTo ?? '0x0')
+
+  return useContractWrite({
+    calls: [
+      ...(delegateBackTo ? [delegateCrewCall] : []),
+      floodgateContract.populateTransaction.unregister_crew(crewId),
+    ],
   })
+}
 
 export const useSetCrewLocked = (crewId: number, isLocked: boolean) =>
   useContractWrite({

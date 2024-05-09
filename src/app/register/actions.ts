@@ -5,6 +5,7 @@ import * as R from 'remeda'
 import { influenceApi } from '@/lib/influence-api'
 
 export const getAccountCrews = async (address: string) => {
+  console.log('getting account crews', address)
   const crews = await influenceApi.entities({
     match: {
       path: 'Nft.owners.starknet',
@@ -13,6 +14,7 @@ export const getAccountCrews = async (address: string) => {
     label: Entity.IDS.CREW,
   })
 
+  console.log('getting asteroid names')
   const asteroidNames = await influenceApi.util.asteroidNames(
     R.pipe(
       crews,

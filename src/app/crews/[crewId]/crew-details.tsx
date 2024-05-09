@@ -33,7 +33,7 @@ export const CrewDetails = ({ crew }: CrewDetailsProps) => {
         <>
           <Separator />
           <h2>Management</h2>
-          <CrewManagement crew={crew} />
+          <CrewManagement crew={crew} address={address} />
         </>
       )}
     </div>

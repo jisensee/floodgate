@@ -10,6 +10,7 @@ export type FloodgateCrew = {
   stationName: string
   crewmateIds: number[]
   managerAddress: bigint
+  ownerAddress: bigint
   services: {
     enabled: boolean
     actionSwayFee: bigint
@@ -24,8 +25,8 @@ export type FloodgateCrew = {
 }
 
 export type FloodgateContractCrew = Awaited<
-  ReturnType<typeof floodgateContract.get_crews>
->[0]
+  ReturnType<typeof floodgateContract.get_crew>
+>
 
 export type FloodgateServiceType = 'RefuelShip' | 'TransportGoods'
 

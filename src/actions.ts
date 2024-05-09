@@ -6,7 +6,11 @@ import { Inventory, ShipType } from '@influenceth/sdk'
 import { InfluenceEntity } from 'influence-typed-sdk/api'
 import { shortString } from 'starknet'
 import { floodgateContract } from './lib/contracts'
-import { FloodgateCrew, FloodgateServiceType } from './lib/contract-types'
+import {
+  FloodgateContractCrew,
+  FloodgateCrew,
+  FloodgateServiceType,
+} from './lib/contract-types'
 import { getCrewBonuses } from './lib/utils'
 import { influenceApi } from '@/lib/influence-api'
 
@@ -89,26 +93,32 @@ const getFuelAmount = (ship: InfluenceEntity) => {
 
 export const getShips = async (
   address: string,
-  asteroidId: number
+  asteroidId: number,
+  volumeBonus: number
 ): Promise<Ship[]> => {
   const ships = await influenceApi.util.ships(address, asteroidId)
 
-  return ships.flatMap((ship) => {
-    const lotIndex = ship.Location?.locations?.lot?.lotIndex
-    return ship.Ship && lotIndex
-      ? [
-          {
-            id: ship.id,
-            name: ship.Name ?? `Ship#${ship.id}`,
-            type: ship.Ship?.shipType,
-            fuelAmount: getFuelAmount(ship),
-            fuelCapacity: getFuelCapacity(ship.Ship.shipType),
-            owningCrewId: ship.Control?.controller?.id ?? 0,
-            lotIndex,
-          },
-        ]
-      : []
-  })
+  return ships
+    .flatMap((ship) => {
+      const lotIndex = ship.Location?.locations?.lot?.lotIndex
+      return ship.Ship && lotIndex
+        ? [
+            {
+              id: ship.id,
+              name: ship.Name ?? `Ship#${ship.id}`,
+              type: ship.Ship?.shipType,
+              fuelAmount: getFuelAmount(ship),
+              fuelCapacity: getFuelCapacity(ship.Ship.shipType),
+              owningCrewId: ship.Control?.controller?.id ?? 0,
+              lotIndex,
+            },
+          ]
+        : []
+    })
+    .filter((ship) => {
+      const overfueledCapacity = ship.fuelCapacity * volumeBonus
+      return ship.fuelAmount < overfueledCapacity
+    })
 }
 
 export type GetCrewArgs = {
@@ -128,28 +138,12 @@ export const getFloodgateCrews = async (
     id: registeredCrews.map(({ crew_id }) => Number(crew_id)),
     label: Entity.IDS.CREW,
   })
-  const crewmateIds = apiCrews.flatMap((c) => c.Crew?.roster ?? [])
 
-  const [asteroidNames, stations, allCrewmates] = await Promise.all([
-    influenceApi.util.asteroidNames(
-      R.pipe(
-        R.map(apiCrews, (c) => c.Location?.locations?.asteroid?.id),
-        R.filter(R.isTruthy)
-      )
-    ),
-    influenceApi.entities({
-      id: R.pipe(
-        R.map(apiCrews, (c) => c.Location?.locations?.building?.id),
-        R.filter(R.isTruthy),
-        R.unique()
-      ),
-      label: Entity.IDS.BUILDING,
-    }),
-    influenceApi.entities({
-      id: crewmateIds,
-      label: Entity.IDS.CREWMATE,
-    }),
-  ])
+  const {
+    asteroidNames,
+    stations,
+    crewmates: allCrewmates,
+  } = await getCrewMetadate(apiCrews)
 
   return R.pipe(
     R.map(registeredCrews, (registeredCrew) => {
@@ -167,26 +161,92 @@ export const getFloodgateCrews = async (
         crew.Crew?.roster?.includes(c.id)
       )
 
-      return {
-        id: Number(registeredCrew.crew_id),
-        locked: registeredCrew.is_locked,
-        managerAddress: BigInt(registeredCrew.manager_address),
-        name: crew.Name ?? `Crew#${registeredCrew.crew_id}`,
-        asteroidId,
-        asteroidName,
-        stationName: station.Name ?? `Station#${station.id}`,
-        crewmateIds: crew.Crew?.roster ?? [],
-        services: registeredCrew.services.map((service) => ({
-          enabled: service.is_enabled,
-          actionSwayFee: BigInt(service.sway_fee_per_action),
-          secondsSwayFee: BigInt(service.sway_fee_per_second),
-          serviceType: shortString.decodeShortString(
-            service.service_type?.toString()
-          ) as FloodgateServiceType,
-        })),
-        bonuses: getCrewBonuses(crew, crewmates, station),
-      }
+      return makeFloodgateCrew(
+        registeredCrew,
+        crew,
+        crewmates,
+        station,
+        asteroidName
+      )
     }),
     R.filter(R.isTruthy)
   )
 }
+
+export const getFloodgateCrew = async (crewId: number) => {
+  const [registeredCrew, apiCrew] = await Promise.all([
+    floodgateContract.get_crew(crewId),
+    influenceApi.entity({
+      id: crewId,
+      label: Entity.IDS.CREW,
+    }),
+  ])
+  if (!apiCrew) return
+
+  const { asteroidNames, stations, crewmates } = await getCrewMetadate([
+    apiCrew,
+  ])
+  const asteroidName =
+    asteroidNames.get(apiCrew.Location?.locations?.asteroid?.id ?? 1) ?? ''
+  const station = stations[0]
+  if (!station) return
+  return makeFloodgateCrew(
+    registeredCrew,
+    apiCrew,
+    crewmates,
+    station,
+    asteroidName
+  )
+}
+
+const getCrewMetadate = async (apiCrews: InfluenceEntity[]) => {
+  const [asteroidNames, stations, crewmates] = await Promise.all([
+    influenceApi.util.asteroidNames(
+      R.pipe(
+        R.map(apiCrews, (c) => c.Location?.locations?.asteroid?.id),
+        R.filter(R.isTruthy)
+      )
+    ),
+    influenceApi.entities({
+      id: R.pipe(
+        R.map(apiCrews, (c) => c.Location?.locations?.building?.id),
+        R.filter(R.isTruthy),
+        R.unique()
+      ),
+      label: Entity.IDS.BUILDING,
+    }),
+    influenceApi.entities({
+      id: apiCrews.flatMap((c) => c.Crew?.roster ?? []),
+      label: Entity.IDS.CREWMATE,
+    }),
+  ])
+
+  return { asteroidNames, stations, crewmates }
+}
+
+const makeFloodgateCrew = (
+  registeredCrew: FloodgateContractCrew,
+  apiCrew: InfluenceEntity,
+  crewmates: InfluenceEntity[],
+  station: InfluenceEntity,
+  asteroidName: string
+): FloodgateCrew => ({
+  id: Number(registeredCrew.crew_id),
+  locked: registeredCrew.is_locked,
+  managerAddress: BigInt(registeredCrew.manager_address),
+  ownerAddress: BigInt(apiCrew?.Nft?.owner ?? 0),
+  name: apiCrew.Name ?? `Crew#${registeredCrew.crew_id}`,
+  asteroidId: apiCrew.Location?.locations?.asteroid?.id ?? 1,
+  asteroidName,
+  stationName: station.Name ?? `Station#${station.id}`,
+  crewmateIds: apiCrew.Crew?.roster ?? [],
+  services: registeredCrew.services.map((service) => ({
+    enabled: service.is_enabled,
+    actionSwayFee: BigInt(service.sway_fee_per_action),
+    secondsSwayFee: BigInt(service.sway_fee_per_second),
+    serviceType: shortString.decodeShortString(
+      service.service_type?.toString()
+    ) as FloodgateServiceType,
+  })),
+  bonuses: getCrewBonuses(apiCrew, crewmates, station),
+})

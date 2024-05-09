@@ -24,11 +24,13 @@ export const RefuelingWizard: FC<RefuelingWizardProps> = ({
 }) => {
   const [state, dispatch] = useRefuelWizardState()
 
+  const volumeBonus = crew.bonuses.volumeCapacity
+
   const { data: userData, refetch } = useQuery({
     queryKey: ['ships-warehouses', address],
     queryFn: () =>
       Promise.all([
-        getShips(address, crew.asteroidId),
+        getShips(address, crew.asteroidId, volumeBonus.totalBonus),
         getWarehouses(address, crew.asteroidId),
       ]),
   })

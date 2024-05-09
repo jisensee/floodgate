@@ -22,10 +22,20 @@ const List = ({
   address,
   registeredCrewIds,
 }: AccountCrewListProps & { address: string }) => {
-  const { data: crews } = useQuery({
+  const {
+    data: crews,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['account-crews', address],
-    queryFn: () => getAccountCrews(address),
+    queryFn: () =>
+      getAccountCrews(address).then((crews) =>
+        crews.filter((c) => c.Crew && c.Crew.roster.length > 0)
+      ),
   })
+
+  if (isLoading) return <div>Loading...</div>
+  if (error) return <div>Error: {error.message}</div>
 
   return (
     <div className='flex flex-col gap-y-2'>
@@ -39,9 +49,7 @@ const List = ({
             {crew.Name ?? crew.id} ({crew.asteroidName ?? ''})
           </span>
           {registeredCrewIds.has(crew.id) && (
-            <span className='text-sm text-yellow-500'>
-              (Already registered)
-            </span>
+            <span className='text-sm text-warning'>(Already registered)</span>
           )}
         </Link>
       ))}

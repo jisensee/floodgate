@@ -14,14 +14,19 @@ import { Input } from '@/components/ui/input'
 
 export type CrewManagementProps = {
   crew: FloodgateCrew
+  address: string
 }
 
-export const CrewManagement = ({ crew }: CrewManagementProps) => {
+export const CrewManagement = ({ crew, address }: CrewManagementProps) => {
   const [services, setServices] = useState(crew.services)
+  const isOwner = BigInt(address) === crew.ownerAddress
   const [managerAddress, setManagerAddress] = useState(
     '0x' + crew.managerAddress.toString(16)
   )
-  const { write: unregister } = useUnregisterCrew(crew.id)
+  const { write: unregister } = useUnregisterCrew(
+    crew.id,
+    isOwner ? address : undefined
+  )
   const { write: toggleLocked } = useSetCrewLocked(crew.id, !crew.locked)
   const { write: setServiceConfig } = useSetCrewServicesConfig(
     crew.id,
@@ -66,13 +71,21 @@ export const CrewManagement = ({ crew }: CrewManagementProps) => {
       >
         {crew.locked ? 'Unlock' : 'Lock'}
       </Button>
-      <Button
-        variant='destructive'
-        onClick={() => unregister()}
-        icon={<Trash2 />}
-      >
-        Unregister
-      </Button>
+      <div className='flex flex-col items-center gap-y-1 rounded-md border border-destructive p-3'>
+        <Button
+          variant='destructive'
+          onClick={() => unregister()}
+          icon={<Trash2 />}
+        >
+          Unregister
+        </Button>
+        {isOwner && (
+          <p className='text-center text-sm text-warning'>
+            You are not the owner and therefore this crew will not be delegated
+            back when unregistering.
+          </p>
+        )}
+      </div>
     </div>
   )
 }
