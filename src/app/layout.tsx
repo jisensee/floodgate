@@ -41,7 +41,7 @@ export default async function RootLayout({
 }
 
 const Footer = () => (
-  <footer className='flex flex-col items-center justify-center gap-y-3 py-3'>
+  <footer className='flex flex-col items-center justify-center gap-y-3 pb-5 pt-3'>
     <Separator />
     <Link href='/faq'>FAQs</Link>
     <Separator className='w-32' />

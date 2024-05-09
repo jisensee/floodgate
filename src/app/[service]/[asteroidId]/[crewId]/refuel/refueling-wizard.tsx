@@ -2,7 +2,6 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { FC, useEffect } from 'react'
-import { Wizard, WizardStep } from '../../../../components/ui/wizard'
 import { State, useRefuelWizardState } from './state'
 import { ShipSelection } from './ship-selection'
 import { WarehouseSelection } from './warehouse-selection'
@@ -10,6 +9,7 @@ import { Confirmation } from './confirmation'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getShips, getWarehouses } from '@/actions'
 import { FloodgateCrew } from '@/lib/contract-types'
+import { Wizard, WizardStep } from '@/components/ui/wizard'
 
 export type RefuelingWizardProps = {
   address: string

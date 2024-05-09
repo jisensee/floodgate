@@ -1,5 +1,6 @@
 import { Fuel, Truck } from 'lucide-react'
 import Link from 'next/link'
+import { Route } from 'next'
 import { Button } from './ui/button'
 import { SwayAmount } from './sway-amount'
 import {
@@ -46,25 +47,36 @@ export const ServiceButton = ({
       </Tooltip>
     </TooltipProvider>
   ) : (
-    <Link className={className} href={link}>
+    <Link className={className} href={link as Route}>
       {button}
     </Link>
   )
 }
 
-const getServiceData = (serviceType: FloodgateServiceType, crewId: number) => {
+export const getServiceData = (
+  serviceType: FloodgateServiceType,
+  crewId?: number
+) => {
   switch (serviceType) {
     case 'RefuelShip':
       return {
         icon: <Fuel />,
         name: 'Fuel Ship',
-        link: `/action/${crewId}/refuel` as const,
+        description:
+          'Fuel up your ship, potentially going over the fuel capacity depending on crew bonuses.',
+        link: crewId
+          ? (`/action/${crewId}/refuel` as const)
+          : `/${serviceType}`,
       }
     case 'TransportGoods':
       return {
         icon: <Truck />,
         name: 'Transport Goods',
-        link: `/action/${crewId}/refuel` as const,
+        description:
+          'Transport goods from one location to another, potentially going over the storage capacity depending on crew bonuses.',
+        link: crewId
+          ? (`/action/${crewId}/refuel` as const)
+          : (`/${serviceType}` as const),
       }
   }
 }

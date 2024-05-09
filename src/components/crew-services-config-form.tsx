@@ -14,20 +14,33 @@ export const CrewServicesConfigForm = ({
   services,
   onServicesChange,
 }: CrewServicesConfigFormProps) => {
+  const allServices: FloodgateService[] =
+    services.length === 0
+      ? [
+          {
+            serviceType: 'RefuelShip',
+            enabled: false,
+            actionSwayFee: 0n,
+            secondsSwayFee: 0n,
+          },
+        ]
+      : services
+
   const handleChange = (
     serviceType: FloodgateServiceType,
     newValues: Partial<FloodgateService>
   ) =>
     onServicesChange(
-      services.map((service) =>
+      allServices.map((service) =>
         service.serviceType === serviceType
           ? { ...service, ...newValues }
           : service
       )
     )
+
   return (
-    <div className='grid grid-cols-[min-content,1fr] items-center gap-x-2 gap-y-1'>
-      {services.map((service) => (
+    <div className='grid grid-cols-[min-content,1fr] items-center gap-x-3 gap-y-2'>
+      {allServices.map((service) => (
         <Fragment key={service.serviceType}>
           <Checkbox
             id={service.serviceType}

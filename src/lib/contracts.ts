@@ -7,7 +7,8 @@ const provider = new RpcProvider({
 })
 
 export const floodgateContract = new Contract(
+  // @ts-expect-error type
   floodgateAbi,
   env.NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS,
   provider
-).typedv2(floodgateAbi)
+).typed(floodgateAbi)

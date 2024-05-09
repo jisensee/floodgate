@@ -28,7 +28,8 @@ export type FloodgateContractCrew = Awaited<
   ReturnType<typeof floodgateContract.get_crew>
 >
 
-export type FloodgateServiceType = 'RefuelShip' | 'TransportGoods'
+export const floodGateServiceTypes = ['RefuelShip', 'TransportGoods'] as const
+export type FloodgateServiceType = (typeof floodGateServiceTypes)[number]
 
 export type FloodgateService = Omit<
   FloodgateCrew['services'][0],

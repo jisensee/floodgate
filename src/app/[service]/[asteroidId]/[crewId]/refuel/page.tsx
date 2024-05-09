@@ -5,14 +5,14 @@ import { RefuelingWizard } from './refueling-wizard'
 import { FloodgateCrew } from '@/lib/contract-types'
 import { ConnectWalletButton } from '@/components/connect-wallet-button'
 
-export const Wrapper = ({
-  crew,
-  actionFee,
-}: {
-  crew: FloodgateCrew
-  actionFee: bigint
-}) => {
+export const RefuelPage = ({ crew }: { crew: FloodgateCrew }) => {
   const { address } = useAccount()
+  const actionFee = crew.services.find(
+    (s) => s.serviceType === 'RefuelShip' && s.enabled
+  )?.actionSwayFee
+  if (!actionFee) {
+    return null
+  }
   return (
     <>
       {address && (

@@ -49,7 +49,7 @@ export const CrewManagement = ({ crew, address }: CrewManagementProps) => {
           Save service config
         </Button>
       </div>
-      <div className='flex w-11/12 flex-col gap-y-1 rounded-md border border-border p-3'>
+      <div className='flex w-11/12 flex-col gap-y-2 rounded-md border border-border p-3'>
         <Label>Manager address</Label>
         <Input
           value={managerAddress}

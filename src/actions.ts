@@ -132,7 +132,9 @@ export const getRegisteredCrews = async (manager?: string) =>
 export const getFloodgateCrews = async (
   args?: GetCrewArgs
 ): Promise<FloodgateCrew[]> => {
-  const registeredCrews = await getRegisteredCrews(args?.manager)
+  const registeredCrews = await getRegisteredCrews(args?.manager).then(
+    (crews) => crews.filter((crew) => !crew.is_locked || args?.includeLocked)
+  )
 
   const apiCrews = await influenceApi.entities({
     id: registeredCrews.map(({ crew_id }) => Number(crew_id)),

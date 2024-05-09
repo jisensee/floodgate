@@ -23,7 +23,7 @@ type AccountInfoProps = {
 export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
   const [open, setOpen] = useState(false)
   const { disconnect, status: disconnectStatus } = useDisconnect()
-  const { data } = useBalance({
+  const { data: swayBalance } = useBalance({
     address,
     token: env.NEXT_PUBLIC_SWAY_CONTRACT_ADDRESS,
   })
@@ -35,8 +35,6 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
     }
   }, [disconnectStatus])
 
-  const swayBalance = data ? parseFloat(data.formatted) : undefined
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -45,18 +43,23 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
           className='flex flex-row items-center gap-x-3 border-primary'
           size='sm'
         >
-          {swayBalance !== undefined && (
+          {swayBalance && (
             <>
-              <SwayAmount amount={swayBalance} />|
+              <SwayAmount amount={swayBalance.value} convert />|
             </>
           )}
-          <Address address={address} />
+          <Address address={address} shownCharacters={4} />
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogHeader>
-            <div className='flex items-center gap-x-2 text-2xl'>
+            <h2>My Account</h2>
+          </DialogHeader>
+        </DialogHeader>
+        <div className='flex flex-col items-center gap-y-5 overflow-hidden'>
+          <div className='flex w-full flex-col gap-y-2 rounded-md border border-border p-3'>
+            <div className='flex w-full items-center gap-x-2 text-xl'>
               {connector.icon.dark && (
                 <NextImage
                   src={connector.icon.dark}
@@ -65,16 +68,14 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
                   alt={connector.name}
                 />
               )}
-              <span>Connected {connector.name} Account</span>
+              <p>Connected {connector.name} Account</p>
             </div>
-          </DialogHeader>
-        </DialogHeader>
-        <div className='flex flex-col items-center gap-y-5'>
-          <p className='break-all text-sm'>{address}</p>
-          {swayBalance !== undefined && (
+            <Address address={address} />
+          </div>
+          {swayBalance && (
             <div className='flex items-center gap-x-2'>
               <span>Balance:</span>
-              <SwayAmount amount={swayBalance} />
+              <SwayAmount amount={swayBalance.value} convert />
             </div>
           )}
           <div className='flex w-6/12 flex-col items-center gap-y-5'>

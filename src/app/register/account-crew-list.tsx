@@ -22,20 +22,13 @@ const List = ({
   address,
   registeredCrewIds,
 }: AccountCrewListProps & { address: string }) => {
-  const {
-    data: crews,
-    isLoading,
-    error,
-  } = useQuery({
+  const { data: crews } = useQuery({
     queryKey: ['account-crews', address],
     queryFn: () =>
       getAccountCrews(address).then((crews) =>
         crews.filter((c) => c.Crew && c.Crew.roster.length > 0)
       ),
   })
-
-  if (isLoading) return <div>Loading...</div>
-  if (error) return <div>Error: {error.message}</div>
 
   return (
     <div className='flex flex-col gap-y-2'>
