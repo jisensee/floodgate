@@ -9,33 +9,35 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from './ui/tooltip'
-import { FloodgateService, FloodgateServiceType } from '@/lib/contract-types'
+import {
+  FloodgateCrew,
+  FloodgateService,
+  FloodgateServiceType,
+} from '@/lib/contract-types'
 import { cn } from '@/lib/utils'
 
 export type ServiceButtonProps = {
   className?: string
   service: FloodgateService
-  crewId: number
-  crewLocked: boolean
+  crew: FloodgateCrew
 }
 
 export const ServiceButton = ({
   className,
   service,
-  crewId,
-  crewLocked,
+  crew,
 }: ServiceButtonProps) => {
   if (!service.enabled) return null
 
-  const { icon, name, link } = getServiceData(service.serviceType, crewId)
+  const { icon, name, link } = getServiceData(service.serviceType, crew)
   const button = (
-    <Button disabled={crewLocked} icon={icon}>
+    <Button disabled={crew.locked} icon={icon}>
       {name}
       <SwayAmount amount={service.actionSwayFee} convert />
     </Button>
   )
 
-  return crewLocked ? (
+  return crew.locked ? (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger className={cn('cursor-not-allowed', className)}>
@@ -55,7 +57,7 @@ export const ServiceButton = ({
 
 export const getServiceData = (
   serviceType: FloodgateServiceType,
-  crewId?: number
+  crew?: FloodgateCrew
 ) => {
   switch (serviceType) {
     case 'RefuelShip':
@@ -64,8 +66,8 @@ export const getServiceData = (
         name: 'Fuel Ship',
         description:
           'Fuel up your ship, potentially going over the fuel capacity depending on crew bonuses.',
-        link: crewId
-          ? (`/action/${crewId}/refuel` as const)
+        link: crew
+          ? (`/${serviceType}/${crew.asteroidId}/${crew.id}` as const)
           : `/${serviceType}`,
       }
     case 'TransportGoods':
@@ -74,8 +76,8 @@ export const getServiceData = (
         name: 'Transport Goods',
         description:
           'Transport goods from one location to another, potentially going over the storage capacity depending on crew bonuses.',
-        link: crewId
-          ? (`/action/${crewId}/refuel` as const)
+        link: crew
+          ? (`/${serviceType}/${crew.asteroidId}/${crew.id}` as const)
           : (`/${serviceType}` as const),
       }
   }

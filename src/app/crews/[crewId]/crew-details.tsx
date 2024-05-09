@@ -25,8 +25,7 @@ export const CrewDetails = ({ crew }: CrewDetailsProps) => {
         <ServiceButton
           key={service.serviceType}
           service={service}
-          crewId={crew.id}
-          crewLocked={crew.locked}
+          crew={crew}
         />
       ))}
       {isManager && (
