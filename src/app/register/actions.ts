@@ -1,7 +1,7 @@
 'use server'
 
 import { Address, Entity } from '@influenceth/sdk'
-import * as R from 'remeda'
+import { A, F, G, pipe } from '@mobily/ts-belt'
 import { influenceApi } from '@/lib/influence-api'
 
 export const getAccountCrews = async (address: string) => {
@@ -13,13 +13,12 @@ export const getAccountCrews = async (address: string) => {
     },
     label: Entity.IDS.CREW,
   })
-
-  console.log('getting asteroid names')
   const asteroidNames = await influenceApi.util.asteroidNames(
-    R.pipe(
+    pipe(
       crews,
-      R.map((c) => c.Location?.locations?.asteroid?.id),
-      R.filter(R.isTruthy)
+      A.map((c) => c.Location?.locations?.asteroid?.id),
+      A.filter(G.isNotNullable),
+      F.toMutable
     )
   )
 

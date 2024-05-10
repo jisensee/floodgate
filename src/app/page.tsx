@@ -1,6 +1,6 @@
-import * as R from 'remeda'
 import NextLink from 'next/link'
 import { Route } from 'next'
+import { A, pipe } from '@mobily/ts-belt'
 import { getFloodgateCrews } from '@/actions'
 import { Page } from '@/components/page'
 import { Button } from '@/components/ui/button'
@@ -12,11 +12,11 @@ import { getServiceData } from '@/components/service-button'
 
 export default async function Home() {
   const crews = await getFloodgateCrews()
-  const availableServices = R.pipe(
-    crews,
-    R.flatMap((c) => c.services),
-    R.filter((s) => s.enabled),
-    R.map((s) => s.serviceType)
+
+  const availableServices = pipe(
+    crews.flatMap((c) => c.services),
+    A.filter((s) => s.enabled),
+    A.map((s) => s.serviceType)
   )
 
   return (

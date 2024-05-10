@@ -1,10 +1,10 @@
 'use server'
 
-import * as R from 'remeda'
 import { Entity } from '@influenceth/sdk'
 import { Inventory, ShipType } from '@influenceth/sdk'
 import { InfluenceEntity } from 'influence-typed-sdk/api'
 import { shortString } from 'starknet'
+import { A, F, G, pipe } from '@mobily/ts-belt'
 import { floodgateContract } from './lib/contracts'
 import {
   FloodgateContractCrew,
@@ -129,9 +129,7 @@ export type GetCrewArgs = {
 export const getRegisteredCrews = async (manager?: string) =>
   floodgateContract.get_crews(manager ?? '0x0')
 
-export const getFloodgateCrews = async (
-  args?: GetCrewArgs
-): Promise<FloodgateCrew[]> => {
+export const getFloodgateCrews = async (args?: GetCrewArgs) => {
   const registeredCrews = await getRegisteredCrews(args?.manager).then(
     (crews) => crews.filter((crew) => !crew.is_locked || args?.includeLocked)
   )
@@ -145,10 +143,11 @@ export const getFloodgateCrews = async (
     asteroidNames,
     stations,
     crewmates: allCrewmates,
-  } = await getCrewMetadate(apiCrews)
+  } = await getCrewMetadata(apiCrews)
 
-  return R.pipe(
-    R.map(registeredCrews, (registeredCrew) => {
+  return pipe(
+    registeredCrews,
+    A.map((registeredCrew) => {
       const crew = apiCrews.find((c) => c.id === Number(registeredCrew.crew_id))
       if (!crew) return
 
@@ -171,7 +170,7 @@ export const getFloodgateCrews = async (
         asteroidName
       )
     }),
-    R.filter(R.isTruthy)
+    A.filter(G.isNotNullable)
   )
 }
 
@@ -185,7 +184,7 @@ export const getFloodgateCrew = async (crewId: number) => {
   ])
   if (!apiCrew) return
 
-  const { asteroidNames, stations, crewmates } = await getCrewMetadate([
+  const { asteroidNames, stations, crewmates } = await getCrewMetadata([
     apiCrew,
   ])
   const asteroidName =
@@ -201,19 +200,23 @@ export const getFloodgateCrew = async (crewId: number) => {
   )
 }
 
-const getCrewMetadate = async (apiCrews: InfluenceEntity[]) => {
+const getCrewMetadata = async (apiCrews: InfluenceEntity[]) => {
   const [asteroidNames, stations, crewmates] = await Promise.all([
     influenceApi.util.asteroidNames(
-      R.pipe(
-        R.map(apiCrews, (c) => c.Location?.locations?.asteroid?.id),
-        R.filter(R.isTruthy)
+      pipe(
+        apiCrews,
+        A.map((c) => c.Location?.locations?.asteroid?.id),
+        A.filter(G.isNotNullable),
+        F.toMutable
       )
     ),
     influenceApi.entities({
-      id: R.pipe(
-        R.map(apiCrews, (c) => c.Location?.locations?.building?.id),
-        R.filter(R.isTruthy),
-        R.unique()
+      id: pipe(
+        apiCrews,
+        A.map((c) => c.Location?.locations?.building?.id),
+        A.filter(G.isNotNullable),
+        A.uniq,
+        F.toMutable
       ),
       label: Entity.IDS.BUILDING,
     }),

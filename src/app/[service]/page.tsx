@@ -1,6 +1,6 @@
-import * as R from 'remeda'
 import { notFound } from 'next/navigation'
 import { Route } from 'next'
+import { A, D, G, O, pipe } from '@mobily/ts-belt'
 import { getFloodgateCrews } from '@/actions'
 import { floodGateServiceTypes } from '@/lib/contract-types'
 import { Page } from '@/components/page'
@@ -40,21 +40,24 @@ export default async function ServicePage({
 }
 
 const getAvailableAsteroids = async (service: string) =>
-  R.pipe(
+  pipe(
     await getFloodgateCrews(),
-    R.filter((c) =>
+    A.filter((c) =>
       c.services.some((s) => s.serviceType === service && s.enabled)
     ),
-    R.groupBy((c) => c.id),
-    R.mapValues((crews) =>
-      crews[0]
-        ? {
-            asteroidId: crews[0].asteroidId,
-            asteroidName: crews[0].asteroidName,
-            crewCount: crews.length,
-          }
-        : undefined
+    A.groupBy((c) => c.id),
+    D.values,
+    A.filter(G.isNotNullable),
+    A.map((crews) =>
+      pipe(
+        crews[0],
+        O.fromNullable,
+        O.map((crew) => ({
+          asteroidId: crew.asteroidId,
+          asteroidName: crew.asteroidName,
+          crewCount: crews.length,
+        }))
+      )
     ),
-    R.values,
-    R.filter(R.isTruthy)
+    A.filter(G.isNotNullable)
   )
