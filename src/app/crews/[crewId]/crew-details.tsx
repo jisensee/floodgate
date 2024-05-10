@@ -18,7 +18,7 @@ export const CrewDetails = ({ crew }: CrewDetailsProps) => {
   return (
     <div className='flex flex-col items-center gap-y-3'>
       <CrewImages crewmateIds={crew.crewmateIds} width={100} />
-      <div className='grid grid-cols-[min-content,1fr] items-center gap-x-2'>
+      <div className='flex flex-wrap gap-2'>
         <CrewBonusStatistics bonuses={crew.bonuses} />
       </div>
       {crew.services.map((service) => (

@@ -1,6 +1,6 @@
 import NextLink from 'next/link'
 import { Route } from 'next'
-import { A, pipe } from '@mobily/ts-belt'
+import { A, D, O, pipe } from '@mobily/ts-belt'
 import { getFloodgateCrews } from '@/actions'
 import { Page } from '@/components/page'
 import { Button } from '@/components/ui/button'
@@ -16,7 +16,23 @@ export default async function Home() {
   const availableServices = pipe(
     crews.flatMap((c) => c.services),
     A.filter((s) => s.enabled),
-    A.map((s) => s.serviceType)
+    A.groupBy((s) => s.serviceType),
+    D.map((services) =>
+      pipe(
+        services,
+        O.fromNullable,
+        O.map(A.sortBy((s) => s.actionSwayFee)),
+        O.mapNullable(A.head),
+        O.map((s) => s.actionSwayFee)
+      )
+    ),
+    D.toPairs,
+    A.filterMap(([service, fee]) =>
+      O.map(fee, (f) => ({
+        service: service as FloodgateServiceType,
+        floorSwayFee: f,
+      }))
+    )
   )
 
   return (
@@ -28,11 +44,11 @@ export default async function Home() {
         <div className='flex flex-col items-center gap-y-3'>
           <p className='text-2xl text-primary'>What would you like to do?</p>
           <div>
-            {availableServices.map((service) => (
+            {availableServices.map(({ service, floorSwayFee }) => (
               <ServiceOption
                 key={service}
                 serviceType={service}
-                floorPrice={5000000000n}
+                floorPrice={floorSwayFee}
               />
             ))}
           </div>

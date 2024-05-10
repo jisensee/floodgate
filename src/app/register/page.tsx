@@ -9,6 +9,7 @@ export default async function RegisterCrewPage() {
     <Page
       title='Register Crew'
       subtitle='Register one of your crews and earn SWAY when others use them.'
+      scrollable
     >
       <AccountCrewList
         registeredCrewIds={

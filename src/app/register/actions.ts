@@ -1,11 +1,12 @@
 'use server'
 
 import { Address, Entity } from '@influenceth/sdk'
-import { A, F, G, pipe } from '@mobily/ts-belt'
+import { A, O, pipe } from '@mobily/ts-belt'
 import { influenceApi } from '@/lib/influence-api'
+import { getCrewMetadata } from '@/actions'
+import { getCrewBonuses } from '@/lib/utils'
 
 export const getAccountCrews = async (address: string) => {
-  console.log('getting account crews', address)
   const crews = await influenceApi.entities({
     match: {
       path: 'Nft.owners.starknet',
@@ -13,20 +14,29 @@ export const getAccountCrews = async (address: string) => {
     },
     label: Entity.IDS.CREW,
   })
-  const asteroidNames = await influenceApi.util.asteroidNames(
-    pipe(
-      crews,
-      A.map((c) => c.Location?.locations?.asteroid?.id),
-      A.filter(G.isNotNullable),
-      F.toMutable
-    )
-  )
+  const { asteroidNames, stations, crewmates } = await getCrewMetadata(crews)
 
-  return crews.map((crew) => ({
-    ...crew,
-    asteroidId: crew.Location?.locations?.asteroid?.id ?? 0,
-    asteroidName: asteroidNames.get(
-      crew.Location?.locations?.asteroid?.id ?? 0
+  return pipe(
+    crews,
+    A.filterMap((crew) =>
+      pipe(
+        O.fromNullable(
+          stations.find((s) => s.id === crew.Location?.locations?.building?.id)
+        ),
+        O.map((station) => [crew, station] as const)
+      )
     ),
-  }))
+    A.map(([crew, station]) => ({
+      ...crew,
+      asteroidId: crew.Location?.locations?.asteroid?.id ?? 0,
+      asteroidName: asteroidNames.get(
+        crew.Location?.locations?.asteroid?.id ?? 0
+      ),
+      bonuses: getCrewBonuses(
+        crew,
+        crewmates.filter((c) => crew.Crew?.roster.includes(c.id)),
+        station
+      ),
+    }))
+  )
 }

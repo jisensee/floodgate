@@ -200,7 +200,7 @@ export const getFloodgateCrew = async (crewId: number) => {
   )
 }
 
-const getCrewMetadata = async (apiCrews: InfluenceEntity[]) => {
+export const getCrewMetadata = async (apiCrews: InfluenceEntity[]) => {
   const [asteroidNames, stations, crewmates] = await Promise.all([
     influenceApi.util.asteroidNames(
       pipe(

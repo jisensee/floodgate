@@ -2,6 +2,7 @@ import { Building, ShipType } from '@influenceth/sdk'
 import NextImage from 'next/image'
 import { makeInfluenceImageUrls } from 'influence-typed-sdk/images'
 import { FC } from 'react'
+import { A } from '@mobily/ts-belt'
 import { cn } from '@/lib/utils'
 
 type ShipImageProps = {
@@ -44,16 +45,22 @@ export const CrewmateImage = ({
     alt='crewmate'
     width={width}
     height={(width * 4) / 3}
+    style={{ objectFit: 'contain' }}
   />
 )
 
 export type CrewImagesProps = {
   crewmateIds: number[]
   width: number
+  onlyCaptain?: boolean
 }
-export const CrewImages = ({ crewmateIds, width }: CrewImagesProps) => (
-  <div className='flex flex-row flex-wrap justify-center'>
-    {crewmateIds.map((id) => (
+export const CrewImages = ({
+  crewmateIds,
+  width,
+  onlyCaptain,
+}: CrewImagesProps) => (
+  <div className='flex shrink-0 flex-row flex-wrap justify-center'>
+    {(onlyCaptain ? A.take(crewmateIds, 1) : crewmateIds).map((id) => (
       <CrewmateImage key={id} crewmateId={id} width={width} />
     ))}
   </div>

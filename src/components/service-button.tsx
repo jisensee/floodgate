@@ -3,18 +3,12 @@ import Link from 'next/link'
 import { Route } from 'next'
 import { Button } from './ui/button'
 import { SwayAmount } from './sway-amount'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from './ui/tooltip'
+import { StandardTooltip } from './ui/tooltip'
 import {
   FloodgateCrew,
   FloodgateService,
   FloodgateServiceType,
 } from '@/lib/contract-types'
-import { cn } from '@/lib/utils'
 
 export type ServiceButtonProps = {
   className?: string
@@ -38,16 +32,9 @@ export const ServiceButton = ({
   )
 
   return crew.locked ? (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger className={cn('cursor-not-allowed', className)}>
-          {button}
-        </TooltipTrigger>
-        <TooltipContent>
-          This crew is currently locked and can not perform actions.
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <StandardTooltip content='This crew is currently locked and can not perform actions.'>
+      {button}
+    </StandardTooltip>
   ) : (
     <Link className={className} href={link as Route}>
       {button}

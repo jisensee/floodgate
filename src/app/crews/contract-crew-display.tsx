@@ -25,7 +25,7 @@ export const ContractCrewDisplay = ({ crew }: ContractCrewDisplayProps) => {
             {crew.asteroidName}
           </div>
         </div>
-        <div className='grid grid-cols-[min-content,1fr] items-center gap-x-2'>
+        <div className='flex flex-wrap gap-2'>
           <CrewBonusStatistics bonuses={crew.bonuses} />
         </div>
         <Link href={`/crews/${crew.id}`}>
