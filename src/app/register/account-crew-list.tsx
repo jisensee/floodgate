@@ -3,16 +3,14 @@
 import { useQuery } from '@tanstack/react-query'
 import { Route } from 'next'
 import { A, pipe } from '@mobily/ts-belt'
-import Link from 'next/link'
-import { CircleAlert, MapPin } from 'lucide-react'
+import { CircleAlert } from 'lucide-react'
 import { getAccountCrews } from './actions'
 import { RequireConnectedAccount } from '@/components/require-connected-account'
 import { AsyncData } from '@/components/async-data'
 import { Skeleton } from '@/components/ui/skeleton'
-import { CrewImages } from '@/components/asset-images'
-import { CrewBonusStatistics } from '@/components/statistic'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import { StandardTooltip } from '@/components/ui/tooltip'
+import { CrewCard } from '@/components/crew-card'
 
 export type AccountCrewListProps = {
   registeredCrewIds: Set<number>
@@ -62,27 +60,12 @@ const List = ({
             A.filter((crew) => crew.asteroidId > 0),
             A.sortBy((crew) => crew.asteroidId),
             A.map((crew) => (
-              <Link
+              <CrewCard
                 key={crew.id}
-                className='flex gap-x-3 rounded-md p-2 ring-1 hover:ring-2'
+                crew={crew}
                 href={`/register/${crew.id}` as Route}
-              >
-                <CrewImages
-                  crewmateIds={crew.Crew?.roster ?? []}
-                  width={100}
-                  onlyCaptain
-                />
-                <div className='flex flex-col gap-y-1'>
-                  <div className='flex flex-wrap items-center gap-2'>
-                    <h2>{crew.Name ?? `Crew#${crew.id}`}</h2>
-                    <div className='flex items-center gap-x-1 text-sm'>
-                      <MapPin /> {crew.asteroidName ?? crew.asteroidId}
-                    </div>
-                  </div>
-                  <div className='flex flex-wrap gap-2'>
-                    <CrewBonusStatistics bonuses={crew.bonuses} />
-                  </div>
-                  {registeredCrewIds.has(crew.id) && (
+                actions={
+                  registeredCrewIds.has(crew.id) && (
                     <StandardTooltip content='Registering it again will reset all configuration.'>
                       <Alert className='mt-1' variant='warning'>
                         <AlertTitle icon={<CircleAlert />}>
@@ -90,9 +73,9 @@ const List = ({
                         </AlertTitle>
                       </Alert>
                     </StandardTooltip>
-                  )}
-                </div>
-              </Link>
+                  )
+                }
+              />
             ))
           )}
         </div>

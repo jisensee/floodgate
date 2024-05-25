@@ -57,12 +57,12 @@ export const getServiceData = (
           ? (`/${serviceType}/${crew.asteroidId}/${crew.id}` as const)
           : `/${serviceType}`,
       }
-    case 'TransportGoods':
+    case 'TransferGoods':
       return {
         icon: <Truck />,
-        name: 'Transport Goods',
+        name: 'Transfer Goods',
         description:
-          'Transport goods from one location to another, potentially going over the storage capacity depending on crew bonuses.',
+          'Transfer goods from one location to another, potentially going over the storage capacity depending on crew bonuses.',
         link: crew
           ? (`/${serviceType}/${crew.asteroidId}/${crew.id}` as const)
           : (`/${serviceType}` as const),

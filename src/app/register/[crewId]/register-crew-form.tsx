@@ -3,6 +3,7 @@
 import { InfluenceEntity } from 'influence-typed-sdk/api'
 import { Cog, MapPin } from 'lucide-react'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { RequireConnectedAccount } from '@/components/require-connected-account'
 import { getCrewBonuses } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -11,6 +12,7 @@ import { CrewImages } from '@/components/asset-images'
 import { CrewBonusStatistics } from '@/components/statistic'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useTransactionToast } from '@/hooks/transaction-toast'
 
 export type RegisterCrewFormProps = {
   crew: InfluenceEntity
@@ -32,9 +34,23 @@ const Form = ({
   asteroidName,
   address,
 }: RegisterCrewFormProps & { address: string }) => {
+  const router = useRouter()
   const bonuses = getCrewBonuses(crew, crewmates, station)
   const [managerAddress, setManagerAddress] = useState(address)
-  const { write: register } = useRegisterCrew(crew.id, managerAddress)
+  const {
+    write: register,
+    data,
+    status,
+    error,
+  } = useRegisterCrew(crew.id, managerAddress)
+  const { isLoading } = useTransactionToast({
+    txHash: data?.transaction_hash,
+    submitStatus: status,
+    submitError: error,
+    pendingMessage: 'Registering crew...',
+    successMessage: 'Crew registered!',
+    onSuccess: () => router.push(`/crews/${crew.id}/manage`),
+  })
   return (
     <div className='flex flex-col items-center gap-y-8'>
       <div className='flex w-full flex-col gap-y-1'>
@@ -46,16 +62,14 @@ const Form = ({
             {asteroidName}
           </div>
         </div>
-        <div className='flex flex-wrap justify-center gap-1'>
-          <CrewImages crewmateIds={crewmates.map(({ id }) => id)} width={100} />
-        </div>
+        <CrewImages crewmateIds={crewmates.map(({ id }) => id)} width={100} />
       </div>
 
       <div className='flex flex-wrap gap-2'>
         <CrewBonusStatistics bonuses={bonuses} />
       </div>
 
-      <div className='flex w-11/12 flex-col gap-y-1'>
+      <div className='flex w-11/12 flex-col gap-y-2'>
         <Label>Manager address</Label>
         <Input
           value={managerAddress}
@@ -63,7 +77,12 @@ const Form = ({
         />
       </div>
 
-      <Button variant='accent' onClick={() => register()} icon={<Cog />}>
+      <Button
+        variant='accent'
+        onClick={() => register()}
+        icon={<Cog />}
+        loading={isLoading}
+      >
         Register {crew.Name ?? ''}
       </Button>
     </div>

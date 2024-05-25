@@ -3,8 +3,8 @@
 import { Route } from 'next'
 import { Page } from '@/components/page'
 import { RequireConnectedAccount } from '@/components/require-connected-account'
-import { Link } from '@/components/ui/link'
 import { useAccountCrews } from '@/hooks/queries'
+import { CrewCard } from '@/components/crew-card'
 
 export default function MyCrewsPage() {
   return (
@@ -21,13 +21,15 @@ const MyCrews = ({ address }: { address: string }) => {
 
   return (
     crews && (
-      <div>
+      <div className='flex flex-col gap-y-3'>
         {crews
           .filter((c) => c.managerAddress === BigInt(address))
           .map((crew) => (
-            <Link key={crew.id} href={`/crews/${crew.id}` as Route}>
-              {crew.name}
-            </Link>
+            <CrewCard
+              key={crew.id}
+              crew={crew}
+              href={`/crews/${crew.id}` as Route}
+            />
           ))}
       </div>
     )

@@ -1,8 +1,6 @@
-import { FC, useEffect, useState } from 'react'
-import { Fuel, LoaderCircle, MoveDown } from 'lucide-react'
+import { FC, useState } from 'react'
+import { Fuel, MoveDown } from 'lucide-react'
 import { Asteroid } from '@influenceth/sdk'
-import { toast } from 'sonner'
-import { useWaitForTransaction } from '@starknet-react/core'
 import { useWizard } from 'react-use-wizard'
 import { ShipImage, WarehouseImage } from '@/components/asset-images'
 import { Progress } from '@/components/ui/progress'
@@ -14,6 +12,7 @@ import { Slider } from '@/components/ui/slider'
 import { Label } from '@/components/ui/label'
 import { Ship, Warehouse } from '@/actions'
 import { FloodgateCrew } from '@/lib/contract-types'
+import { useTransactionToast } from '@/hooks/transaction-toast'
 
 export type ConfirmationProps = {
   crew: FloodgateCrew
@@ -68,38 +67,14 @@ export const Confirmation: FC<ConfirmationProps> = ({
     swayFee: actionFee,
   })
 
-  const {
-    isLoading: txLoading,
-    error: txError,
-    status: txStatus,
-  } = useWaitForTransaction({ hash: data?.transaction_hash })
-
-  const [successToastId, setSuccessToastId] = useState<
-    number | string | undefined
-  >()
+  const { isLoading, status: txStatus } = useTransactionToast({
+    txHash: data?.transaction_hash,
+    submitStatus,
+    submitError,
+    pendingMessage: 'Fueling ship...',
+  })
 
   const fuelSuccess = txStatus === 'success'
-
-  useEffect(() => {
-    if (fuelSuccess) {
-      toast.dismiss(successToastId)
-    }
-  }, [fuelSuccess, successToastId])
-
-  useEffect(() => {
-    if (submitStatus === 'success') {
-      setSuccessToastId(
-        toast.success('Transaction submitted, waiting for confirmation...', {
-          icon: <LoaderCircle className='animate-spin' />,
-          duration: 1e9,
-        })
-      )
-    } else if (submitError) {
-      toast.error(`Error when submitting tx: ${submitError.message}`)
-    } else if (txError) {
-      toast.error(`Error when executing tx: ${txError.message}`)
-    }
-  }, [submitError, submitStatus, txError])
 
   return (
     <div className='flex flex-col items-center gap-y-3'>
@@ -181,7 +156,7 @@ export const Confirmation: FC<ConfirmationProps> = ({
             variant='accent'
             onClick={() => fuelShip()}
             icon={<Fuel size={24} />}
-            loading={submitStatus === 'pending' || txLoading}
+            loading={isLoading}
           >
             Fuel Ship
           </Button>

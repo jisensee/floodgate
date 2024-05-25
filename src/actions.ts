@@ -201,32 +201,53 @@ export const getFloodgateCrew = async (crewId: number) => {
 }
 
 export const getCrewMetadata = async (apiCrews: InfluenceEntity[]) => {
-  const [asteroidNames, stations, crewmates] = await Promise.all([
-    influenceApi.util.asteroidNames(
+  const [asteroidNames, shipStations, buildingStations, crewmates] =
+    await Promise.all([
+      influenceApi.util.asteroidNames(
+        pipe(
+          apiCrews,
+          A.map((c) => c.Location?.locations?.asteroid?.id),
+          A.filter(G.isNotNullable),
+          F.toMutable
+        )
+      ),
       pipe(
         apiCrews,
-        A.map((c) => c.Location?.locations?.asteroid?.id),
-        A.filter(G.isNotNullable),
-        F.toMutable
-      )
-    ),
-    influenceApi.entities({
-      id: pipe(
-        apiCrews,
-        A.map((c) => c.Location?.locations?.building?.id),
-        A.filter(G.isNotNullable),
-        A.uniq,
-        F.toMutable
+        A.filterMap((c) => c.Location?.location?.ship?.id),
+        F.ifElse(
+          A.isNotEmpty,
+          (shipIds) =>
+            influenceApi.entities({
+              id: F.toMutable(shipIds),
+              label: Entity.IDS.SHIP,
+            }),
+          () => Promise.resolve([])
+        )
       ),
-      label: Entity.IDS.BUILDING,
-    }),
-    influenceApi.entities({
-      id: apiCrews.flatMap((c) => c.Crew?.roster ?? []),
-      label: Entity.IDS.CREWMATE,
-    }),
-  ])
+      pipe(
+        apiCrews,
+        A.filterMap((c) => c.Location?.location?.building?.id),
+        F.ifElse(
+          A.isNotEmpty,
+          (shipIds) =>
+            influenceApi.entities({
+              id: F.toMutable(shipIds),
+              label: Entity.IDS.BUILDING,
+            }),
+          () => Promise.resolve([])
+        )
+      ),
+      influenceApi.entities({
+        id: apiCrews.flatMap((c) => c.Crew?.roster ?? []),
+        label: Entity.IDS.CREWMATE,
+      }),
+    ])
 
-  return { asteroidNames, stations, crewmates }
+  return {
+    asteroidNames,
+    stations: A.concat(shipStations, buildingStations),
+    crewmates,
+  }
 }
 
 const makeFloodgateCrew = (

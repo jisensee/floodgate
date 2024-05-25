@@ -1,14 +1,13 @@
 import { notFound } from 'next/navigation'
-import { MapPin } from 'lucide-react'
-import Link from 'next/link'
+import { Route } from 'next'
 import { getServiceData } from '@/components/service-button'
 import { floodGateServiceTypes } from '@/lib/contract-types'
 import { influenceApi } from '@/lib/influence-api'
 import { Page } from '@/components/page'
 import { getFloodgateCrews } from '@/actions'
-import { CrewmateImage } from '@/components/asset-images'
-import { SwayAmount } from '@/components/sway-amount'
-import { CrewBonusStatistics } from '@/components/statistic'
+import { CrewCard } from '@/components/crew-card'
+
+export const dynamic = 'force-dynamic'
 
 export default async function ServiceCrewsPage({
   params,
@@ -47,33 +46,19 @@ export default async function ServiceCrewsPage({
       subtitle='Which crew would you like to use?'
       scrollable
     >
-      {crews.map((crew) => (
-        <Link
-          key={crew.id}
-          className='flex gap-x-3 rounded-md p-3 ring-1 hover:ring-2'
-          href={`/${serviceType}/${asteroidId}/${crew.id}`}
-        >
-          <CrewmateImage crewmateId={crew.crewmateIds[0] ?? 0} width={120} />
-          <div className='flex flex-col gap-y-2'>
-            <div className='flex flex-wrap gap-2'>
-              <h2>{crew.name}</h2>
-              <div className='flex items-center gap-x-2'>
-                <MapPin /> <span>{crew.asteroidName}</span>
-              </div>
-            </div>
-            <SwayAmount
-              amount={
-                crew.services.find((s) => s.serviceType === serviceType)
-                  ?.actionSwayFee ?? 0
-              }
-              convert
-            />
-            <div className='flex flex-wrap gap-2'>
-              <CrewBonusStatistics bonuses={crew.bonuses} />
-            </div>
-          </div>
-        </Link>
-      ))}
+      <div className='flex flex-col gap-y-3'>
+        {crews.map((crew) => (
+          <CrewCard
+            key={crew.id}
+            crew={crew}
+            href={`/${serviceType}/${asteroidId}/${crew.id}` as Route}
+            swayFee={
+              crew.services.find((s) => s.serviceType === serviceType)
+                ?.actionSwayFee
+            }
+          />
+        ))}
+      </div>
     </Page>
   )
 }

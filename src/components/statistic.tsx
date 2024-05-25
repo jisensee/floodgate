@@ -14,7 +14,7 @@ export const Statistic = ({ value, label, icon }: StatisticProps) => (
   <StandardTooltip content={label}>
     <Badge className='flex items-center gap-x-2' variant='outline'>
       <span
-        className={cn('text-xl', {
+        className={cn('text-lg', {
           'text-success': value >= 0,
           'text-destructive': value < 0,
         })}

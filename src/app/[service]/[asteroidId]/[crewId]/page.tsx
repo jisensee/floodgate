@@ -1,10 +1,12 @@
 import { notFound } from 'next/navigation'
-import { RefuelPage } from './refuel/page'
+import { RefuelPage } from './refuel/refuel-page'
 import { getFloodgateCrew } from '@/actions'
 import { Page } from '@/components/page'
 import { getServiceData } from '@/components/service-button'
 import { floodGateServiceTypes } from '@/lib/contract-types'
 import { influenceApi } from '@/lib/influence-api'
+
+export const dynamic = 'force-dynamic'
 
 export default async function CrewsActionPage({
   params,

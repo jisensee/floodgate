@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils'
 type PageProps = {
   title: ReactNode
   subtitle?: ReactNode
-  hideBorder?: boolean
   fullSize?: boolean
   scrollable?: boolean
 } & PropsWithChildren
@@ -12,7 +11,6 @@ type PageProps = {
 export const Page = ({
   title,
   subtitle,
-  hideBorder,
   fullSize,
   scrollable,
   children,
@@ -23,14 +21,17 @@ export const Page = ({
         'md:w-[34rem]': !fullSize,
       })}
     >
-      {typeof title === 'string' ? <h1>{title}</h1> : title}
+      {typeof title === 'string' ? (
+        <h1 className='text-center'>{title}</h1>
+      ) : (
+        title
+      )}
       {subtitle && (
         <p className='text-center text-muted-foreground'>{subtitle}</p>
       )}
       <div
-        className={cn('w-full p-3 md:rounded md:border md:border-border', {
+        className={cn('w-full p-3 ', {
           'overflow-y-auto': scrollable,
-          'border-none': hideBorder,
           'md:h-[65vh]': !fullSize,
         })}
       >

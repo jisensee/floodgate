@@ -72,12 +72,7 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
             </div>
             <Address address={address} />
           </div>
-          {swayBalance && (
-            <div className='flex items-center gap-x-2'>
-              <span>Balance:</span>
-              <SwayAmount amount={swayBalance.value} convert />
-            </div>
-          )}
+          {swayBalance && <SwayAmount amount={swayBalance.value} convert />}
           <div className='flex w-6/12 flex-col items-center gap-y-5'>
             {crews && crews.length > 0 && (
               <>

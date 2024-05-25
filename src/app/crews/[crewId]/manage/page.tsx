@@ -1,12 +1,12 @@
 import { notFound } from 'next/navigation'
 import { MapPin } from 'lucide-react'
-import { CrewDetails } from './crew-details'
+import { CrewManagement } from './crew-management'
 import { getFloodgateCrew } from '@/actions'
 import { Page } from '@/components/page'
 
 export const dynamic = 'force-dynamic'
 
-export default async function CrewDetailPage({
+export default async function CrewManagementPage({
   params,
 }: {
   params: { crewId: string }
@@ -30,7 +30,7 @@ export default async function CrewDetailPage({
         </div>
       }
     >
-      <CrewDetails crew={crew} showServices showManageButton />
+      <CrewManagement crew={crew} />
     </Page>
   )
 }

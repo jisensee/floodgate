@@ -4,6 +4,8 @@ import { RegisterCrewForm } from './register-crew-form'
 import { Page } from '@/components/page'
 import { influenceApi } from '@/lib/influence-api'
 
+export const dynamic = 'force-dynamic'
+
 export default async function RegisterCrewPage({
   params,
 }: {

@@ -74,3 +74,14 @@ export const getCrewBonuses = (
 }
 
 export type CrewBonuses = ReturnType<typeof getCrewBonuses>
+
+export const pluralize = (
+  number: number,
+  singular: string,
+  plural?: string
+) => {
+  if (number === 1) {
+    return singular
+  }
+  return plural ?? `${singular}s`
+}

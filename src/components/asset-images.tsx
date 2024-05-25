@@ -28,6 +28,15 @@ export const WarehouseImage: FC<WarehouseImageProps> = ({ size }) => {
   return <NextImage src={url} width={size} height={size} alt='Warehouse' />
 }
 
+export const AsteroidImage = ({ id, width }: { id: number; width: number }) => (
+  <NextImage
+    src={imageUrls.asteroid(id)}
+    width={width}
+    height={(width * 4) / 3}
+    alt='Asteroid'
+  />
+)
+
 type CrewmateImageProps = {
   crewmateId: number
   width: number
@@ -40,7 +49,7 @@ export const CrewmateImage = ({
   className,
 }: CrewmateImageProps) => (
   <NextImage
-    className={cn('rounded border border-border', className)}
+    className={cn('rounded', className)}
     src={imageUrls.crewmate(crewmateId)}
     alt='crewmate'
     width={width}
@@ -50,16 +59,23 @@ export const CrewmateImage = ({
 )
 
 export type CrewImagesProps = {
+  className?: string
   crewmateIds: number[]
   width: number
   onlyCaptain?: boolean
 }
 export const CrewImages = ({
+  className,
   crewmateIds,
   width,
   onlyCaptain,
 }: CrewImagesProps) => (
-  <div className='flex shrink-0 flex-row flex-wrap justify-center'>
+  <div
+    className={cn(
+      'flex shrink-0 flex-row flex-wrap justify-center gap-1',
+      className
+    )}
+  >
     {(onlyCaptain ? A.take(crewmateIds, 1) : crewmateIds).map((id) => (
       <CrewmateImage key={id} crewmateId={id} width={width} />
     ))}

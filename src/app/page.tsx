@@ -10,6 +10,8 @@ import { FloodgateServiceType } from '@/lib/contract-types'
 import { SwayAmount } from '@/components/sway-amount'
 import { getServiceData } from '@/components/service-button'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Home() {
   const crews = await getFloodgateCrews()
 
@@ -36,14 +38,14 @@ export default async function Home() {
   )
 
   return (
-    <Page title='Floodgate' hideBorder fullSize>
+    <Page title='Floodgate' fullSize>
       <div className='flex flex-col items-center gap-y-5'>
         <p className='text-center text-xl'>
           Hire specialized crews from all over the belt!
         </p>
         <div className='flex flex-col items-center gap-y-3'>
           <p className='text-2xl text-primary'>What would you like to do?</p>
-          <div>
+          <div className='flex max-w-[36rem] flex-col gap-y-3'>
             {availableServices.map(({ service, floorSwayFee }) => (
               <ServiceOption
                 key={service}
@@ -54,9 +56,9 @@ export default async function Home() {
           </div>
         </div>
         <div className='flex items-center justify-center gap-x-3'>
-          <Separator />
+          <Separator className='w-28' />
           Or
-          <Separator />
+          <Separator className='w-28' />
         </div>
         <p>
           <Link href='/crews'>
