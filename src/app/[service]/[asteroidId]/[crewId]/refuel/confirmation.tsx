@@ -7,12 +7,21 @@ import { Progress } from '@/components/ui/progress'
 import { SwayAmount } from '@/components/sway-amount'
 import { Format, cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { useFuelShipTransaction } from '@/hooks/contract'
+import { useDevteamShare, useFuelShipTransaction } from '@/hooks/contract'
 import { Slider } from '@/components/ui/slider'
 import { Label } from '@/components/ui/label'
 import { Ship, Warehouse } from '@/actions'
 import { FloodgateCrew } from '@/lib/contract-types'
 import { useTransactionToast } from '@/hooks/transaction-toast'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { InfoTooltip } from '@/components/ui/tooltip'
 
 export type ConfirmationProps = {
   crew: FloodgateCrew
@@ -31,6 +40,7 @@ export const Confirmation: FC<ConfirmationProps> = ({
 }) => {
   const transportBonus = crew.bonuses.transportTime.totalBonus
   const { goToStep } = useWizard()
+  const devteamShare = useDevteamShare()
 
   const overfuelBonus = crew.bonuses.volumeCapacity.totalBonus
   const missingFuel =
@@ -149,6 +159,14 @@ export const Confirmation: FC<ConfirmationProps> = ({
                 amount={Number(actionFee)}
                 convert
               />
+              {devteamShare && (
+                <InfoTooltip>
+                  <FeeBreakdown
+                    devteamShare={devteamShare}
+                    actionFee={actionFee}
+                  />
+                </InfoTooltip>
+              )}
             </div>
           </div>
           <Button
@@ -174,6 +192,64 @@ export const Confirmation: FC<ConfirmationProps> = ({
           Fuel another ship
         </Button>
       )}
+    </div>
+  )
+}
+
+const FeeBreakdown = ({
+  devteamShare,
+  actionFee,
+}: {
+  devteamShare: number
+  actionFee: bigint
+}) => {
+  const managerShare = 1 - devteamShare
+  const devteamAmount = Math.floor(Number(actionFee) * devteamShare)
+  const managerAmount = Math.floor(Number(actionFee) * managerShare)
+
+  return (
+    <div>
+      <p className='text-muted-foreground'>
+        The fee you pay is split the following way:
+      </p>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead />
+            <TableHead>Share</TableHead>
+            <TableHead>Amount</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell className='font-medium text-muted-foreground'>
+              Dev team
+            </TableCell>
+            <TableCell>{devteamShare * 100}%</TableCell>
+            <TableCell>
+              <SwayAmount amount={devteamAmount} convert />
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className='font-medium text-muted-foreground'>
+              Crew manager
+            </TableCell>
+            <TableCell>{managerShare * 100}%</TableCell>
+            <TableCell>
+              <SwayAmount amount={managerAmount} convert />
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className='font-medium text-muted-foreground'>
+              Total
+            </TableCell>
+            <TableCell>100%</TableCell>
+            <TableCell>
+              <SwayAmount amount={actionFee} convert />
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     </div>
   )
 }

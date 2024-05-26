@@ -14,6 +14,8 @@ import {
 } from '@/components/ui/dialog'
 import { useAccountCrews } from '@/hooks/queries'
 import { Separator } from '@/components/ui/separator'
+import { useFeeBalance } from '@/hooks/contract'
+import { FeeBalance } from '@/components/fee-balance'
 
 type AccountInfoProps = {
   address: string
@@ -25,9 +27,13 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
   const { disconnect, status: disconnectStatus } = useDisconnect()
   const { data: swayBalance } = useBalance({
     address,
+    watch: true,
     token: env.NEXT_PUBLIC_SWAY_CONTRACT_ADDRESS,
   })
   const { data: crews } = useAccountCrews(address)
+  const feeBalance = useFeeBalance(address)
+
+  const hasFeesToWithdraw = feeBalance !== undefined && feeBalance > 0n
 
   useEffect(() => {
     if (disconnectStatus === 'success') {
@@ -72,7 +78,19 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
             </div>
             <Address address={address} />
           </div>
-          {swayBalance && <SwayAmount amount={swayBalance.value} convert />}
+          {swayBalance && (
+            <div className='flex flex-col items-center gap-y-1'>
+              <p className='font-bold'>Current balance</p>
+              <SwayAmount amount={swayBalance.value} convert />
+            </div>
+          )}
+          {hasFeesToWithdraw && (
+            <div className='flex w-6/12 flex-col gap-y-3'>
+              <Separator />
+              <FeeBalance balance={feeBalance} />
+              <Separator />
+            </div>
+          )}
           <div className='flex w-6/12 flex-col items-center gap-y-5'>
             {crews && crews.length > 0 && (
               <>

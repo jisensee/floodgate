@@ -1,5 +1,10 @@
-import { useContract, useContractWrite } from '@starknet-react/core'
+import {
+  useContract,
+  useContractRead,
+  useContractWrite,
+} from '@starknet-react/core'
 import { Entity, Permission } from '@influenceth/sdk'
+import { ABI as floodgateAbi } from '../abis/floodgate'
 import dispatcherAbi from '../abis/influence-dispatcher.json'
 import swayAbi from '../abis/sway.json'
 import { env } from '@/env'
@@ -166,3 +171,29 @@ export const useSetCrewManager = (crewId: number, managerAddress: string) =>
       ),
     ],
   })
+
+export const useFeeBalance = (address: string) => {
+  const { data } = useContractRead({
+    abi: [...floodgateAbi],
+    watch: true,
+    address: env.NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS,
+    functionName: 'get_current_balance',
+    args: [address],
+  })
+
+  return data ? BigInt(data.toString()) : undefined
+}
+
+export const useWithdrawFees = (amount: bigint) =>
+  useContractWrite({
+    calls: [floodgateContract.populateTransaction.withdraw_balance(amount)],
+  })
+
+export const useDevteamShare = () => {
+  const { data } = useContractRead({
+    abi: [...floodgateAbi],
+    address: env.NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS,
+    functionName: 'get_devteam_share',
+  })
+  return data ? Number(data.toString()) / 1_000 : undefined
+}

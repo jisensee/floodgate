@@ -2,11 +2,11 @@ export const ABI = [
   {
     "type": "impl",
     "name": "UpgradableImpl",
-    "interface_name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::UpgradableTrait"
+    "interface_name": "influenceoverfueler::UpgradableTrait"
   },
   {
     "type": "interface",
-    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::UpgradableTrait",
+    "name": "influenceoverfueler::UpgradableTrait",
     "items": [
       {
         "type": "function",
@@ -25,11 +25,11 @@ export const ABI = [
   {
     "type": "impl",
     "name": "OwnableImpl",
-    "interface_name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::OwnableTrait"
+    "interface_name": "influenceoverfueler::OwnableTrait"
   },
   {
     "type": "interface",
-    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::OwnableTrait",
+    "name": "influenceoverfueler::OwnableTrait",
     "items": [
       {
         "type": "function",
@@ -59,11 +59,11 @@ export const ABI = [
   {
     "type": "impl",
     "name": "FixScrewedDataImpl",
-    "interface_name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FixScrewedDataTrait"
+    "interface_name": "influenceoverfueler::FixScrewedDataTrait"
   },
   {
     "type": "interface",
-    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FixScrewedDataTrait",
+    "name": "influenceoverfueler::FixScrewedDataTrait",
     "items": [
       {
         "type": "function",
@@ -86,7 +86,7 @@ export const ABI = [
   {
     "type": "impl",
     "name": "FloodgateApplicationInterfaceImpl",
-    "interface_name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateApplicationInterfaceTrait"
+    "interface_name": "influenceoverfueler::FloodgateApplicationInterfaceTrait"
   },
   {
     "type": "enum",
@@ -104,7 +104,7 @@ export const ABI = [
   },
   {
     "type": "struct",
-    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::InfluenceInventory",
+    "name": "influenceoverfueler::InfluenceInventory",
     "members": [
       {
         "name": "inventory_type",
@@ -122,7 +122,7 @@ export const ABI = [
   },
   {
     "type": "struct",
-    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateService",
+    "name": "influenceoverfueler::FloodgateService",
     "members": [
       {
         "name": "service_type",
@@ -144,17 +144,17 @@ export const ABI = [
   },
   {
     "type": "struct",
-    "name": "core::array::Span::</opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateService>",
+    "name": "core::array::Span::<influenceoverfueler::FloodgateService>",
     "members": [
       {
         "name": "snapshot",
-        "type": "@core::array::Array::</opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateService>"
+        "type": "@core::array::Array::<influenceoverfueler::FloodgateService>"
       }
     ]
   },
   {
     "type": "struct",
-    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateAppServiceCrew",
+    "name": "influenceoverfueler::FloodgateAppServiceCrew",
     "members": [
       {
         "name": "crew_id",
@@ -174,27 +174,27 @@ export const ABI = [
       },
       {
         "name": "default_feeding_inventory",
-        "type": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::InfluenceInventory"
+        "type": "influenceoverfueler::InfluenceInventory"
       },
       {
         "name": "services",
-        "type": "core::array::Span::</opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateService>"
+        "type": "core::array::Span::<influenceoverfueler::FloodgateService>"
       }
     ]
   },
   {
     "type": "struct",
-    "name": "core::array::Span::</opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateAppServiceCrew>",
+    "name": "core::array::Span::<influenceoverfueler::FloodgateAppServiceCrew>",
     "members": [
       {
         "name": "snapshot",
-        "type": "@core::array::Array::</opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateAppServiceCrew>"
+        "type": "@core::array::Array::<influenceoverfueler::FloodgateAppServiceCrew>"
       }
     ]
   },
   {
     "type": "interface",
-    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateApplicationInterfaceTrait",
+    "name": "influenceoverfueler::FloodgateApplicationInterfaceTrait",
     "items": [
       {
         "type": "function",
@@ -207,7 +207,7 @@ export const ABI = [
         ],
         "outputs": [
           {
-            "type": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateAppServiceCrew"
+            "type": "influenceoverfueler::FloodgateAppServiceCrew"
           }
         ],
         "state_mutability": "view"
@@ -223,7 +223,7 @@ export const ABI = [
         ],
         "outputs": [
           {
-            "type": "core::array::Span::</opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateAppServiceCrew>"
+            "type": "core::array::Span::<influenceoverfueler::FloodgateAppServiceCrew>"
           }
         ],
         "state_mutability": "view"
@@ -233,11 +233,11 @@ export const ABI = [
   {
     "type": "impl",
     "name": "FloodgateAdministrationImpl",
-    "interface_name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateAdministrationTrait"
+    "interface_name": "influenceoverfueler::FloodgateAdministrationTrait"
   },
   {
     "type": "interface",
-    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateAdministrationTrait",
+    "name": "influenceoverfueler::FloodgateAdministrationTrait",
     "items": [
       {
         "type": "function",
@@ -432,11 +432,11 @@ export const ABI = [
   {
     "type": "impl",
     "name": "FloodgateManagementInterfaceImpl",
-    "interface_name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateManagementTrait"
+    "interface_name": "influenceoverfueler::FloodgateManagementTrait"
   },
   {
     "type": "struct",
-    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateServiceCrew",
+    "name": "influenceoverfueler::FloodgateServiceCrew",
     "members": [
       {
         "name": "crew_id",
@@ -462,7 +462,7 @@ export const ABI = [
   },
   {
     "type": "interface",
-    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateManagementTrait",
+    "name": "influenceoverfueler::FloodgateManagementTrait",
     "items": [
       {
         "type": "function",
@@ -490,15 +490,15 @@ export const ABI = [
           },
           {
             "name": "crew_configuration",
-            "type": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateServiceCrew"
+            "type": "influenceoverfueler::FloodgateServiceCrew"
           },
           {
             "name": "default_feeding_inventory",
-            "type": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::InfluenceInventory"
+            "type": "influenceoverfueler::InfluenceInventory"
           },
           {
             "name": "services",
-            "type": "core::array::Array::</opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateService>"
+            "type": "core::array::Array::<influenceoverfueler::FloodgateService>"
           }
         ],
         "outputs": [],
@@ -562,7 +562,7 @@ export const ABI = [
           },
           {
             "name": "default_feeding_inventory",
-            "type": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::InfluenceInventory"
+            "type": "influenceoverfueler::InfluenceInventory"
           }
         ],
         "outputs": [],
@@ -578,7 +578,7 @@ export const ABI = [
           },
           {
             "name": "services",
-            "type": "core::array::Array::</opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateService>"
+            "type": "core::array::Array::<influenceoverfueler::FloodgateService>"
           }
         ],
         "outputs": [],
@@ -587,7 +587,12 @@ export const ABI = [
       {
         "type": "function",
         "name": "get_current_balance",
-        "inputs": [],
+        "inputs": [
+          {
+            "name": "address",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
         "outputs": [
           {
             "type": "core::integer::u128"
@@ -617,7 +622,7 @@ export const ABI = [
           },
           {
             "name": "source_inventory",
-            "type": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::InfluenceInventory"
+            "type": "influenceoverfueler::InfluenceInventory"
           },
           {
             "name": "food_kg",
@@ -648,11 +653,25 @@ export const ABI = [
   {
     "type": "impl",
     "name": "FloodgateUsageInterfaceImpl",
-    "interface_name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateUsageTrait"
+    "interface_name": "influenceoverfueler::FloodgateUsageTrait"
+  },
+  {
+    "type": "struct",
+    "name": "influenceoverfueler::InfluenceInventoryItem",
+    "members": [
+      {
+        "name": "item_id",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "item_quantity",
+        "type": "core::integer::u64"
+      }
+    ]
   },
   {
     "type": "interface",
-    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::FloodgateUsageTrait",
+    "name": "influenceoverfueler::FloodgateUsageTrait",
     "items": [
       {
         "type": "function",
@@ -664,7 +683,7 @@ export const ABI = [
           },
           {
             "name": "source_inventory",
-            "type": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::InfluenceInventory"
+            "type": "influenceoverfueler::InfluenceInventory"
           },
           {
             "name": "ship_id",
@@ -673,6 +692,26 @@ export const ABI = [
           {
             "name": "fuel_kg",
             "type": "core::integer::u64"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "service_transfer_goods",
+        "inputs": [
+          {
+            "name": "service_crew_id",
+            "type": "core::integer::u64"
+          },
+          {
+            "name": "destination_inventory",
+            "type": "influenceoverfueler::InfluenceInventory"
+          },
+          {
+            "name": "transfers",
+            "type": "core::array::Array::<(influenceoverfueler::InfluenceInventory, core::array::Array::<influenceoverfueler::InfluenceInventoryItem>)>"
           }
         ],
         "outputs": [],
@@ -692,7 +731,7 @@ export const ABI = [
   },
   {
     "type": "event",
-    "name": "/opt/app/api/upload/temp/6f1e2296ed07b1820c012ecd78e97581da8f4c645bf00b94e77f47565e0989b1/src::Floodgate::Event",
+    "name": "influenceoverfueler::Floodgate::Event",
     "kind": "enum",
     "variants": []
   }

@@ -3,6 +3,8 @@
 import * as React from 'react'
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 
+import { PropsWithChildren } from 'react'
+import { Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const TooltipProvider = TooltipPrimitive.Provider
@@ -40,11 +42,18 @@ const StandardTooltip = ({ content, children }: StandardTooltipProps) => (
   </TooltipProvider>
 )
 
+const InfoTooltip = ({ children }: PropsWithChildren) => (
+  <StandardTooltip content={children}>
+    <Info />
+  </StandardTooltip>
+)
+
 export {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
   TooltipProvider,
   StandardTooltip,
+  InfoTooltip,
   type StandardTooltipProps,
 }
