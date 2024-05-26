@@ -49,11 +49,7 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
           className='flex flex-row items-center gap-x-3 border-primary'
           size='sm'
         >
-          {swayBalance && (
-            <>
-              <SwayAmount amount={swayBalance.value} convert />|
-            </>
-          )}
+          {swayBalance && <SwayAmount amount={swayBalance.value} convert />}
           <Address address={address} shownCharacters={4} />
         </Button>
       </DialogTrigger>
@@ -80,7 +76,7 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
           </div>
           {swayBalance && (
             <div className='flex flex-col items-center gap-y-1'>
-              <p className='font-bold'>Current balance</p>
+              <p className='font-bold'>Wallet balance</p>
               <SwayAmount amount={swayBalance.value} convert />
             </div>
           )}

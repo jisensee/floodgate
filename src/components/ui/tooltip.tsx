@@ -43,7 +43,7 @@ const StandardTooltip = ({ content, children }: StandardTooltipProps) => (
 )
 
 const InfoTooltip = ({ children }: PropsWithChildren) => (
-  <StandardTooltip content={children}>
+  <StandardTooltip content={<div className='max-w-64'>{children}</div>}>
     <Info />
   </StandardTooltip>
 )

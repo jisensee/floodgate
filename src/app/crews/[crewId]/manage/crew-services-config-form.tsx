@@ -12,8 +12,9 @@ import {
   FloodgateServiceType,
   floodGateServiceTypes,
 } from '@/lib/contract-types'
-import { useSetCrewServicesConfig } from '@/hooks/contract'
+import { useDevteamShare, useSetCrewServicesConfig } from '@/hooks/contract'
 import { useTransactionToast } from '@/hooks/transaction-toast'
+import { SwayAmount } from '@/components/sway-amount'
 
 export type CrewServicesConfigFormProps = {
   services: FloodgateService[]
@@ -22,6 +23,7 @@ export type CrewServicesConfigFormProps = {
 
 export const CrewServicesConfigForm = ({ crew }: { crew: FloodgateCrew }) => {
   const router = useRouter()
+  const devteamShare = useDevteamShare() ?? 0
   const [services, setServices] = useState(
     floodGateServiceTypes.map(
       (serviceType) =>
@@ -82,8 +84,8 @@ export const CrewServicesConfigForm = ({ crew }: { crew: FloodgateCrew }) => {
             <Label className='text-lg' htmlFor={service.serviceType}>
               {service.serviceType}
             </Label>
-            <div />
             <Input
+              className='col-span-2'
               type='number'
               leadingIcon={<SwayIcon size={24} />}
               value={(service.actionSwayFee / 1_000_000n).toString()}
@@ -94,6 +96,21 @@ export const CrewServicesConfigForm = ({ crew }: { crew: FloodgateCrew }) => {
                 })
               }
             />
+            <div className='col-span-2 flex items-center gap-x-1 text-muted-foreground'>
+              <span>You will receive</span>
+              <SwayAmount
+                className='text-foreground'
+                amount={Number(service.actionSwayFee) * (1 - devteamShare)}
+                convert
+              />
+              <span>
+                per action after applying the{' '}
+                <span className='text-foreground'>
+                  {Math.round(devteamShare * 100)}%
+                </span>{' '}
+                dev team share.
+              </span>
+            </div>
           </Fragment>
         ))}
       </div>

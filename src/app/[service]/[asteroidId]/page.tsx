@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { Route } from 'next'
 import { getServiceData } from '@/components/service-button'
 import { floodGateServiceTypes } from '@/lib/contract-types'
@@ -34,10 +34,10 @@ export default async function ServiceCrewsPage({
     )
   )
 
-  // if (crews.length === 1) {
-  //   const crewId = crews[0]?.id ?? 1
-  //   redirect(`/${serviceType}/${asteroidId}/${crewId}`)
-  // }
+  if (crews.length === 1) {
+    const crewId = crews[0]?.id ?? 1
+    redirect(`/${serviceType}/${asteroidId}/${crewId}`)
+  }
 
   const { name } = getServiceData(serviceType)
   return (

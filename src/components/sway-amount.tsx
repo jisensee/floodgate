@@ -1,5 +1,4 @@
 import NextImage from 'next/image'
-import { FC } from 'react'
 import { cn } from '@/lib/utils'
 
 type SwayAmountProps = {
@@ -8,13 +7,9 @@ type SwayAmountProps = {
   convert?: boolean
 }
 
-export const SwayAmount: FC<SwayAmountProps> = ({
-  className,
-  amount,
-  convert,
-}) => {
+export const SwayAmount = ({ className, amount, convert }: SwayAmountProps) => {
   return (
-    <div className={cn('flex items-center gap-x-1', className)}>
+    <div className={cn('flex items-center', className)}>
       <NextImage src='/sway-logo.png' alt='SWAY logo' width={24} height={24} />
       <span>
         {Math.round(

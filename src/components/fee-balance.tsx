@@ -16,7 +16,9 @@ export const FeeBalance = ({ balance }: { balance: bigint }) => {
 
   return (
     <div className='flex w-full flex-col items-center gap-y-2 p-3'>
-      <p className='font-bold'>Fee balance</p>
+      <div className='flex items-center gap-x-3'>
+        <p className='font-bold'>Floodgate balance</p>
+      </div>
       <SwayAmount amount={balance} convert />
       <Button
         variant='accent'

@@ -225,7 +225,7 @@ const FeeBreakdown = ({
             <TableCell className='font-medium text-muted-foreground'>
               Dev team
             </TableCell>
-            <TableCell>{devteamShare * 100}%</TableCell>
+            <TableCell>{Math.round(devteamShare * 100)}%</TableCell>
             <TableCell>
               <SwayAmount amount={devteamAmount} convert />
             </TableCell>
@@ -234,7 +234,7 @@ const FeeBreakdown = ({
             <TableCell className='font-medium text-muted-foreground'>
               Crew manager
             </TableCell>
-            <TableCell>{managerShare * 100}%</TableCell>
+            <TableCell>{Math.round(managerShare * 100)}%</TableCell>
             <TableCell>
               <SwayAmount amount={managerAmount} convert />
             </TableCell>
