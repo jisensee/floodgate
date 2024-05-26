@@ -27,7 +27,7 @@ export const RefuelingWizard: FC<RefuelingWizardProps> = ({
   const volumeBonus = crew.bonuses.volumeCapacity
 
   const { data: userData, refetch } = useQuery({
-    queryKey: ['ships-warehouses', address],
+    queryKey: ['ships-warehouses', address, crew.asteroidId],
     queryFn: () =>
       Promise.all([
         getShips(address, crew.asteroidId, volumeBonus.totalBonus),
