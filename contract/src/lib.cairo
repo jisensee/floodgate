@@ -85,12 +85,6 @@ struct InfluenceInventoryItem {
 }
 
 #[starknet::interface]
-trait FixScrewedDataTrait<T>
-{
-    fn reset_crew_list(ref self: T, start_id: u64, end_id: u64);
-}
-
-#[starknet::interface]
 trait FloodgateApplicationInterfaceTrait<T>
 {
     fn get_crew(self: @T, service_crew_id: u64) -> FloodgateAppServiceCrew;
@@ -132,7 +126,7 @@ trait FloodgateManagementTrait<T>
     fn set_crew_feeding_configuration(ref self: T, service_crew_id: u64, is_automated_feeding_enabled: bool, default_feeding_inventory: InfluenceInventory);
     fn set_crew_services_configuration(ref self: T, service_crew_id: u64, services: Array<FloodgateService>);
 
-    fn get_current_balance(self: @T) -> u128;
+    fn get_current_balance(self: @T, address: ContractAddress) -> u128;
     fn withdraw_balance(ref self: T, amount: u128);
 
     fn resupply_food(ref self: T, service_crew_id: u64, source_inventory: InfluenceInventory, food_kg: u64);
@@ -361,31 +355,6 @@ mod Floodgate
     }
 
     #[abi(embed_v0)]
-    impl FixScrewedDataImpl of super::FixScrewedDataTrait<ContractState>
-    {
-        fn reset_crew_list(ref self: ContractState, start_id: u64, end_id: u64) {
-            self.only_owner();
-            let mut id: u64 = start_id;
-            let null_address: ContractAddress = self.service_crews.read(0).manager_address;
-
-            loop {
-                if id >= end_id { break; }
-
-                if self.service_crew_ids.read(id).is_defined {
-                    self.service_crew_ids.write(id, ListLink { is_defined: false, prev: 0, next: 0 });
-                }
-                if self.service_crews.read(id).crew_id.is_non_zero() || self.service_crews.read(id).is_registered {
-                    self.service_crews.write(id, FloodgateServiceCrew { crew_id: 0, is_registered: false, is_locked: false, manager_address: null_address, is_automated_feeding_enabled: false});
-                }
-
-                id += 1;
-            };
-
-            self.service_crew_ids_anchor.write(0);
-        }
-    }
-
-    #[abi(embed_v0)]
     impl FloodgateApplicationInterfaceImpl of super::FloodgateApplicationInterfaceTrait<ContractState>
     {
         fn get_crew(self: @ContractState, service_crew_id: u64) -> FloodgateAppServiceCrew {
@@ -578,8 +547,8 @@ mod Floodgate
             self.set_crew_services_configuration_internal(service_crew_id, services);
         }
 
-        fn get_current_balance(self: @ContractState) -> u128 {
-            self.manager_balances.read(get_caller_address())
+        fn get_current_balance(self: @ContractState, address: ContractAddress) -> u128 {
+            self.manager_balances.read(address)
         }
 
         fn withdraw_balance(ref self: ContractState, amount: u128) {
@@ -642,10 +611,16 @@ mod Floodgate
             let service_code: felt252 = 'TransferGoods';
             self.only_enabled_service(service_crew_id, service_code);
 
+            // protect default feeding inventory
+            if self.service_crews.read(service_crew_id).is_automated_feeding_enabled {
+                let f: InfluenceInventory = self.service_crew_feeding_inventories.read(service_crew_id);
+                assert(destination_inventory.inventory_type != f.inventory_type || destination_inventory.inventory_id != f.inventory_id || destination_inventory.inventory_slot != f.inventory_slot, 'Transfer to feeding inventory');
+            }
+
             let mut a = transfers;
             while let Option::Some((source_inventory, items)) = a.pop_front() {
             
-                // protect default food inventory
+                // protect default feeding inventory
                 if self.service_crews.read(service_crew_id).is_automated_feeding_enabled {
                     let f: InfluenceInventory = self.service_crew_feeding_inventories.read(service_crew_id);
                     assert(source_inventory.inventory_type != f.inventory_type || source_inventory.inventory_id != f.inventory_id || source_inventory.inventory_slot != f.inventory_slot, 'Transfer from feeding inventory');
@@ -660,6 +635,7 @@ mod Floodgate
 
                 // items
                 let mut i = items;
+                call_data.append(i.len().into());
                 while let Option::Some(item) = i.pop_front() {    
                     call_data.append(item.item_id.into());
                     call_data.append(item.item_quantity.into());
