@@ -266,6 +266,16 @@ const makeFloodgateCrew = (
   asteroidName,
   stationName: station.Name ?? `Station#${station.id}`,
   crewmateIds: apiCrew.Crew?.roster ?? [],
+  feedingConfig: {
+    automaticFeedingEnabled: registeredCrew.is_automated_feeding_enabled,
+    inventoryId: Number(registeredCrew.default_feeding_inventory.inventory_id),
+    inventoryType: Number(
+      registeredCrew.default_feeding_inventory.inventory_type
+    ),
+    inventorySlot: Number(
+      registeredCrew.default_feeding_inventory.inventory_slot
+    ),
+  },
   services: registeredCrew.services.map((service) => ({
     enabled: service.is_enabled,
     actionSwayFee: BigInt(service.sway_fee_per_action),

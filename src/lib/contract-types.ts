@@ -11,6 +11,12 @@ export type FloodgateCrew = {
   crewmateIds: number[]
   managerAddress: bigint
   ownerAddress: bigint
+  feedingConfig: {
+    automaticFeedingEnabled: boolean
+    inventoryId: number
+    inventoryType: number
+    inventorySlot: number
+  }
   services: {
     enabled: boolean
     actionSwayFee: bigint

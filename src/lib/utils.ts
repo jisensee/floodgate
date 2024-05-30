@@ -1,4 +1,5 @@
-import { Crew, Crewmate } from '@influenceth/sdk'
+import { Crew, Crewmate, Inventory, Product } from '@influenceth/sdk'
+import { A, D, O, pipe } from '@mobily/ts-belt'
 import { type ClassValue, clsx } from 'clsx'
 import { InfluenceEntity } from 'influence-typed-sdk/api'
 import { twMerge } from 'tailwind-merge'
@@ -85,3 +86,13 @@ export const pluralize = (
   }
   return plural ?? `${singular}s`
 }
+
+export const getFoodAmount = (warehouse: InfluenceEntity) =>
+  pipe(
+    warehouse.Inventories,
+    A.find((i) => i.inventoryType === Inventory.IDS.WAREHOUSE_PRIMARY),
+    O.map(D.prop('contents')),
+    O.mapNullable(A.find((c) => c.product.i === Product.IDS.FOOD)),
+    O.map(D.prop('amount')),
+    O.getWithDefault<number>(0)
+  )

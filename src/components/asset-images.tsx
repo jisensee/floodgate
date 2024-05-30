@@ -1,4 +1,4 @@
-import { Building, ShipType } from '@influenceth/sdk'
+import { Building, Product, ShipType } from '@influenceth/sdk'
 import NextImage from 'next/image'
 import { makeInfluenceImageUrls } from 'influence-typed-sdk/images'
 import { FC } from 'react'
@@ -80,6 +80,20 @@ export const CrewImages = ({
       <CrewmateImage key={id} crewmateId={id} width={width} />
     ))}
   </div>
+)
+
+export type ProductImageProps = {
+  productId: number
+  width: number
+}
+
+export const ProductImage = ({ productId, width }: ProductImageProps) => (
+  <NextImage
+    src={imageUrls.product(Product.getType(productId), { w: width })}
+    width={width}
+    height={width}
+    alt='product'
+  />
 )
 
 export type SwayIconProps = {

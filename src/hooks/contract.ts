@@ -197,3 +197,41 @@ export const useDevteamShare = () => {
   })
   return data ? Number(data.toString()) / 1_000 : undefined
 }
+
+export const useSetFeedingConfig = (
+  crewId: number,
+  enabled: boolean,
+  warehouseId: number
+) =>
+  useContractWrite({
+    calls: [
+      floodgateContract.populateTransaction.set_crew_feeding_configuration(
+        crewId,
+        enabled,
+        {
+          inventory_id: warehouseId,
+          inventory_type: Entity.IDS.BUILDING,
+          inventory_slot: 2,
+        }
+      ),
+    ],
+  })
+
+export const useFeedCrew = (
+  crewId: number,
+  warehouseId: number,
+  foodAmount: number
+) =>
+  useContractWrite({
+    calls: [
+      floodgateContract.populateTransaction.resupply_food(
+        crewId,
+        {
+          inventory_type: Entity.IDS.BUILDING,
+          inventory_slot: 2,
+          inventory_id: warehouseId,
+        },
+        foodAmount
+      ),
+    ],
+  })
