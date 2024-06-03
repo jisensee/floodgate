@@ -32,7 +32,6 @@ export const FeedingConfigForm = ({
       ? crew.feedingConfig.inventoryId
       : undefined
   )
-  console.log('crew', crew)
   const {
     write: setConfig,
     data,

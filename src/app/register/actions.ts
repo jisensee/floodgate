@@ -1,12 +1,24 @@
 'use server'
 
 import { Address, Entity } from '@influenceth/sdk'
-import { A, O, pipe } from '@mobily/ts-belt'
+import { A, F, O, pipe } from '@mobily/ts-belt'
+import { InfluenceEntity } from 'influence-typed-sdk/api'
 import { influenceApi } from '@/lib/influence-api'
 import { getCrewMetadata } from '@/actions'
-import { getCrewBonuses } from '@/lib/utils'
+import { CrewBonuses, getCrewBonuses } from '@/lib/utils'
 
-export const getAccountCrews = async (address: string) => {
+export const getAccountCrews = async (
+  address: string
+): Promise<
+  (InfluenceEntity & {
+    name: string
+    crewmateIds: number[]
+    asteroidId: number
+    asteroidName: string
+    stationName?: string
+    bonuses: CrewBonuses
+  })[]
+> => {
   const crews = await influenceApi.entities({
     match: {
       path: 'Nft.owners.starknet',
@@ -14,6 +26,7 @@ export const getAccountCrews = async (address: string) => {
     },
     label: Entity.IDS.CREW,
   })
+  if (crews.length === 0) return []
   const { asteroidNames, stations, crewmates } = await getCrewMetadata(crews)
 
   return pipe(
@@ -44,6 +57,7 @@ export const getAccountCrews = async (address: string) => {
         crewmates.filter((c) => crew.Crew?.roster.includes(c.id)),
         station
       ),
-    }))
+    })),
+    F.toMutable
   )
 }

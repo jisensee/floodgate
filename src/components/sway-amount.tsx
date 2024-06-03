@@ -9,7 +9,7 @@ type SwayAmountProps = {
 
 export const SwayAmount = ({ className, amount, convert }: SwayAmountProps) => {
   return (
-    <div className={cn('flex items-center', className)}>
+    <div className={cn('flex items-center gap-x-1', className)}>
       <NextImage src='/sway-logo.png' alt='SWAY logo' width={24} height={24} />
       <span>
         {Math.round(

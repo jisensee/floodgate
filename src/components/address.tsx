@@ -10,9 +10,7 @@ export const Address: FC<AddressProps> = ({ address, shownCharacters }) => {
   const { data } = useStarkName({ address })
 
   const value = getTrimmedAddress(address, shownCharacters)
-  return (
-    <span className='overflow-hidden overflow-ellipsis'>{data ?? value}</span>
-  )
+  return <span className='break-words'>{data ?? value}</span>
 }
 
 const getTrimmedAddress = (address: string, shownCharacters?: number) => {

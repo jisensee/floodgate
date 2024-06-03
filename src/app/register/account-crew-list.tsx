@@ -53,33 +53,39 @@ const List = ({
 
   return (
     <AsyncData result={result} onLoading={loading}>
-      {(crews) => (
-        <div className='flex flex-col gap-y-3'>
-          {pipe(
-            crews,
-            A.filter((crew) => crew.asteroidId > 0),
-            A.sortBy((crew) => crew.asteroidId),
-            A.map((crew) => (
-              <CrewCard
-                key={crew.id}
-                crew={crew}
-                href={`/register/${crew.id}` as Route}
-                actions={
-                  registeredCrewIds.has(crew.id) && (
-                    <StandardTooltip content='Registering it again will reset all configuration.'>
-                      <Alert className='mt-1' variant='warning'>
-                        <AlertTitle icon={<CircleAlert />}>
-                          Crew is already registered
-                        </AlertTitle>
-                      </Alert>
-                    </StandardTooltip>
-                  )
-                }
-              />
-            ))
-          )}
-        </div>
-      )}
+      {(crews) =>
+        crews.length === 0 ? (
+          <div className='text-center'>
+            You own no crews that you could register.
+          </div>
+        ) : (
+          <div className='flex flex-col gap-y-3'>
+            {pipe(
+              crews,
+              A.filter((crew) => crew.asteroidId > 0),
+              A.sortBy((crew) => crew.asteroidId),
+              A.map((crew) => (
+                <CrewCard
+                  key={crew.id}
+                  crew={crew}
+                  href={`/register/${crew.id}` as Route}
+                  actions={
+                    registeredCrewIds.has(crew.id) && (
+                      <StandardTooltip content='Registering it again will reset all configuration.'>
+                        <Alert className='mt-1' variant='warning'>
+                          <AlertTitle icon={<CircleAlert />}>
+                            Crew is already registered
+                          </AlertTitle>
+                        </Alert>
+                      </StandardTooltip>
+                    )
+                  }
+                />
+              ))
+            )}
+          </div>
+        )
+      }
     </AsyncData>
   )
 }
