@@ -28,6 +28,7 @@ export type FloodgateCrew = {
     massCapacity: AbilityBonusDetails
     volumeCapacity: AbilityBonusDetails
   }
+  currentFoodRatio: number
 }
 
 export type FloodgateContractCrew = Awaited<

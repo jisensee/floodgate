@@ -3,6 +3,7 @@ import {
   useContractRead,
   useContractWrite,
 } from '@starknet-react/core'
+import { Call } from 'starknet'
 import { Entity, Permission } from '@influenceth/sdk'
 import { ABI as floodgateAbi } from '../abis/floodgate'
 import dispatcherAbi from '../abis/influence-dispatcher.json'
@@ -22,6 +23,7 @@ export const useFuelShipTransaction = (args: {
   shipOwnerCrewId: number
   swayFee: bigint
   fuelAmount: number
+  autoFeedingAmount: number
 }) => {
   const { contract: dispatcherContract } = useContract({
     abi: dispatcherAbi,
@@ -31,10 +33,52 @@ export const useFuelShipTransaction = (args: {
     abi: swayAbi,
     address: env.NEXT_PUBLIC_SWAY_CONTRACT_ADDRESS,
   })
+  
+  let feedingCall: Call[] = []
+  if (args.autoFeedingAmount > 0) {
+    feedingCall.push(floodgateContract.populateTransaction.resupply_food_from_default(
+        args.contractCrewId,
+        args.autoFeedingAmount
+      )
+    )
+  }
 
-  const write = useContractWrite({
-    calls: [
-      dispatcherContract?.populateTransaction?.['run_system']?.('Whitelist', [
+  const refuelCalls: Call[] =  [
+    dispatcherContract?.populateTransaction?.['run_system']?.('Whitelist', [
+      Entity.IDS.BUILDING,
+      args.warehouseId,
+      Permission.IDS.REMOVE_PRODUCTS,
+      Entity.IDS.CREW,
+      args.contractCrewId,
+      Entity.IDS.CREW,
+      args.warehouseOwnerCrewId,
+    ]),
+    dispatcherContract?.populateTransaction?.['run_system']?.('Whitelist', [
+      Entity.IDS.SHIP,
+      args.shipId,
+      Permission.IDS.ADD_PRODUCTS,
+      Entity.IDS.CREW,
+      args.contractCrewId,
+      Entity.IDS.CREW,
+      args.shipOwnerCrewId,
+    ]),
+    swayContract?.populateTransaction?.['increase_allowance']?.(
+      overfuelerAddress,
+      args.swayFee
+    ),
+    floodgateContract.populateTransaction.service_refuel_ship(
+      args.contractCrewId,
+      {
+        inventory_id: args.warehouseId,
+        inventory_type: Entity.IDS.BUILDING,
+        inventory_slot: 2,
+      },
+      args.shipId,
+      args.fuelAmount
+    ),
+    dispatcherContract?.populateTransaction?.['run_system']?.(
+      'RemoveFromWhitelist',
+      [
         Entity.IDS.BUILDING,
         args.warehouseId,
         Permission.IDS.REMOVE_PRODUCTS,
@@ -42,8 +86,11 @@ export const useFuelShipTransaction = (args: {
         args.contractCrewId,
         Entity.IDS.CREW,
         args.warehouseOwnerCrewId,
-      ]),
-      dispatcherContract?.populateTransaction?.['run_system']?.('Whitelist', [
+      ]
+    ),
+    dispatcherContract?.populateTransaction?.['run_system']?.(
+      'RemoveFromWhitelist',
+      [
         Entity.IDS.SHIP,
         args.shipId,
         Permission.IDS.ADD_PRODUCTS,
@@ -51,46 +98,12 @@ export const useFuelShipTransaction = (args: {
         args.contractCrewId,
         Entity.IDS.CREW,
         args.shipOwnerCrewId,
-      ]),
-      swayContract?.populateTransaction?.['increase_allowance']?.(
-        overfuelerAddress,
-        args.swayFee
-      ),
-      floodgateContract.populateTransaction.service_refuel_ship(
-        args.contractCrewId,
-        {
-          inventory_id: args.warehouseId,
-          inventory_type: Entity.IDS.BUILDING,
-          inventory_slot: 2,
-        },
-        args.shipId,
-        args.fuelAmount
-      ),
-      dispatcherContract?.populateTransaction?.['run_system']?.(
-        'RemoveFromWhitelist',
-        [
-          Entity.IDS.BUILDING,
-          args.warehouseId,
-          Permission.IDS.REMOVE_PRODUCTS,
-          Entity.IDS.CREW,
-          args.contractCrewId,
-          Entity.IDS.CREW,
-          args.warehouseOwnerCrewId,
-        ]
-      ),
-      dispatcherContract?.populateTransaction?.['run_system']?.(
-        'RemoveFromWhitelist',
-        [
-          Entity.IDS.SHIP,
-          args.shipId,
-          Permission.IDS.ADD_PRODUCTS,
-          Entity.IDS.CREW,
-          args.contractCrewId,
-          Entity.IDS.CREW,
-          args.shipOwnerCrewId,
-        ]
-      ),
-    ],
+      ]
+    ),
+  ]
+  
+  const write = useContractWrite({
+    calls: feedingCall.concat(refuelCalls),
   })
 
   return write

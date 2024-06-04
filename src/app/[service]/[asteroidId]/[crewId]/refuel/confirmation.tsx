@@ -5,7 +5,7 @@ import { useWizard } from 'react-use-wizard'
 import { ShipImage, WarehouseImage } from '@/components/asset-images'
 import { Progress } from '@/components/ui/progress'
 import { SwayAmount } from '@/components/sway-amount'
-import { Format, cn } from '@/lib/utils'
+import { Format, cn, getAutomaticFeedingAmount } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { useDevteamShare, useFuelShipTransaction } from '@/hooks/contract'
 import { Slider } from '@/components/ui/slider'
@@ -61,7 +61,9 @@ export const Confirmation: FC<ConfirmationProps> = ({
       selectedShip.lotIndex,
       transportBonus
     ) / 24
-
+  
+  const foodAmount = getAutomaticFeedingAmount(crew)
+  
   const {
     write: fuelShip,
     data,
@@ -75,6 +77,7 @@ export const Confirmation: FC<ConfirmationProps> = ({
     shipOwnerCrewId: selectedShip.owningCrewId,
     fuelAmount: usedFuel - 1,
     swayFee: actionFee,
+    autoFeedingAmount: foodAmount
   })
 
   const { isLoading, status: txStatus } = useTransactionToast({

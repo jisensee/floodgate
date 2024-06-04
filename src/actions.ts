@@ -11,7 +11,7 @@ import {
   FloodgateCrew,
   FloodgateServiceType,
 } from './lib/contract-types'
-import { getCrewBonuses } from './lib/utils'
+import { getCrewBonuses, getFoodRatio } from './lib/utils'
 import { influenceApi } from '@/lib/influence-api'
 
 export const getCrew = async (crewId: number) => {
@@ -285,4 +285,5 @@ const makeFloodgateCrew = (
     ) as FloodgateServiceType,
   })),
   bonuses: getCrewBonuses(apiCrew, crewmates, station),
+  currentFoodRatio: getFoodRatio(apiCrew, crewmates, station),
 })
