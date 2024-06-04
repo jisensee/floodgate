@@ -1,6 +1,6 @@
 import NextLink from 'next/link'
 import { Route } from 'next'
-import { A, D, O, pipe } from '@mobily/ts-belt'
+import { A, D, F, O, pipe } from '@mobily/ts-belt'
 import { getFloodgateCrews } from '@/actions'
 import { Page } from '@/components/page'
 import { Button } from '@/components/ui/button'
@@ -22,6 +22,7 @@ export default async function Home() {
     D.map((services) =>
       pipe(
         services,
+        F.toMutable,
         O.fromNullable,
         O.map(A.sortBy((s) => s.actionSwayFee)),
         O.mapNullable(A.head),

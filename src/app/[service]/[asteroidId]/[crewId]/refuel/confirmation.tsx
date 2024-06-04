@@ -2,6 +2,7 @@ import { FC, useState } from 'react'
 import { Fuel, MoveDown } from 'lucide-react'
 import { Asteroid } from '@influenceth/sdk'
 import { useWizard } from 'react-use-wizard'
+import { useQuery } from '@tanstack/react-query'
 import { ShipImage, WarehouseImage } from '@/components/asset-images'
 import { Progress } from '@/components/ui/progress'
 import { SwayAmount } from '@/components/sway-amount'
@@ -10,7 +11,7 @@ import { Button } from '@/components/ui/button'
 import { useDevteamShare, useFuelShipTransaction } from '@/hooks/contract'
 import { Slider } from '@/components/ui/slider'
 import { Label } from '@/components/ui/label'
-import { Ship, Warehouse } from '@/actions'
+import { Ship, Warehouse, getAutomaticFeedingAmount } from '@/actions'
 import { FloodgateCrew } from '@/lib/contract-types'
 import { useTransactionToast } from '@/hooks/transaction-toast'
 import {
@@ -61,7 +62,12 @@ export const Confirmation: FC<ConfirmationProps> = ({
       selectedShip.lotIndex,
       transportBonus
     ) / 24
-
+  
+  const {data: feedingAmount} = useQuery({
+    queryKey: ['feedingAmount', crew.id],
+    queryFn: () => getAutomaticFeedingAmount(crew),
+  })
+  
   const {
     write: fuelShip,
     data,
@@ -75,6 +81,7 @@ export const Confirmation: FC<ConfirmationProps> = ({
     shipOwnerCrewId: selectedShip.owningCrewId,
     fuelAmount: usedFuel - 1,
     swayFee: actionFee,
+    autoFeedingAmount: feedingAmount ?? 0
   })
 
   const { isLoading, status: txStatus } = useTransactionToast({

@@ -11,7 +11,7 @@ import {
   FloodgateCrew,
   FloodgateServiceType,
 } from './lib/contract-types'
-import { getCrewBonuses } from './lib/utils'
+import { getCrewBonuses, getFoodRatio, getFoodAmount } from './lib/utils'
 import { influenceApi } from '@/lib/influence-api'
 
 export const getCrew = async (crewId: number) => {
@@ -285,4 +285,22 @@ const makeFloodgateCrew = (
     ) as FloodgateServiceType,
   })),
   bonuses: getCrewBonuses(apiCrew, crewmates, station),
+  currentFoodRatio: getFoodRatio(apiCrew, crewmates, station),
 })
+
+export const getAutomaticFeedingAmount =  async (
+  crew: FloodgateCrew
+) => {
+  if (!crew.feedingConfig.automaticFeedingEnabled) { return 0 }
+  
+  const foodRatio = crew.currentFoodRatio
+  if (foodRatio >= 0.6) { return 0 }
+
+  const foodInventory = await getBuilding(crew.feedingConfig.inventoryId)
+  if (!foodInventory) { return 0 }
+  
+  const availableFood = getFoodAmount(foodInventory)
+  const foodToMax = (1 - crew.currentFoodRatio) * crew.crewmateIds.length * 1000
+  
+  return Math.floor(Math.min(foodToMax, availableFood))
+}
