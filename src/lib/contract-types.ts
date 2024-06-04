@@ -1,5 +1,5 @@
-import { AbilityBonusDetails } from '@influenceth/sdk'
 import { floodgateContract } from './contracts'
+import { CrewBonuses } from './utils'
 
 export type FloodgateCrew = {
   id: number
@@ -23,11 +23,8 @@ export type FloodgateCrew = {
     secondsSwayFee: bigint
     serviceType: FloodgateServiceType
   }[]
-  bonuses: {
-    transportTime: AbilityBonusDetails
-    massCapacity: AbilityBonusDetails
-    volumeCapacity: AbilityBonusDetails
-  }
+  bonuses: CrewBonuses
+  currentFoodRatio: number
 }
 
 export type FloodgateContractCrew = Awaited<

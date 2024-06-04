@@ -71,7 +71,18 @@ export const getCrewBonuses = (
     transportTime: getBonus(Crewmate.ABILITY_IDS.HOPPER_TRANSPORT_TIME),
     massCapacity: getBonus(Crewmate.ABILITY_IDS.INVENTORY_MASS_CAPACITY),
     volumeCapacity: getBonus(Crewmate.ABILITY_IDS.INVENTORY_VOLUME_CAPACITY),
+    foodConsumptionTime: getBonus(Crewmate.ABILITY_IDS.FOOD_CONSUMPTION_TIME),
   }
+}
+
+export const getFoodRatio = (
+  crew: InfluenceEntity,
+  crewmates: InfluenceEntity[],
+  station: InfluenceEntity
+) => {
+  const timeSinceFed: number = (new Date().getTime() - (crew?.Crew?.lastFed?.getTime() ?? 0)) / 1000 * 24
+  const consumption: number = getCrewBonuses(crew, crewmates, station).foodConsumptionTime.totalBonus
+  return Crew.getCurrentFoodRatio(timeSinceFed, consumption)
 }
 
 export type CrewBonuses = ReturnType<typeof getCrewBonuses>

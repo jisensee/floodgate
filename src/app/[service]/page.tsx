@@ -1,6 +1,6 @@
 import { notFound, redirect } from 'next/navigation'
 import { Route } from 'next'
-import { A, D, G, O, pipe } from '@mobily/ts-belt'
+import { A, D, F, G, O, pipe } from '@mobily/ts-belt'
 import Link from 'next/link'
 import { getFloodgateCrews } from '@/actions'
 import {
@@ -77,6 +77,7 @@ const getAvailableAsteroids = async (service: FloodgateServiceType) =>
     A.map((crews) =>
       pipe(
         crews,
+        F.toMutable,
         A.sortBy(
           (c) =>
             c.services.find((s) => s.serviceType === service)?.actionSwayFee
