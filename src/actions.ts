@@ -207,8 +207,7 @@ export const getCrewMetadata = async (apiCrews: InfluenceEntity[]) => {
         pipe(
           apiCrews,
           A.map((c) => c.Location?.locations?.asteroid?.id),
-          A.filter(G.isNotNullable),
-          F.toMutable
+          A.filter(G.isNotNullable)
         )
       ),
       pipe(
@@ -218,7 +217,7 @@ export const getCrewMetadata = async (apiCrews: InfluenceEntity[]) => {
           A.isNotEmpty,
           (shipIds) =>
             influenceApi.entities({
-              id: F.toMutable(shipIds),
+              id: shipIds,
               label: Entity.IDS.SHIP,
             }),
           () => Promise.resolve([])
@@ -231,7 +230,7 @@ export const getCrewMetadata = async (apiCrews: InfluenceEntity[]) => {
           A.isNotEmpty,
           (shipIds) =>
             influenceApi.entities({
-              id: F.toMutable(shipIds),
+              id: shipIds,
               label: Entity.IDS.BUILDING,
             }),
           () => Promise.resolve([])
