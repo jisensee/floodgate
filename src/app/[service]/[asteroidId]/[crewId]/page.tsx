@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { RefuelPage } from './refuel/refuel-page'
+import { TransferGoodsWizard } from './transfer-goods/transfer-goods-wizard'
 import { getFloodgateCrew } from '@/actions'
 import { Page } from '@/components/page'
 import { getServiceData } from '@/components/service-button'
@@ -39,6 +40,9 @@ export default async function CrewsActionPage({
     <Page title={`${name} on ${asteroidName}`} subtitle={`Using ${crew.name}`}>
       {service === 'RefuelShip' && crewSupportsService && (
         <RefuelPage crew={crew} />
+      )}
+      {service === 'TransferGoods' && crewSupportsService && (
+        <TransferGoodsWizard crew={crew} />
       )}
       {!crewSupportsService && (
         <p>This service is not supported by this crew currently.</p>

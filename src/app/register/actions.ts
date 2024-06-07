@@ -1,7 +1,7 @@
 'use server'
 
 import { Address, Entity } from '@influenceth/sdk'
-import { A, F, O, pipe } from '@mobily/ts-belt'
+import { A, O, pipe } from '@mobily/ts-belt'
 import { InfluenceEntity } from 'influence-typed-sdk/api'
 import { influenceApi } from '@/lib/influence-api'
 import { getCrewMetadata } from '@/actions'
@@ -57,7 +57,6 @@ export const getAccountCrews = async (
         crewmates.filter((c) => crew.Crew?.roster.includes(c.id)),
         station
       ),
-    })),
-    F.toMutable
+    }))
   )
 }
