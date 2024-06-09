@@ -1,4 +1,4 @@
-import { FC, Fragment, PropsWithChildren } from 'react'
+import { FC, Fragment, PropsWithChildren, useEffect } from 'react'
 import { Wizard as WizardProvider, useWizard } from 'react-use-wizard'
 import { CheckCircle, ChevronLeft, ChevronRight, Circle } from 'lucide-react'
 import { Separator } from './separator'
@@ -9,6 +9,7 @@ export type WizardStep = {
   title: string
   completed: boolean
   nextLabel?: string
+  onEnter?: () => Promise<void>
 }
 
 export type WizardProps = {
@@ -91,6 +92,11 @@ const Footer: FC<FooterProps> = ({ steps }) => {
   const step = steps[activeStep]
   const nextLabel = step?.nextLabel ?? 'Next'
   const completed = step?.completed
+
+  useEffect(() => {
+    steps[activeStep]?.onEnter?.()
+  }, [activeStep, steps])
+
   return (
     <div className='flex w-full justify-between'>
       <Button

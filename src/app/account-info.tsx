@@ -55,9 +55,7 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogHeader>
-            <h2>My Account</h2>
-          </DialogHeader>
+          <h2>My Account</h2>
         </DialogHeader>
         <div className='flex flex-col items-center gap-y-5 overflow-hidden'>
           <div className='flex w-full flex-col gap-y-2 rounded-md border border-border p-3'>

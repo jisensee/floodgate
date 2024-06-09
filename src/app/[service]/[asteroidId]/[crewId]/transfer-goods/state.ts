@@ -2,153 +2,80 @@ import { A } from '@mobily/ts-belt'
 import { ProductAmount } from 'influence-typed-sdk/api'
 import { Reducer, useReducer } from 'react'
 import { P, match } from 'ts-pattern'
+import { Inventory } from './actions'
 
 export type InventoryType = 'ship' | 'warehouse'
 
-export type DeliveryInventory = {
-  inventoryType: InventoryType
-  inventoryId: string
-}
-
-export type DestinationInventory = {
-  currentContents: ProductAmount[]
-  inventory: DeliveryInventory
-  massCapacity: number
-  volumeCapacity: number
-}
-
 export type Delivery = {
-  source: DeliveryInventory
+  source: Inventory
   contents: ProductAmount[]
 }
 
-type SelectDestinationState = {
-  step: 'select-destination'
-  destination?: DeliveryInventory
-}
-
-type SelectGoodsState = {
-  step: 'select-goods'
-  destination: DestinationInventory
+export type State = {
+  destination?: Inventory
   deliveries: Delivery[]
 }
-
-type ConfirmState = {
-  step: 'confirm'
-  destination: DestinationInventory
-  deliveries: Delivery[]
-}
-
-export type State = SelectDestinationState | SelectGoodsState | ConfirmState
-export type Step = State['step']
 
 type SelectDestinationAction = {
   type: 'select-destination'
-  destination: DeliveryInventory
-}
-
-type CompleteSelectDestinationStep = {
-  type: 'complete-select-destination-step'
-  destination: DestinationInventory
-}
-
-type CompleteSelectGoodsStep = {
-  type: 'complete-select-goods-step'
+  destination: Inventory
 }
 
 type AddDelivery = {
   type: 'add-delivery'
-  delivery: Delivery
+  source: Inventory
 }
 
 type RemvoveDelivery = {
   type: 'remove-delivery'
-  delivery: DeliveryInventory
+  deliverySourceUuid: string
 }
 
 type UpdateDelivery = {
   type: 'update-delivery'
-  delivery: DeliveryInventory
+  deliverySourceUuid: string
   newContents: ProductAmount[]
 }
 
 export type Action =
-  | CompleteSelectDestinationStep
-  | CompleteSelectGoodsStep
   | SelectDestinationAction
   | AddDelivery
   | RemvoveDelivery
   | UpdateDelivery
 
 const reducer: Reducer<State, Action> = (currentState, action) =>
-  match([currentState, action])
+  match(action)
     .returnType<State>()
-    .with(
-      [
-        { step: 'select-destination', destination: P.nonNullable },
-        { type: 'complete-select-destination-step' },
+    .with({ type: 'select-destination' }, (action) => ({
+      step: 'select-destination',
+      ...currentState,
+      destination: action.destination,
+    }))
+    .with({ type: 'add-delivery' }, (action) => ({
+      ...currentState,
+      deliveries: [
+        ...currentState.deliveries,
+        { source: action.source, contents: [] },
       ],
-      ([, action]) => ({
-        step: 'select-goods',
-        destination: action.destination,
-        deliveries: [],
-      })
-    )
-    .with(
-      [{ step: 'select-goods' }, { type: 'complete-select-goods-step' }],
-      ([state]) => state.deliveries.length > 0,
-      ([state]) => ({
-        step: 'confirm',
-        destination: state.destination,
-        deliveries: state.deliveries,
-      })
-    )
-    .with(
-      [{ step: 'select-destination' }, { type: 'select-destination' }],
-      ([, action]) => ({
-        step: 'select-destination',
-        destination: action.destination,
-      })
-    )
-    .with(
-      [{ step: 'select-goods' }, { type: 'add-delivery' }],
-      ([state, action]) => ({
-        ...state,
-        deliveries: [...state.deliveries, action.delivery],
-      })
-    )
-    .with(
-      [{ step: 'select-goods' }, { type: 'remove-delivery' }],
-      ([state, action]) => ({
-        ...state,
-        deliveries: A.removeFirstBy(
-          state.deliveries,
-          action.delivery,
-          deliveryEquals
-        ),
-      })
-    )
-    .with(
-      [{ step: 'select-goods' }, { type: 'update-delivery' }],
-      ([state, action]) => ({
-        ...state,
-        deliveries: state.deliveries.map((d) =>
-          deliveryEquals(d, action.delivery)
-            ? { ...d, contents: action.newContents }
-            : d
-        ),
-      })
-    )
+    }))
+    .with({ type: 'remove-delivery' }, (action) => ({
+      ...currentState,
+      deliveries: A.removeFirstBy(
+        currentState.deliveries,
+        action.deliverySourceUuid,
+        (delivery, sourceUuid) => delivery.source.uuid === sourceUuid
+      ),
+    }))
+    .with({ type: 'update-delivery' }, (action) => ({
+      ...currentState,
+      deliveries: currentState.deliveries.map((delivery) =>
+        delivery.source.uuid === action.deliverySourceUuid
+          ? { ...delivery, contents: action.newContents }
+          : delivery
+      ),
+    }))
     .with(P._, () => currentState)
     .exhaustive()
 
 export const useTransferGoodsState = () =>
-  useReducer<Reducer<State, Action>>(reducer, { step: 'select-destination' })
-
-const deliveryInventoryEquals = (a: DeliveryInventory, b: DeliveryInventory) =>
-  a.inventoryType === b.inventoryType && a.inventoryId === b.inventoryId
-
-const deliveryEquals = (
-  delivery: Delivery,
-  deliveryInventory: DeliveryInventory
-) => deliveryInventoryEquals(delivery.source, deliveryInventory)
+  useReducer<Reducer<State, Action>>(reducer, { deliveries: [] })

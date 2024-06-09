@@ -1,7 +1,7 @@
-import { Crew, Crewmate, Inventory, Product } from '@influenceth/sdk'
+import { Building, Crew, Crewmate, Inventory, Product } from '@influenceth/sdk'
 import { A, D, O, pipe } from '@mobily/ts-belt'
 import { type ClassValue, clsx } from 'clsx'
-import { InfluenceEntity } from 'influence-typed-sdk/api'
+import { InfluenceEntity, ProductAmount } from 'influence-typed-sdk/api'
 import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
@@ -42,12 +42,22 @@ export const Format = {
     if (kilograms < 1_000_000) {
       return Math.round(kilograms / 1000) + 't'
     }
+    if (kilograms < 1_000_000_000) {
+      return (
+        (kilograms / 1_000_000).toLocaleString(undefined, {
+          maximumFractionDigits: 1,
+        }) + 'kt'
+      )
+    }
     return (
-      (kilograms / 1_000_000).toLocaleString(undefined, {
+      (kilograms / 1_000_000_000).toLocaleString(undefined, {
         maximumFractionDigits: 1,
-      }) + 'kt'
+      }) + 'Mt'
     )
   },
+  volume: (liters: number) =>
+    (liters / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 }) +
+    'm³',
 }
 
 export const getCrewBonuses = (
@@ -80,8 +90,10 @@ export const getFoodRatio = (
   crewmates: InfluenceEntity[],
   station: InfluenceEntity
 ) => {
-  const timeSinceFed: number = (new Date().getTime() - (crew?.Crew?.lastFed?.getTime() ?? 0)) / 1000 * 24
-  const consumption: number = getCrewBonuses(crew, crewmates, station).foodConsumptionTime.totalBonus
+  const timeSinceFed: number =
+    ((new Date().getTime() - (crew?.Crew?.lastFed?.getTime() ?? 0)) / 1000) * 24
+  const consumption: number = getCrewBonuses(crew, crewmates, station)
+    .foodConsumptionTime.totalBonus
   return Crew.getCurrentFoodRatio(timeSinceFed, consumption)
 }
 
@@ -107,3 +119,34 @@ export const getFoodAmount = (warehouse: InfluenceEntity) =>
     O.map(D.prop('amount')),
     O.getWithDefault<number>(0)
   )
+
+export const getBaseName = (influenceEntity: InfluenceEntity) => {
+  if (influenceEntity.Name) return influenceEntity.Name
+
+  if (influenceEntity.Ship) {
+    return `${influenceEntity.Ship.shipType.name}#${influenceEntity.id}`
+  }
+  if (influenceEntity.Building) {
+    return `${influenceEntity.Building.buildingType.name}#${influenceEntity.id}`
+  }
+  if (influenceEntity.Crew) {
+    return `Crew#${influenceEntity.id}`
+  }
+  return `Unknown#${influenceEntity.id}`
+}
+
+export const getStorageInventoryId = (influenceEntity: InfluenceEntity) => {
+  if (influenceEntity.Ship)
+    return influenceEntity.Ship.shipType.cargoInventoryType
+
+  if (influenceEntity.Building)
+    return influenceEntity.Building?.buildingType.i === Building.IDS.WAREHOUSE
+      ? Inventory.IDS.WAREHOUSE_PRIMARY
+      : undefined
+}
+
+export const calcMassAndVolume = (contents: ProductAmount[]) =>
+  A.reduce(contents, { mass: 0, volume: 0 }, (curr, next) => ({
+    mass: curr.mass + next.amount * (next.product.massPerUnit / 1000),
+    volume: curr.volume + next.amount * (next.product.volumePerUnit / 1000),
+  }))
