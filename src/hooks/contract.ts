@@ -34,7 +34,7 @@ export const useFuelShipTransaction = (args: {
     address: env.NEXT_PUBLIC_SWAY_CONTRACT_ADDRESS,
   })
   
-  let feedingCall: Call[] = []
+  const feedingCall: Call[] = []
   if (args.autoFeedingAmount > 0) {
     feedingCall.push(floodgateContract.populateTransaction.resupply_food_from_default(
         args.contractCrewId,

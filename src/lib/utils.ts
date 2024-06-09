@@ -1,11 +1,8 @@
 import { Crew, Crewmate, Inventory, Product } from '@influenceth/sdk'
-import { FloodgateCrew } from '@/lib/contract-types'
 import { A, D, O, pipe } from '@mobily/ts-belt'
 import { type ClassValue, clsx } from 'clsx'
 import { InfluenceEntity } from 'influence-typed-sdk/api'
 import { twMerge } from 'tailwind-merge'
-import { num } from 'starknet'
-import { getBuilding } from '@/actions'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -83,8 +80,8 @@ export const getFoodRatio = (
   crewmates: InfluenceEntity[],
   station: InfluenceEntity
 ) => {
-  let timeSinceFed: number = (new Date().getTime() - (crew?.Crew?.lastFed?.getTime() ?? 0)) / 1000 * 24
-  let consumption: number = getCrewBonuses(crew, crewmates, station).foodConsumptionTime.totalBonus
+  const timeSinceFed: number = (new Date().getTime() - (crew?.Crew?.lastFed?.getTime() ?? 0)) / 1000 * 24
+  const consumption: number = getCrewBonuses(crew, crewmates, station).foodConsumptionTime.totalBonus
   return Crew.getCurrentFoodRatio(timeSinceFed, consumption)
 }
 
@@ -110,20 +107,3 @@ export const getFoodAmount = (warehouse: InfluenceEntity) =>
     O.map(D.prop('amount')),
     O.getWithDefault<number>(0)
   )
-
-export const getAutomaticFeedingAmount =  (
-  crew: FloodgateCrew
-) => {
-  if (!crew.feedingConfig.automaticFeedingEnabled) { return 0 }
-  
-  const foodRatio = crew.currentFoodRatio
-  if (foodRatio >= 0.6) { return 0 }
-
-  //const foodInventory = await getBuilding(crew.feedingConfig.inventoryId)
-  //if (!foodInventory) { return 0 }
-  
-  const availableFood = 250 //getFoodAmount(foodInventory)
-  const foodToMax = (1 - crew.currentFoodRatio) * crew.crewmateIds.length * 1000
-  
-  return Math.min(foodToMax, availableFood)
-}
