@@ -83,7 +83,7 @@ export const FeedingConfigForm = ({
           value={selectedWarehouseId}
           onChange={(e) => setSelectedWarehouseId(parseInt(e.target.value))}
         />
-        {!selectedWarehouse && (
+        {!selectedWarehouse && selectedWarehouseId !== undefined && (
           <Alert className='col-span-2' variant='warning'>
             You have selected a warehouse that the crew is not whitelisted for.
             Please make sure that the crew is permitted to remove products from
@@ -116,6 +116,10 @@ export const FeedingConfigForm = ({
           crew for a warehouse or enter a warehouse ID manually.
         </Alert>
       )}
+      <Alert variant='default' className='text-center'>
+        To protect the assets of your selected warehouse, Floodgate will not
+        allow any products to be transferred out of it through any service.
+      </Alert>
       <div className='flex justify-center'>
         <Button
           className='w-fit'

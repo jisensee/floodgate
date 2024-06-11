@@ -3,8 +3,9 @@ import {
   useContractRead,
   useContractWrite,
 } from '@starknet-react/core'
-import { Call } from 'starknet'
+import { Call, cairo } from 'starknet'
 import { Entity, Permission } from '@influenceth/sdk'
+import { ProductAmount } from 'influence-typed-sdk/api'
 import { ABI as floodgateAbi } from '../abis/floodgate'
 import dispatcherAbi from '../abis/influence-dispatcher.json'
 import swayAbi from '../abis/sway.json'
@@ -14,6 +15,21 @@ import { FloodgateService } from '@/lib/contract-types'
 
 const overfuelerAddress = env.NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS
 const dispatcherAddress = env.NEXT_PUBLIC_INFLUENCE_DISPATCHER_CONTRACT_ADDRESS
+
+const addFeedingCall = (
+  calls: Call[],
+  crewId: number,
+  autoFeedingAmount: number
+) =>
+  autoFeedingAmount > 0
+    ? [
+        floodgateContract.populateTransaction.resupply_food_from_default(
+          crewId,
+          autoFeedingAmount
+        ),
+        ...calls,
+      ]
+    : calls
 
 export const useFuelShipTransaction = (args: {
   warehouseId: number
@@ -33,17 +49,8 @@ export const useFuelShipTransaction = (args: {
     abi: swayAbi,
     address: env.NEXT_PUBLIC_SWAY_CONTRACT_ADDRESS,
   })
-  
-  const feedingCall: Call[] = []
-  if (args.autoFeedingAmount > 0) {
-    feedingCall.push(floodgateContract.populateTransaction.resupply_food_from_default(
-        args.contractCrewId,
-        args.autoFeedingAmount
-      )
-    )
-  }
 
-  const refuelCalls: Call[] =  [
+  const refuelCalls: Call[] = [
     dispatcherContract?.populateTransaction?.['run_system']?.('Whitelist', [
       Entity.IDS.BUILDING,
       args.warehouseId,
@@ -101,9 +108,13 @@ export const useFuelShipTransaction = (args: {
       ]
     ),
   ]
-  
+
   const write = useContractWrite({
-    calls: feedingCall.concat(refuelCalls),
+    calls: addFeedingCall(
+      refuelCalls,
+      args.contractCrewId,
+      args.autoFeedingAmount
+    ),
   })
 
   return write
@@ -248,3 +259,119 @@ export const useFeedCrew = (
       ),
     ],
   })
+
+export type TransferGoodsInventory = {
+  inventoryId: number
+  inventoryType: number
+  inventorySlot: number
+  owningCrewId: number
+}
+export const useTransferGoodsTransaction = (
+  crewId: number,
+  actionFee: bigint,
+  destination: TransferGoodsInventory,
+  transfers: {
+    source: TransferGoodsInventory
+    contents: ProductAmount[]
+  }[],
+  autoFeedingAmount: number
+) => {
+  const { contract: dispatcherContract } = useContract({
+    abi: dispatcherAbi,
+    address: dispatcherAddress,
+  })
+  const { contract: swayContract } = useContract({
+    abi: swayAbi,
+    address: env.NEXT_PUBLIC_SWAY_CONTRACT_ADDRESS,
+  })
+
+  const transferCall =
+    floodgateContract.populateTransaction.service_transfer_goods(
+      crewId,
+      {
+        inventory_id: destination.inventoryId,
+        inventory_type: destination.inventoryType,
+        inventory_slot: destination.inventorySlot,
+      },
+      //@ts-expect-error abi wan doesn't like tuples I guess
+      transfers.map(({ source, contents }) =>
+        cairo.tuple(
+          {
+            inventory_id: source.inventoryId,
+            inventory_type: source.inventoryType,
+            inventory_slot: source.inventorySlot,
+          },
+          contents.map((c) => ({
+            item_id: c.product.i,
+            item_quantity: c.amount,
+          }))
+        )
+      )
+    )
+
+  const whitelistCalls = transfers
+    .map(({ source }) =>
+      dispatcherContract?.populateTransaction?.['run_system']?.('Whitelist', [
+        source.inventoryType,
+        source.inventoryId,
+        Permission.IDS.REMOVE_PRODUCTS,
+        Entity.IDS.CREW,
+        crewId,
+        Entity.IDS.CREW,
+        source.owningCrewId,
+      ])
+    )
+    .concat([
+      dispatcherContract?.populateTransaction?.['run_system']?.('Whitelist', [
+        destination.inventoryType,
+        destination.inventoryId,
+        Permission.IDS.ADD_PRODUCTS,
+        Entity.IDS.CREW,
+        crewId,
+        Entity.IDS.CREW,
+        destination.owningCrewId,
+      ]),
+    ])
+  const removeFromWhitelistCalls = transfers.flatMap(({ source }) => [
+    dispatcherContract?.populateTransaction?.['run_system']?.(
+      'RemoveFromWhitelist',
+      [
+        source.inventoryType,
+        source.inventoryId,
+        Permission.IDS.REMOVE_PRODUCTS,
+        Entity.IDS.CREW,
+        crewId,
+        Entity.IDS.CREW,
+        source.owningCrewId,
+      ]
+    ),
+    dispatcherContract?.populateTransaction?.['run_system']?.(
+      'RemoveFromWhitelist',
+      [
+        destination.inventoryType,
+        destination.inventoryId,
+        Permission.IDS.ADD_PRODUCTS,
+        Entity.IDS.CREW,
+        crewId,
+        Entity.IDS.CREW,
+        destination.owningCrewId,
+      ]
+    ),
+  ])
+
+  return useContractWrite({
+    calls: addFeedingCall(
+      [
+        ...whitelistCalls,
+        swayContract?.populateTransaction?.['increase_allowance']?.(
+          overfuelerAddress,
+          actionFee
+        ),
+        transferCall,
+        ...removeFromWhitelistCalls,
+      ],
+      crewId,
+      autoFeedingAmount
+    ),
+  })
+}

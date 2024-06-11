@@ -1,4 +1,4 @@
-import { A } from '@mobily/ts-belt'
+import { A, D, N, O, pipe } from '@mobily/ts-belt'
 import { ProductAmount } from 'influence-typed-sdk/api'
 import { Reducer, useReducer } from 'react'
 import { P, match } from 'ts-pattern'
@@ -37,11 +37,16 @@ type UpdateDelivery = {
   newContents: ProductAmount[]
 }
 
+type Reset = {
+  type: 'reset'
+}
+
 export type Action =
   | SelectDestinationAction
   | AddDelivery
   | RemvoveDelivery
   | UpdateDelivery
+  | Reset
 
 const reducer: Reducer<State, Action> = (currentState, action) =>
   match(action)
@@ -55,7 +60,10 @@ const reducer: Reducer<State, Action> = (currentState, action) =>
       ...currentState,
       deliveries: [
         ...currentState.deliveries,
-        { source: action.source, contents: [] },
+        {
+          source: action.source,
+          contents: action.source.contents.map((p) => ({ ...p, amount: 0 })),
+        },
       ],
     }))
     .with({ type: 'remove-delivery' }, (action) => ({
@@ -74,8 +82,31 @@ const reducer: Reducer<State, Action> = (currentState, action) =>
           : delivery
       ),
     }))
+    .with({ type: 'reset' }, () => ({
+      deliveries: [],
+    }))
     .with(P._, () => currentState)
     .exhaustive()
 
 export const useTransferGoodsState = () =>
   useReducer<Reducer<State, Action>>(reducer, { deliveries: [] })
+
+export const getDeliveriesContents = (deliveries: Delivery[]) =>
+  pipe(
+    deliveries,
+    A.map(D.prop('contents')),
+    A.flat,
+    A.groupBy((p) => p.product.i),
+    D.values,
+    A.keepMap(
+      O.mapNullable((amounts) => {
+        const product = amounts?.[0]?.product
+        if (!product) return undefined
+
+        return {
+          product,
+          amount: amounts.map((a) => a.amount).reduce(N.add),
+        }
+      })
+    )
+  )

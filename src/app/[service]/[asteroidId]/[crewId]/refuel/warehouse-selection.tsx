@@ -23,10 +23,14 @@ export const WarehouseSelection: FC<WarehouseSelectionProps> = ({
   const transportBonus = crew.bonuses.transportTime.totalBonus
 
   const getShipDistance = (warehouse: Warehouse) =>
-    Asteroid.getLotDistance(1, warehouse.lotIndex, selectedShip?.lotIndex ?? 0)
+    Asteroid.getLotDistance(
+      crew.asteroidId,
+      warehouse.lotIndex,
+      selectedShip?.lotIndex ?? 0
+    )
   const getTransportTime = (warehouse: Warehouse) =>
     Asteroid.getLotTravelTime(
-      1,
+      crew.asteroidId,
       warehouse.lotIndex,
       selectedShip?.lotIndex ?? 0,
       transportBonus

@@ -49,7 +49,11 @@ export const ShipSelection: FC<ShipSelectionProps> = ({
           </div>
           <Progress
             className='h-1'
-            value={(ship.fuelAmount / ship.fuelCapacity) * 100}
+            indicators={[
+              {
+                value: (ship.fuelAmount / ship.fuelCapacity) * 100,
+              },
+            ]}
           />
         </div>
       ))}

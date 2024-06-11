@@ -35,6 +35,8 @@
 @layer base {
   * {
     @apply border-border;
+    scroll-behavior: smooth;
+    scrollbar-color: hsl(var(--muted-foreground)) hsl(var(--background));
   }
 
   body {
