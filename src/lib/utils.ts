@@ -8,6 +8,27 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+const formatMass = (kilograms: number) => {
+  if (kilograms < 1000) {
+    return `${kilograms}kg`
+  }
+  if (kilograms < 1_000_000) {
+    return Math.round(kilograms / 1000) + 't'
+  }
+  if (kilograms < 1_000_000_000) {
+    return (
+      (kilograms / 1_000_000).toLocaleString(undefined, {
+        maximumFractionDigits: 1,
+      }) + 'kt'
+    )
+  }
+  return (
+    (kilograms / 1_000_000_000).toLocaleString(undefined, {
+      maximumFractionDigits: 1,
+    }) + 'Mt'
+  )
+}
+
 export const Format = {
   duration: (seconds: number) => {
     if (seconds === 0) {
@@ -35,26 +56,11 @@ export const Format = {
   },
   distance: (kilometers: number) =>
     kilometers.toLocaleString(undefined, { maximumFractionDigits: 1 }) + 'km',
-  mass: (kilograms: number) => {
-    if (kilograms < 1000) {
-      return `${kilograms}kg`
-    }
-    if (kilograms < 1_000_000) {
-      return Math.round(kilograms / 1000) + 't'
-    }
-    if (kilograms < 1_000_000_000) {
-      return (
-        (kilograms / 1_000_000).toLocaleString(undefined, {
-          maximumFractionDigits: 1,
-        }) + 'kt'
-      )
-    }
-    return (
-      (kilograms / 1_000_000_000).toLocaleString(undefined, {
-        maximumFractionDigits: 1,
-      }) + 'Mt'
-    )
-  },
+  productMass: (productAmount: ProductAmount) =>
+    productAmount.product.isAtomic
+      ? productAmount.amount.toLocaleString()
+      : formatMass(productAmount.amount),
+  mass: formatMass,
   volume: (liters: number) =>
     (liters / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 }) +
     'm³',

@@ -22,13 +22,11 @@ export const InventoryCard = ({
 
   const { mass, volume } = calcMassAndVolume(inventory.contents)
 
-  const usedMass = inventory.reservedMass / 1000 + mass
-  const usedVolume = inventory.reservedVolume / 1000 + volume
-  const usedMassPercent = Math.round(
-    (usedMass / (inventory.massCapacity / 1000)) * 100
-  )
+  const usedMass = inventory.reservedMass + mass
+  const usedVolume = inventory.reservedVolume + volume
+  const usedMassPercent = Math.round((usedMass / inventory.massCapacity) * 100)
   const usedVolumePercent = Math.round(
-    (usedVolume / (inventory.volumeCapacity / 1000)) * 100
+    (usedVolume / inventory.volumeCapacity) * 100
   )
 
   return (
@@ -45,12 +43,11 @@ export const InventoryCard = ({
           <p className='font-bold'>{inventory.name}</p>
           <p className='text-muted-foreground'>
             Mass: {Format.mass(usedMass)} /{' '}
-            {Format.mass(inventory.massCapacity / 1000)} ({usedMassPercent}%)
+            {Format.mass(inventory.massCapacity)} ({usedMassPercent}%)
           </p>
           <p className='text-muted-foreground'>
             Volume: {Format.volume(usedVolume)} /{' '}
-            {Format.volume(inventory.volumeCapacity / 1000)} (
-            {usedVolumePercent}%)
+            {Format.volume(inventory.volumeCapacity)} ({usedVolumePercent}%)
           </p>
         </div>
       </div>

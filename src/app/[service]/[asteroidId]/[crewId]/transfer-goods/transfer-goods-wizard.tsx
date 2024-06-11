@@ -9,6 +9,7 @@ import { SelectGoodsStep } from './select-goods-step'
 import { ConfirmationStep } from './confirmation-step'
 import { FloodgateCrew } from '@/lib/contract-types'
 import { Wizard } from '@/components/ui/wizard'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export type TransferGoodsWizardProps = {
   address: string
@@ -22,7 +23,7 @@ export const TransferGoodsWizard = ({
 }: TransferGoodsWizardProps) => {
   const result = useQuery({
     queryKey: ['ships-warehouses', address, crew.asteroidId],
-    queryFn: () => getInventories(address, crew.asteroidId),
+    queryFn: () => getInventories(address, crew),
   })
   const [state, dispatch] = useTransferGoodsState()
 
@@ -44,7 +45,19 @@ export const TransferGoodsWizard = ({
       wrapperClassName='overflow-auto grow h-full'
     >
       {match(result)
-        .with({ isLoading: true }, () => <p>Loading...</p>)
+        .with({ isLoading: true }, () => (
+          <div className='flex h-full grow flex-col gap-y-3'>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className='flex gap-x-5'>
+                <Skeleton className='h-20 w-32' />
+                <div className='flex flex-col gap-y-1'>
+                  <Skeleton className='h-4 w-64' />
+                  <Skeleton className='h-3 w-32' />
+                </div>
+              </div>
+            ))}
+          </div>
+        ))
         .with({ data: P.nonNullable }, ({ data: inventories }) => [
           <SelectDestinationStep
             key='1'
@@ -58,10 +71,11 @@ export const TransferGoodsWizard = ({
               inventories={inventories}
               destination={state.destination}
               deliveries={state.deliveries}
+              crew={crew}
               dispatch={dispatch}
             />
           ) : (
-            <div />
+            <div key='2' />
           ),
           state.destination ? (
             <ConfirmationStep
@@ -69,9 +83,11 @@ export const TransferGoodsWizard = ({
               inventories={inventories}
               destination={state.destination}
               deliveries={state.deliveries}
+              crew={crew}
+              onReset={() => dispatch({ type: 'reset' })}
             />
           ) : (
-            <div />
+            <div key='3' />
           ),
         ])
         .with(P._, () => null)

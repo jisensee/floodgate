@@ -3,29 +3,46 @@
 import * as React from 'react'
 import * as ProgressPrimitive from '@radix-ui/react-progress'
 
+import { A, D, pipe } from '@mobily/ts-belt'
 import { cn } from '@/lib/utils'
+
+export type ProgressIndicator = {
+  position?: number
+  value: number
+  className?: string
+}
 
 const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> & {
-    indicatorClassName?: string
+  Omit<
+    React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>,
+    'value'
+  > & {
+    indicators: ProgressIndicator[]
   }
->(({ className, value, indicatorClassName, ...props }, ref) => (
+>(({ className, indicators, ...props }, ref) => (
   <ProgressPrimitive.Root
     ref={ref}
     className={cn(
-      'relative h-4 w-full overflow-hidden rounded-full bg-border',
+      'relative h-4 w-full overflow-hidden rounded bg-border',
       className
     )}
     {...props}
   >
-    <ProgressPrimitive.Indicator
-      className={cn(
-        'h-full w-full flex-1 bg-primary transition-all',
-        indicatorClassName
-      )}
-      style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
-    />
+    {pipe(
+      indicators,
+      A.sortBy(D.prop('position')),
+      A.map((indicator) => (
+        <ProgressPrimitive.Indicator
+          key={indicator.position ?? 1}
+          className={cn(
+            'absolute left-0 h-full w-full flex-1 bg-white transition-all',
+            indicator.className
+          )}
+          style={{ transform: `translateX(-${100 - indicator.value}%)` }}
+        />
+      ))
+    )}
   </ProgressPrimitive.Root>
 ))
 Progress.displayName = ProgressPrimitive.Root.displayName

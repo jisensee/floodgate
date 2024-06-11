@@ -50,7 +50,17 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
           size='sm'
         >
           {swayBalance && <SwayAmount amount={swayBalance.value} convert />}
-          <Address address={address} shownCharacters={4} />
+          <div className='flex items-center gap-x-1'>
+            {connector.icon.dark && (
+              <NextImage
+                src={connector.icon.dark}
+                width={16}
+                height={16}
+                alt={connector.name}
+              />
+            )}
+            <Address address={address} shownCharacters={4} />
+          </div>
         </Button>
       </DialogTrigger>
       <DialogContent>
