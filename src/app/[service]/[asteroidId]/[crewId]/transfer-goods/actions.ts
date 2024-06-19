@@ -70,6 +70,15 @@ export const getInventories = async (
         owningCrewId,
         lotIndex,
       }
+
+      // Exclude the feeding inventory since the contract won't allow actions on it
+      if (
+        base.id === crew.feedingConfig.inventoryId &&
+        base.inventoryType === crew.feedingConfig.inventoryType
+      ) {
+        return undefined
+      }
+
       return entity.Ship
         ? {
             type: 'ship',
@@ -77,11 +86,6 @@ export const getInventories = async (
             ...base,
           }
         : { type: 'warehouse', ...base }
-    }),
-    A.keep(
-      (i) =>
-        i.id !== crew.feedingConfig.inventoryId &&
-        i.inventoryType !== crew.feedingConfig.inventoryType
-    )
+    })
   )
 }

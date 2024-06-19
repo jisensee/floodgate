@@ -11,6 +11,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import { Link } from '@/components/ui/link'
+import { env } from '@/env'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -29,9 +30,9 @@ export default async function RootLayout({
         <Analytics />
         <Providers>
           <div className='flex h-full flex-col'>
-            <Header />
+            {env.NEXT_PUBLIC_CHAIN === 'testnet' && <Header />}
             <div className='flex-grow'>{children}</div>
-            <Footer />
+            {env.NEXT_PUBLIC_CHAIN === 'testnet' && <Footer />}
             <Toaster />
           </div>
         </Providers>
