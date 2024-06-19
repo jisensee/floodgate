@@ -75,7 +75,6 @@ export const SelectGoodsStep = ({
           open={addSourceDialogOpen}
           onOpenChange={setAddSourceDialogOpen}
           sources={availableSources}
-          crew={crew}
           onSelect={(i) => {
             dispatch({
               type: 'add-delivery',
@@ -246,14 +245,12 @@ type AddSourceDialogProps = {
   onOpenChange: (open: boolean) => void
   sources: Inventory[]
   onSelect: (inventory: Inventory) => void
-  crew: FloodgateCrew
 }
 const AddSourceDialog = ({
   open,
   onOpenChange,
   sources,
   onSelect,
-  crew,
 }: AddSourceDialogProps) => (
   <Dialog open={open} onOpenChange={onOpenChange}>
     <DialogTrigger asChild>
@@ -265,11 +262,6 @@ const AddSourceDialog = ({
       <DialogHeader>Add source</DialogHeader>
       {pipe(
         sources,
-        A.keep(
-          (source) =>
-            source.id !== crew.feedingConfig.inventoryId &&
-            source.inventoryType !== crew.feedingConfig.inventoryType
-        ),
         A.map((source) => (
           <InventoryCard
             key={source.uuid}
