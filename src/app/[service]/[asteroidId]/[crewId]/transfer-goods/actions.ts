@@ -77,6 +77,11 @@ export const getInventories = async (
             ...base,
           }
         : { type: 'warehouse', ...base }
-    })
+    }),
+    A.keep(
+      (i) =>
+        i.id !== crew.feedingConfig.inventoryId &&
+        i.inventoryType !== crew.feedingConfig.inventoryType
+    )
   )
 }

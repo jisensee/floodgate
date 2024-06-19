@@ -332,32 +332,35 @@ export const useTransferGoodsTransaction = (
         destination.owningCrewId,
       ]),
     ])
-  const removeFromWhitelistCalls = transfers.flatMap(({ source }) => [
-    dispatcherContract?.populateTransaction?.['run_system']?.(
-      'RemoveFromWhitelist',
-      [
-        source.inventoryType,
-        source.inventoryId,
-        Permission.IDS.REMOVE_PRODUCTS,
-        Entity.IDS.CREW,
-        crewId,
-        Entity.IDS.CREW,
-        source.owningCrewId,
-      ]
-    ),
-    dispatcherContract?.populateTransaction?.['run_system']?.(
-      'RemoveFromWhitelist',
-      [
-        destination.inventoryType,
-        destination.inventoryId,
-        Permission.IDS.ADD_PRODUCTS,
-        Entity.IDS.CREW,
-        crewId,
-        Entity.IDS.CREW,
-        destination.owningCrewId,
-      ]
-    ),
-  ])
+  const removeFromWhitelistCalls = transfers
+    .flatMap(({ source }) => [
+      dispatcherContract?.populateTransaction?.['run_system']?.(
+        'RemoveFromWhitelist',
+        [
+          source.inventoryType,
+          source.inventoryId,
+          Permission.IDS.REMOVE_PRODUCTS,
+          Entity.IDS.CREW,
+          crewId,
+          Entity.IDS.CREW,
+          source.owningCrewId,
+        ]
+      ),
+    ])
+    .concat([
+      dispatcherContract?.populateTransaction?.['run_system']?.(
+        'RemoveFromWhitelist',
+        [
+          destination.inventoryType,
+          destination.inventoryId,
+          Permission.IDS.ADD_PRODUCTS,
+          Entity.IDS.CREW,
+          crewId,
+          Entity.IDS.CREW,
+          destination.owningCrewId,
+        ]
+      ),
+    ])
 
   return useContractWrite({
     calls: addFeedingCall(
