@@ -6,16 +6,23 @@ import { ConnectWalletButton } from './connect-wallet-button'
 
 import { Button } from './ui/button'
 import { Link } from './ui/link'
+import { Badge } from './ui/badge'
 import { AccountInfo } from '@/app/account-info'
+import { env } from '@/env'
 
 export const Header = () => {
   return (
     <div className='fixed top-0 z-50 flex w-full items-center justify-between bg-background px-3 py-2'>
       <div className='flex w-full items-center justify-between'>
-        <Link href='/' className='flex gap-x-2 hover:text-primary'>
-          <Home size={24} />
-          <span className='hidden md:block'>Home</span>
-        </Link>
+        <div className='flex items-center gap-x-5'>
+          <Link href='/' className='flex gap-x-2 hover:text-primary'>
+            <Home size={24} />
+            <span className='hidden md:block'>Home</span>
+          </Link>
+          {env.NEXT_PUBLIC_CHAIN === 'testnet' && (
+            <Badge variant='destructive'>Testnet</Badge>
+          )}
+        </div>
         <div className='flex gap-x-2'>
           <RegisterCrewButton />
           <WalletSection />
