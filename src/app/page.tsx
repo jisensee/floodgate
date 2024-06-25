@@ -1,7 +1,6 @@
 import NextLink from 'next/link'
 import { Route } from 'next'
 import { A, D, F, O, pipe } from '@mobily/ts-belt'
-import { Construction } from 'lucide-react'
 import { getFloodgateCrews } from '@/actions'
 import { Page } from '@/components/page'
 import { Button } from '@/components/ui/button'
@@ -10,27 +9,10 @@ import { Link } from '@/components/ui/link'
 import { FloodgateServiceType } from '@/lib/contract-types'
 import { SwayAmount } from '@/components/sway-amount'
 import { getServiceData } from '@/components/service-button'
-import { env } from '@/env'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Home() {
-  if (env.NEXT_PUBLIC_CHAIN === 'mainnet') {
-    return (
-      <div className='flex h-full flex-col items-center justify-center gap-y-5 p-10'>
-        <Construction className='text-warning' size={60} />
-        <p className='text-center text-5xl md:w-1/2'>
-          <span className='text-primary'>Floodgate</span> is coming to mainnet
-          soon!
-        </p>
-        <p className='text-center text-xl md:w-1/2'>
-          In the meantime, you can use the{' '}
-          <Link href='https://test.floodgate.space'>testnet version</Link> for
-          testing.
-        </p>
-      </div>
-    )
-  }
   const crews = await getFloodgateCrews()
 
   const availableServices = pipe(
@@ -105,7 +87,7 @@ const ServiceOption = ({ serviceType, floorPrice }: ServiceOptionProps) => {
         {icon}
         <p className='text-lg'>{name}</p>
       </div>
-      <p className='text-sm text-muted-foreground'>{description}</p>
+      <p className='text-center text-sm text-muted-foreground'>{description}</p>
       <div className='flex items-center gap-x-2'>
         <p className='text-sm font-semibold'>Starting at</p>
         <SwayAmount amount={floorPrice} convert />

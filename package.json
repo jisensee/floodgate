@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "preview": "next build && next start",
-    "contract:export-abi": "bunx abi-wan-kanabi -i contract/target/dev/influenceoverfueler_InfluenceOverfueler.contract_class.json -o src/abis/overfueler.ts",
+    "contract:export-abi": "bunx abi-wan-kanabi -i contract/target/dev/influenceoverfueler_InfluenceOverfueler.contract_class.json -o src/abis/floodgate.ts",
     "contract:build": "cd contract && scarb build && cd .. && bun contract:export-abi"
   },
   "dependencies": {
@@ -36,7 +36,7 @@
     "clsx": "^2.1.1",
     "elastic-builder": "^2.29.0",
     "get-starknet-core": "^3.3.0",
-    "influence-typed-sdk": "1.5.2",
+    "influence-typed-sdk": "1.5.5",
     "lucide-react": "^0.383.0",
     "next": "^14.2.3",
     "next-themes": "^0.3.0",
@@ -48,7 +48,8 @@
     "starknet": "^5.24.3",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
-    "ts-pattern": "^5.1.2"
+    "ts-pattern": "^5.1.2",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20",

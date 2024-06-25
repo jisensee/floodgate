@@ -126,13 +126,18 @@ export type GetCrewArgs = {
   manager?: string
 }
 
-export const getRegisteredCrews = async (manager?: string) =>
-  floodgateContract.get_crews(manager ?? '0x0')
+export const getRegisteredCrews = async (manager?: string) => {
+  const contractLocked = await floodgateContract.is_locked()
+
+  return contractLocked ? [] : floodgateContract.get_crews(manager ?? '0x0')
+}
 
 export const getFloodgateCrews = async (args?: GetCrewArgs) => {
   const registeredCrews = await getRegisteredCrews(args?.manager).then(
     (crews) => crews.filter((crew) => !crew.is_locked || args?.includeLocked)
   )
+
+  if (registeredCrews.length === 0) return []
 
   const apiCrews = await influenceApi.entities({
     id: registeredCrews.map(({ crew_id }) => Number(crew_id)),
@@ -287,19 +292,23 @@ const makeFloodgateCrew = (
   currentFoodRatio: getFoodRatio(apiCrew, crewmates, station),
 })
 
-export const getAutomaticFeedingAmount =  async (
-  crew: FloodgateCrew
-) => {
-  if (!crew.feedingConfig.automaticFeedingEnabled) { return 0 }
-  
+export const getAutomaticFeedingAmount = async (crew: FloodgateCrew) => {
+  if (!crew.feedingConfig.automaticFeedingEnabled) {
+    return 0
+  }
+
   const foodRatio = crew.currentFoodRatio
-  if (foodRatio >= 0.6) { return 0 }
+  if (foodRatio >= 0.6) {
+    return 0
+  }
 
   const foodInventory = await getBuilding(crew.feedingConfig.inventoryId)
-  if (!foodInventory) { return 0 }
-  
+  if (!foodInventory) {
+    return 0
+  }
+
   const availableFood = getFoodAmount(foodInventory)
   const foodToMax = (1 - crew.currentFoodRatio) * crew.crewmateIds.length * 1000
-  
+
   return Math.floor(Math.min(foodToMax, availableFood))
 }

@@ -32,7 +32,7 @@ export const CrewCard = ({ crew, href, swayFee, actions }: CrewCardProps) => {
         'flex w-full flex-col gap-y-2 rounded-md p-2 ring-1 hover:ring-2'
       )}
     >
-      <div className={'flex w-full w-full flex-row items-start gap-x-3'}>
+      <div className={'flex w-full flex-row items-start gap-x-3'}>
         <CrewImages
           className='hidden md:flex'
           crewmateIds={crew.crewmateIds}
