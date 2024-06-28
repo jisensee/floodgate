@@ -89,7 +89,7 @@ export const ConfirmationStep = ({
       inventoryId: destination.id,
       inventoryType:
         destination.type === 'ship' ? Entity.IDS.SHIP : Entity.IDS.BUILDING,
-      inventorySlot: destination.type === 'ship' ? 1 : 2,
+      inventorySlot: 2,
     },
     deliveries.map((delivery) => ({
       source: {
@@ -98,7 +98,7 @@ export const ConfirmationStep = ({
           delivery.source.type === 'ship'
             ? Entity.IDS.SHIP
             : Entity.IDS.BUILDING,
-        inventorySlot: delivery.source.type === 'ship' ? 1 : 2,
+        inventorySlot: 2,
         owningCrewId: delivery.source.owningCrewId,
       },
       contents: delivery.contents.filter((c) => c.amount > 0),
