@@ -38,16 +38,15 @@ const List = ({
 
   const loading = (
     <div className='flex flex-col gap-y-3'>
-      {A.make(
-        5,
-        <div className='flex gap-x-2'>
+      {A.makeWithIndex(5, (i) => (
+        <div key={i} className='flex gap-x-2'>
           <Skeleton className='h-[133px] w-[100px] shrink-0' />
           <div className='flex w-full flex-col gap-y-1'>
             <Skeleton className='h-6 w-8/12' />
             <Skeleton className='h-4 w-6/12' />
           </div>
         </div>
-      )}
+      ))}
     </div>
   )
 
