@@ -71,6 +71,9 @@ export const CrewCard = ({ crew, href, swayFee, actions }: CrewCardProps) => {
       {actions && <div className='flex md:hidden'>{actions}</div>}
     </div>
   )
-  // return href ? <Link href={href}>{card}</Link> : card
-  return <Link href={href ?? `/crews/${crew.id}`}>{card}</Link>
+  return (
+    <Link className='w-full' href={href ?? `/crews/${crew.id}`}>
+      {card}
+    </Link>
+  )
 }

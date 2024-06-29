@@ -12,6 +12,7 @@ import {
   FloodgateServiceType,
 } from './lib/contract-types'
 import { getCrewBonuses, getFoodRatio, getFoodAmount } from './lib/utils'
+import { env } from './env'
 import { influenceApi } from '@/lib/influence-api'
 
 export const getCrew = async (crewId: number) => {
@@ -139,10 +140,17 @@ export const getFloodgateCrews = async (args?: GetCrewArgs) => {
 
   if (registeredCrews.length === 0) return []
 
-  const apiCrews = await influenceApi.entities({
-    id: registeredCrews.map(({ crew_id }) => Number(crew_id)),
-    label: Entity.IDS.CREW,
-  })
+  const apiCrews = (
+    await influenceApi.entities({
+      id: registeredCrews.map(({ crew_id }) => Number(crew_id)),
+      label: Entity.IDS.CREW,
+    })
+  ).filter(
+    (crew) =>
+      crew.Crew?.delegatedTo === env.NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS
+  )
+
+  if (apiCrews.length === 0) return []
 
   const {
     asteroidNames,
@@ -187,7 +195,11 @@ export const getFloodgateCrew = async (crewId: number) => {
       label: Entity.IDS.CREW,
     }),
   ])
-  if (!apiCrew) return
+  if (
+    !apiCrew ||
+    apiCrew.Crew?.delegatedTo !== env.NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS
+  )
+    return
 
   const { asteroidNames, stations, crewmates } = await getCrewMetadata([
     apiCrew,
