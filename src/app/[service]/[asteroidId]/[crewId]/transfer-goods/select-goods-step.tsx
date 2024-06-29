@@ -259,17 +259,21 @@ const AddSourceDialog = ({
       </Button>
     </DialogTrigger>
     <DialogContent>
-      <DialogHeader>Add source</DialogHeader>
-      {pipe(
-        sources,
-        A.map((source) => (
-          <InventoryCard
-            key={source.uuid}
-            inventory={source}
-            onSelect={() => onSelect(source)}
-          />
-        ))
-      )}
+      <DialogHeader>
+        <h3>Add source</h3>
+      </DialogHeader>
+      <div className='max-h-[80vh] overflow-y-auto'>
+        {pipe(
+          sources,
+          A.map((source) => (
+            <InventoryCard
+              key={source.uuid}
+              inventory={source}
+              onSelect={() => onSelect(source)}
+            />
+          ))
+        )}
+      </div>
     </DialogContent>
   </Dialog>
 )
