@@ -15,6 +15,7 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
@@ -260,7 +261,7 @@ const AddSourceDialog = ({
     </DialogTrigger>
     <DialogContent>
       <DialogHeader>
-        <h3>Add source</h3>
+        <DialogTitle className='text-2xl'>Add source</DialogTitle>
       </DialogHeader>
       <div className='max-h-[80vh] overflow-y-auto'>
         {pipe(
@@ -492,7 +493,7 @@ const ProductSelectionDialog = ({
         <DialogHeader>
           <div className='flex items-center gap-x-2'>
             <ProductImage width={40} productId={product.i} />
-            <span className='text-2xl'>{product.name}</span>
+            <DialogTitle className='text-2xl'>{product.name}</DialogTitle>
           </div>
         </DialogHeader>
         <div>

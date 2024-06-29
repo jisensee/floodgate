@@ -23,7 +23,7 @@ export const useTransactionToast = ({
     isLoading: txLoading,
     error: txError,
     status: txStatus,
-  } = useWaitForTransaction({ hash: txHash })
+  } = useWaitForTransaction({ hash: txHash, retry: true })
 
   const [toastId, setToastId] = useState<number | string | undefined>()
 
