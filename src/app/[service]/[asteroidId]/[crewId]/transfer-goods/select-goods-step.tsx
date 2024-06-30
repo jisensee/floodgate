@@ -166,25 +166,30 @@ const DestinationPreview = ({
   const newDestinationMass = usedDestinationMass + deliveryMass
   const newDestinationVolume = usedDestinationVolume + deliveryVolume
 
+  const maxDestinationMass =
+    destination.massCapacity * crew.bonuses.massCapacity.totalBonus
+  const maxDestinationVolume =
+    destination.volumeCapacity * crew.bonuses.volumeCapacity.totalBonus
+
   return (
     <div className='flex flex-col gap-y-1'>
       <h3>{destination.name}</h3>
       <div>
         <p>
           Mass: {Format.mass(newDestinationMass)} /{' '}
-          {Format.mass(destination.massCapacity)}{' '}
+          {Format.mass(maxDestinationMass)}{' '}
         </p>
         <Progress
           className='h-2'
           indicators={[
             {
               position: 1,
-              value: (newDestinationMass / destination.massCapacity) * 100,
+              value: (newDestinationMass / maxDestinationMass) * 100,
               className: 'bg-primary',
             },
             {
               position: 2,
-              value: (usedDestinationMass / destination.massCapacity) * 100,
+              value: (usedDestinationMass / maxDestinationMass) * 100,
               className: 'bg-white',
             },
           ]}
@@ -193,19 +198,19 @@ const DestinationPreview = ({
       <div>
         <p>
           Volume: {Format.volume(newDestinationVolume)} /{' '}
-          {Format.volume(destination.volumeCapacity)}{' '}
+          {Format.volume(maxDestinationVolume)}{' '}
         </p>
         <Progress
           className='h-2'
           indicators={[
             {
               position: 1,
-              value: (newDestinationVolume / destination.volumeCapacity) * 100,
+              value: (newDestinationVolume / maxDestinationVolume) * 100,
               className: 'bg-primary',
             },
             {
               position: 2,
-              value: (usedDestinationVolume / destination.volumeCapacity) * 100,
+              value: (usedDestinationVolume / maxDestinationVolume) * 100,
               className: 'bg-white',
             },
           ]}
