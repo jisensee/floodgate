@@ -10,6 +10,7 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { useAccountCrews } from '@/hooks/queries'
@@ -31,9 +32,13 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
     token: env.NEXT_PUBLIC_SWAY_CONTRACT_ADDRESS,
   })
   const { data: crews } = useAccountCrews(address)
-  const feeBalance = useFeeBalance(address)
+  const {
+    feeBalance,
+    devteamBalance: [devteamBalance],
+  } = useFeeBalance(address)
+  const totalFeeBalance = feeBalance + devteamBalance
 
-  const hasFeesToWithdraw = feeBalance !== undefined && feeBalance > 0n
+  const hasFeesToWithdraw = totalFeeBalance > 0n
 
   useEffect(() => {
     if (disconnectStatus === 'success') {
@@ -65,7 +70,7 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <h2>My Account</h2>
+          <DialogTitle className='text-2xl'>My Account</DialogTitle>
         </DialogHeader>
         <div className='flex flex-col items-center gap-y-5 overflow-hidden'>
           <div className='flex w-full flex-col gap-y-2 rounded-md border border-border p-3'>
@@ -91,7 +96,10 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
           {hasFeesToWithdraw && (
             <div className='flex w-6/12 flex-col gap-y-3'>
               <Separator />
-              <FeeBalance balance={feeBalance} />
+              <FeeBalance
+                balance={totalFeeBalance}
+                onClick={() => setOpen(false)}
+              />
               <Separator />
             </div>
           )}
