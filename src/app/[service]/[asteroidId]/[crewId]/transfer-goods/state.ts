@@ -103,9 +103,12 @@ export const getDeliveriesContents = (deliveries: Delivery[]) =>
         const product = amounts?.[0]?.product
         if (!product) return undefined
 
+        const amount = amounts.map((a) => a.amount).reduce(N.add)
+        if (amount === 0) return undefined
+
         return {
           product,
-          amount: amounts.map((a) => a.amount).reduce(N.add),
+          amount,
         }
       })
     )
