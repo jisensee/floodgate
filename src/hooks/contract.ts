@@ -3,7 +3,7 @@ import {
   useContractRead,
   useContractWrite,
 } from '@starknet-react/core'
-import { Call, cairo } from 'starknet'
+import { ArgsOrCalldata, Call, cairo } from 'starknet'
 import { Entity, Permission } from '@influenceth/sdk'
 import { ProductAmount } from 'influence-typed-sdk/api'
 import { ABI as floodgateAbi } from '../abis/floodgate'
@@ -196,21 +196,57 @@ export const useSetCrewManager = (crewId: number, managerAddress: string) =>
     ],
   })
 
-export const useFeeBalance = (address: string) => {
-  const { data } = useContractRead({
+const useFloodgateContractRead = (
+  functionName: string,
+  args: ArgsOrCalldata = []
+) =>
+  useContractRead({
     abi: [...floodgateAbi],
     watch: true,
     address: env.NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS,
-    functionName: 'get_current_balance',
-    args: [address],
+    functionName,
+    args,
   })
 
-  return data ? BigInt(data.toString()) : undefined
+const useDevteamBalance = (address: string) => {
+  const { data: address1 } = useFloodgateContractRead('get_devteam_address_one')
+  const { data: address2 } = useFloodgateContractRead('get_devteam_address_two')
+  const { data: balance1 } = useFloodgateContractRead('get_devteam_balance_one')
+  const { data: balance2 } = useFloodgateContractRead('get_devteam_balance_two')
+
+  if (BigInt(address) === address1 && balance1 !== undefined) {
+    return [BigInt(balance1.toString()), 1] as const
+  } else if (BigInt(address) === address2 && balance2 !== undefined) {
+    return [BigInt(balance2.toString()), 2] as const
+  } else {
+    return [0n, 0] as const
+  }
+}
+
+export const useFeeBalance = (address: string) => {
+  const devteamBalance = useDevteamBalance(address)
+  const { data } = useFloodgateContractRead('get_current_balance', [address])
+
+  return {
+    feeBalance: data ? BigInt(data.toString()) : 0n,
+    devteamBalance,
+  }
 }
 
 export const useWithdrawFees = (amount: bigint) =>
   useContractWrite({
     calls: [floodgateContract.populateTransaction.withdraw_balance(amount)],
+  })
+
+export const useDevteamWithdraw = (amount: bigint, index: number) =>
+  useContractWrite({
+    calls: [
+      (index === 1
+        ? floodgateContract.populateTransaction.withdraw_devteam_balance_one
+        : floodgateContract.populateTransaction.withdraw_devteam_balance_two)(
+        amount
+      ),
+    ],
   })
 
 export const useDevteamShare = () => {
