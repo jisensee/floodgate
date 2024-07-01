@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { P, match } from 'ts-pattern'
 import { getInventories } from './actions'
-import { useTransferGoodsState } from './state'
+import { getDeliveriesContents, useTransferGoodsState } from './state'
 import { SelectDestinationStep } from './select-destination-step'
 import { SelectGoodsStep } from './select-goods-step'
 import { ConfirmationStep } from './confirmation-step'
@@ -26,6 +26,7 @@ export const TransferGoodsWizard = ({
     queryFn: () => getInventories(address, crew),
   })
   const [state, dispatch] = useTransferGoodsState()
+  console.log('contents', getDeliveriesContents(state.deliveries))
 
   return (
     <Wizard
@@ -38,7 +39,8 @@ export const TransferGoodsWizard = ({
         {
           title: 'Select Goods',
           completed:
-            state.destination !== undefined && state.deliveries.length > 0,
+            state.destination !== undefined &&
+            getDeliveriesContents(state.deliveries).length > 0,
         },
         { title: 'Confirmation', completed: true },
       ]}
