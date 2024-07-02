@@ -37,7 +37,7 @@ export const Confirmation: FC<ConfirmationProps> = ({
   const { goToStep } = useWizard()
   const devteamShare = useDevteamShare()
 
-  const overfuelBonus = crew.bonuses.volumeCapacity.totalBonus
+  const overfuelBonus = Math.min(crew.bonuses.volumeCapacity.totalBonus, crew.bonuses.massCapacity.totalBonus);
   const missingFuel =
     selectedShip.fuelCapacity * overfuelBonus - selectedShip.fuelAmount
   const maxFuel = Math.min(missingFuel, selectedWarehouse.fuelAmount)
