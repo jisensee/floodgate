@@ -414,3 +414,34 @@ export const useTransferGoodsTransaction = (
     ),
   })
 }
+
+export const useCrewRefeeding = (
+  args: { amount: number; crewId: number } & (
+    | {
+        type: 'default'
+      }
+    | {
+        type: 'manual'
+        warehouseId: number
+      }
+  )
+) => {
+  const call =
+    args.type === 'default'
+      ? floodgateContract.populateTransaction.resupply_food_from_default(
+          args.crewId,
+          args.amount
+        )
+      : floodgateContract.populateTransaction.resupply_food(
+          args.crewId,
+          {
+            inventory_id: args.warehouseId,
+            inventory_slot: 2,
+            inventory_type: Entity.IDS.BUILDING,
+          },
+          args.amount
+        )
+  return useContractWrite({
+    calls: [call],
+  })
+}

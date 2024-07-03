@@ -68,6 +68,7 @@ const List = ({
                   key={crew.id}
                   crew={crew}
                   href={`/register/${crew.id}` as Route}
+                  connectedAddress={address}
                   actions={
                     registeredCrewIds.has(crew.id) && (
                       <StandardTooltip content='Registering it again will reset all configuration.'>

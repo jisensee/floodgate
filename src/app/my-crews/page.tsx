@@ -29,6 +29,7 @@ const MyCrews = ({ address }: { address: string }) => {
               key={crew.id}
               crew={crew}
               href={`/crews/${crew.id}` as Route}
+              connectedAddress={address}
             />
           ))}
       </div>

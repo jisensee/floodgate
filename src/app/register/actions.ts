@@ -5,7 +5,7 @@ import { A, O, pipe } from '@mobily/ts-belt'
 import { InfluenceEntity } from 'influence-typed-sdk/api'
 import { influenceApi } from '@/lib/influence-api'
 import { getCrewMetadata } from '@/actions'
-import { CrewBonuses, getCrewBonuses } from '@/lib/utils'
+import { CrewBonuses, getCrewBonuses, getFoodRatio } from '@/lib/utils'
 
 export const getAccountCrews = async (
   address: string
@@ -15,7 +15,9 @@ export const getAccountCrews = async (
     crewmateIds: number[]
     asteroidId: number
     asteroidName: string
+    currentFoodRatio: number
     stationName?: string
+    ownerAddress: bigint
     bonuses: CrewBonuses
   })[]
 > => {
@@ -52,6 +54,8 @@ export const getAccountCrews = async (
       asteroidName:
         asteroidNames.get(crew.Location?.locations?.asteroid?.id ?? 0) ?? '',
       stationName: station.Name,
+      currentFoodRatio: getFoodRatio(crew, crewmates, station),
+      ownerAddress: BigInt(crew.Nft?.owner ?? 0),
       bonuses: getCrewBonuses(
         crew,
         crewmates.filter((c) => crew.Crew?.roster.includes(c.id)),
