@@ -11,6 +11,7 @@ export type FloodgateCrew = {
   crewmateIds: number[]
   managerAddress: bigint
   ownerAddress: bigint
+  busyUntil?: Date
   feedingConfig: {
     automaticFeedingEnabled: boolean
     inventoryId: number

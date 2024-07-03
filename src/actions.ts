@@ -1,10 +1,11 @@
 'use server'
 
-import { Entity } from '@influenceth/sdk'
+import { isFuture } from 'date-fns'
+import { Entity, Lot } from '@influenceth/sdk'
 import { Inventory, ShipType } from '@influenceth/sdk'
 import { InfluenceEntity } from 'influence-typed-sdk/api'
 import { shortString } from 'starknet'
-import { A, F, G, pipe } from '@mobily/ts-belt'
+import { A, F, G, O, pipe } from '@mobily/ts-belt'
 import { floodgateContract } from './lib/contracts'
 import {
   FloodgateContractCrew,
@@ -38,6 +39,20 @@ export const getBuilding = async (buildingId: number) =>
     id: buildingId,
     label: Entity.IDS.BUILDING,
   })
+
+export const getBuildingAtLot = async (asteroidId: number, lotIndex: number) =>
+  influenceApi
+    .entities({
+      match: {
+        path: 'Location.locations.uuid',
+        value: Entity.packEntity({
+          id: Lot.toId(asteroidId, lotIndex),
+          label: Entity.IDS.LOT,
+        }),
+      },
+      label: Entity.IDS.BUILDING,
+    })
+    .then(A.head)
 
 export type Warehouse = {
   id: number
@@ -281,6 +296,7 @@ const makeFloodgateCrew = (
   asteroidId: apiCrew.Location?.locations?.asteroid?.id ?? 1,
   asteroidName,
   stationName: station.Name ?? `Station#${station.id}`,
+  busyUntil: O.filter(apiCrew.Crew?.readyAt, isFuture) ?? undefined,
   crewmateIds: apiCrew.Crew?.roster ?? [],
   feedingConfig: {
     automaticFeedingEnabled: registeredCrew.is_automated_feeding_enabled,

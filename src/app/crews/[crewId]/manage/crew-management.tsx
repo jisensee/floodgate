@@ -16,6 +16,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import { Badge } from '@/components/ui/badge'
+import { pluralize } from '@/lib/utils'
 
 export type CrewManagementProps = {
   crew: FloodgateCrew
@@ -31,6 +33,8 @@ const Management = ({
 
   if (!isManager) return null
 
+  const enabledServicesCount = crew.services.filter((s) => s.enabled).length
+
   return (
     <div className='flex flex-col items-center gap-y-5'>
       <CrewDetails crew={crew} />
@@ -39,7 +43,15 @@ const Management = ({
           <AccordionTrigger>
             <div className='flex items-center gap-x-2'>
               <Cog />
-              Services
+              <span>Services</span>
+              <Badge
+                variant={enabledServicesCount > 0 ? 'success' : 'destructive'}
+                className='ml-3'
+              >
+                {enabledServicesCount > 0
+                  ? `${enabledServicesCount} ${pluralize(enabledServicesCount, 'service')} active`
+                  : 'No services active'}
+              </Badge>
             </div>
           </AccordionTrigger>
           <AccordionContent>
@@ -50,7 +62,20 @@ const Management = ({
           <AccordionTrigger>
             <div className='flex items-center gap-x-2'>
               <Apple />
-              Feeding Config
+              <span>Feeding Config</span>
+              <Badge
+                variant={
+                  crew.feedingConfig.automaticFeedingEnabled
+                    ? 'success'
+                    : 'destructive'
+                }
+                className='ml-3'
+              >
+                Auto feeding{' '}
+                {crew.feedingConfig.automaticFeedingEnabled
+                  ? 'enabled'
+                  : 'disabled'}
+              </Badge>
             </div>
           </AccordionTrigger>
           <AccordionContent>
@@ -75,7 +100,13 @@ const Management = ({
           <AccordionTrigger>
             <div className='flex items-center gap-x-2'>
               <Lock />
-              Lock/Unlock
+              <span>Lock/Unlock</span>
+              <Badge
+                variant={crew.locked ? 'destructive' : 'success'}
+                className='ml-3'
+              >
+                Crew {crew.locked ? 'Locked' : 'Unlocked'}
+              </Badge>
             </div>
           </AccordionTrigger>
           <AccordionContent>

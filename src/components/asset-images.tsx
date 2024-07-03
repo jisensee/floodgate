@@ -4,18 +4,13 @@ import { makeInfluenceImageUrls } from 'influence-typed-sdk/images'
 import { FC } from 'react'
 import { A } from '@mobily/ts-belt'
 import { cn } from '@/lib/utils'
-import { env } from '@/env'
 
 type ShipImageProps = {
   type: ShipType
   size: number
 }
 
-const imageUrls = makeInfluenceImageUrls({
-  cloudfrontImageHost: env.NEXT_PUBLIC_INFLUENCE_CLOUDFRONT_IMAGE_HOST,
-  apiImagesUrl: 'https://images.influenceth.io/v1',
-  cloudfrontBucket: 'unstoppablegames',
-})
+const imageUrls = makeInfluenceImageUrls()
 
 export const ShipImage: FC<ShipImageProps> = ({ type, size }) => {
   const url = imageUrls.ship(type, { w: size })
@@ -55,7 +50,7 @@ export const CrewmateImage = ({
 }: CrewmateImageProps) => (
   <NextImage
     className={cn('rounded', className)}
-    src={imageUrls.crewmate(crewmateId)}
+    src={imageUrls.crewmate(crewmateId, { width })}
     alt={`Crewmate #${crewmateId}`}
     width={width}
     height={(width * 4) / 3}

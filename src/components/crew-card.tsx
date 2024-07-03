@@ -7,25 +7,39 @@ import { Location } from './location'
 import { CrewBonusStatistics } from './statistic'
 import { SwayAmount } from './sway-amount'
 import { StandardTooltip } from './ui/tooltip'
-import { FloodgateCrew } from '@/lib/contract-types'
-import { cn } from '@/lib/utils'
+import { FoodStatus } from './food-status'
+import { CrewBonuses, cn } from '@/lib/utils'
 
 export type CrewCardProps = {
   crew: {
     id: number
     name: string
-    stationName?: string
-    asteroidName: string
+    currentFoodRatio: number
     crewmateIds: number[]
+    asteroidId: number
+    asteroidName: string
+    stationName?: string
+    bonuses: CrewBonuses
     locked?: boolean
-    bonuses: FloodgateCrew['bonuses']
+    managerAddress?: bigint
+    ownerAddress?: bigint
   }
   href?: Route
   swayFee?: bigint
   actions?: ReactNode
+  connectedAddress?: string
 }
 
-export const CrewCard = ({ crew, href, swayFee, actions }: CrewCardProps) => {
+export const CrewCard = ({
+  crew,
+  href,
+  swayFee,
+  actions,
+  connectedAddress,
+}: CrewCardProps) => {
+  const isManagerOrOwner =
+    connectedAddress &&
+    [crew.managerAddress, crew.ownerAddress].includes(BigInt(connectedAddress))
   const card = (
     <div
       className={cn(
@@ -46,14 +60,20 @@ export const CrewCard = ({ crew, href, swayFee, actions }: CrewCardProps) => {
           onlyCaptain
         />
         <div className='flex w-full flex-col gap-y-1'>
-          <div className='flex w-full flex-row items-center justify-between'>
+          <div className='flex w-full flex-row items-center justify-between gap-x-3'>
             <p className='text-lg md:text-xl'>{crew.name}</p>
-            {crew.locked && (
-              <StandardTooltip content='This crew is currently locked.'>
-                <Lock className='text-warning' />
-              </StandardTooltip>
-            )}
+            <div className='flex gap-x-3'>
+              {isManagerOrOwner && (
+                <FoodStatus foodRatio={crew.currentFoodRatio} />
+              )}
+              {crew.locked && (
+                <StandardTooltip content='This crew is currently locked.'>
+                  <Lock className='text-warning' />
+                </StandardTooltip>
+              )}
+            </div>
           </div>
+
           <Location
             stationName={crew.stationName}
             asteroidName={crew.asteroidName}

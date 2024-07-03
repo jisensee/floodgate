@@ -2,7 +2,7 @@
 
 import { useAccount } from '@starknet-react/core'
 import Link from 'next/link'
-import { Cog } from 'lucide-react'
+import { Cog, Wheat } from 'lucide-react'
 import { CrewImages } from '@/components/asset-images'
 import { FloodgateCrew } from '@/lib/contract-types'
 import { CrewBonusStatistics } from '@/components/statistic'
@@ -37,11 +37,18 @@ export const CrewDetails = ({
           />
         ))}
       {isManager && showManageButton && (
-        <Link href={`/crews/${crew.id}/manage`}>
-          <Button variant='secondary' icon={<Cog />}>
-            Manage Crew
-          </Button>
-        </Link>
+        <>
+          <Link href={`/crews/${crew.id}/manage`}>
+            <Button variant='secondary' icon={<Cog />}>
+              Manage Crew
+            </Button>
+          </Link>
+          <Link href={`/crews/${crew.id}/feed`}>
+            <Button variant='secondary' icon={<Wheat />}>
+              Feed Crew
+            </Button>
+          </Link>
+        </>
       )}
     </div>
   )
