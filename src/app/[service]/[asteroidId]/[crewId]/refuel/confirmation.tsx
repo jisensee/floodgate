@@ -73,7 +73,7 @@ export const Confirmation: FC<ConfirmationProps> = ({
     contractCrewId: crew.id,
     warehouseOwnerCrewId: selectedWarehouse.owningCrewId,
     shipOwnerCrewId: selectedShip.owningCrewId,
-    fuelAmount: usedFuel - 1,
+    fuelAmount: Math.floor(usedFuel),
     swayFee: actionFee,
     autoFeedingAmount: feedingAmount ?? 0,
   })
