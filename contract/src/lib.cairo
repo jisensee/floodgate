@@ -569,7 +569,6 @@ mod Floodgate
 
         fn resupply_food_from_default(ref self: ContractState, service_crew_id: u64, food_kg: u64) {
             self.only_unlocked();
-            self.only_manager(service_crew_id);
             self.resupply_food_internal(service_crew_id, self.service_crew_feeding_inventories.read(service_crew_id), food_kg);
         }
     }
