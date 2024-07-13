@@ -19,7 +19,7 @@ export default async function RegisterCrewPage({
     notFound()
   }
 
-  const asteroidId = crew.Location?.locations?.asteroid?.id ?? 0
+  const asteroidId = crew.Location?.resolvedLocations?.asteroid?.id ?? 0
   const [asteroidNames, crewmates, station] = await Promise.all([
     influenceApi.util.asteroidNames([asteroidId]),
     influenceApi.entities({
@@ -27,7 +27,7 @@ export default async function RegisterCrewPage({
       label: Entity.IDS.CREWMATE,
     }),
     influenceApi.entity({
-      id: crew.Location?.locations?.building?.id ?? 0,
+      id: crew.Location?.resolvedLocations?.building?.id ?? 0,
       label: Entity.IDS.BUILDING,
     }),
   ])

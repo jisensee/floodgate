@@ -338,7 +338,7 @@ export const useTransferGoodsTransaction = (
             inventory_slot: source.inventorySlot,
           },
           contents.map((c) => ({
-            item_id: c.product.i,
+            item_id: c.product,
             item_quantity: c.amount,
           }))
         )

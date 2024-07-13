@@ -1,6 +1,6 @@
 'use client'
 
-import { InfluenceEntity } from 'influence-typed-sdk/api'
+import { InfluenceEntity, getEntityName } from 'influence-typed-sdk/api'
 import { Entity, Product } from '@influenceth/sdk'
 import { useMemo, useState } from 'react'
 import { Save } from 'lucide-react'
@@ -160,7 +160,7 @@ const WarehouseEntry = ({
     >
       <WarehouseImage size={100} />
       <div className='flex flex-col gap-y-1'>
-        <p className='text-base font-bold'>{warehouse.Name ?? warehouse.id}</p>
+        <p className='text-base font-bold'>{getEntityName(warehouse)}</p>
         <div className='flex items-center gap-x-2'>
           <ProductImage productId={Product.IDS.FOOD} width={30} />
           <p>{Format.mass(foodAmount)} Food available</p>

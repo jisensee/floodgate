@@ -2,7 +2,7 @@
 
 import { Address, Entity } from '@influenceth/sdk'
 import { A, O, pipe } from '@mobily/ts-belt'
-import { InfluenceEntity } from 'influence-typed-sdk/api'
+import { InfluenceEntity, getEntityName } from 'influence-typed-sdk/api'
 import { influenceApi } from '@/lib/influence-api'
 import { getCrewMetadata } from '@/actions'
 import { CrewBonuses, getCrewBonuses, getFoodRatio } from '@/lib/utils'
@@ -38,8 +38,8 @@ export const getAccountCrews = async (
         O.fromNullable(
           stations.find((s) =>
             [
-              crew.Location?.location?.building?.id,
-              crew.Location?.location.ship?.id,
+              crew.Location?.resolvedLocation?.building?.id,
+              crew.Location?.resolvedLocation.ship?.id,
             ].includes(s.id)
           )
         ),
@@ -48,12 +48,14 @@ export const getAccountCrews = async (
     ),
     A.map(([crew, station]) => ({
       ...crew,
-      name: crew.Name ?? `Crew#${crew.id}`,
+      name: getEntityName(crew),
       crewmateIds: crew.Crew?.roster ?? [],
-      asteroidId: crew.Location?.locations?.asteroid?.id ?? 0,
+      asteroidId: crew.Location?.resolvedLocations?.asteroid?.id ?? 0,
       asteroidName:
-        asteroidNames.get(crew.Location?.locations?.asteroid?.id ?? 0) ?? '',
-      stationName: station.Name,
+        asteroidNames.get(
+          crew.Location?.resolvedLocations?.asteroid?.id ?? 0
+        ) ?? '',
+      stationName: getEntityName(station),
       currentFoodRatio: getFoodRatio(crew, crewmates, station),
       ownerAddress: BigInt(crew.Nft?.owner ?? 0),
       bonuses: getCrewBonuses(
