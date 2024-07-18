@@ -138,6 +138,8 @@ trait FloodgateUsageTrait<T>
 {
     fn service_refuel_ship(ref self: T, service_crew_id: u64, source_inventory: InfluenceInventory, ship_id: u64, fuel_kg: u64);
     fn service_transfer_goods (ref self: T, service_crew_id: u64, destination_inventory: InfluenceInventory, transfers: Array<(InfluenceInventory, Array<InfluenceInventoryItem>)>);
+
+    fn collect_generic_fee(ref self: T, fee_amount: u64);
 }
 
 #[starknet::contract]
@@ -653,6 +655,16 @@ mod Floodgate
             };
 
             self.handle_service_fee(service_crew_id, service_code, 0);
+        }
+
+        fn collect_generic_fee(ref self: ContractState, fee_amount: u64) {
+            if fee_amount > 0 {
+                ISwayContractDispatcher { contract_address: self.sway_contract_address.read() }.transfer_from(get_caller_address(), get_contract_address(), fee_amount.into());
+                let mut team_balances: FloodgateDevTeamBalances = self.devteam_balances.read();
+                team_balances.one += fee_amount / 2;
+                team_balances.two += fee_amount / 2;
+                self.devteam_balances.write(team_balances);
+            }
         }
     }
 
