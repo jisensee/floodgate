@@ -4,8 +4,10 @@ import {
   useContractWrite,
 } from '@starknet-react/core'
 import { ArgsOrCalldata, Call, cairo } from 'starknet'
-import { Entity, Permission } from '@influenceth/sdk'
+import { Entity, Permission, System } from '@influenceth/sdk'
 import { ProductAmount } from 'influence-typed-sdk/api'
+import { useMemo } from 'react'
+import { A, pipe } from '@mobily/ts-belt'
 import { ABI as floodgateAbi } from '../abis/floodgate'
 import dispatcherAbi from '../abis/influence-dispatcher.json'
 import swayAbi from '../abis/sway.json'
@@ -13,8 +15,10 @@ import { env } from '@/env'
 import { floodgateContract } from '@/lib/contracts'
 import { FloodgateService } from '@/lib/contract-types'
 
-const overfuelerAddress = env.NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS
-const dispatcherAddress = env.NEXT_PUBLIC_INFLUENCE_DISPATCHER_CONTRACT_ADDRESS
+const floodgateContractAddress = env.NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS
+const influenceDispatcherAddress =
+  env.NEXT_PUBLIC_INFLUENCE_DISPATCHER_CONTRACT_ADDRESS
+const swayAddress = env.NEXT_PUBLIC_SWAY_CONTRACT_ADDRESS
 
 const addFeedingCall = (
   calls: Call[],
@@ -41,14 +45,8 @@ export const useFuelShipTransaction = (args: {
   fuelAmount: number
   autoFeedingAmount: number
 }) => {
-  const { contract: dispatcherContract } = useContract({
-    abi: dispatcherAbi,
-    address: dispatcherAddress,
-  })
-  const { contract: swayContract } = useContract({
-    abi: swayAbi,
-    address: env.NEXT_PUBLIC_SWAY_CONTRACT_ADDRESS,
-  })
+  const dispatcherContract = useInfluenceDispatcher()
+  const swayContract = useSwayContract()
 
   const refuelCalls: Call[] = [
     dispatcherContract?.populateTransaction?.['run_system']?.('Whitelist', [
@@ -70,7 +68,7 @@ export const useFuelShipTransaction = (args: {
       args.shipOwnerCrewId,
     ]),
     swayContract?.populateTransaction?.['increase_allowance']?.(
-      overfuelerAddress,
+      floodgateContractAddress,
       args.swayFee
     ),
     floodgateContract.populateTransaction.service_refuel_ship(
@@ -122,7 +120,13 @@ export const useFuelShipTransaction = (args: {
 const useInfluenceDispatcher = () =>
   useContract({
     abi: dispatcherAbi,
-    address: dispatcherAddress,
+    address: influenceDispatcherAddress,
+  }).contract
+
+const useSwayContract = () =>
+  useContract({
+    abi: swayAbi,
+    address: env.NEXT_PUBLIC_SWAY_CONTRACT_ADDRESS,
   }).contract
 
 const useDelegateCrewCall = (crewId: number, targetAddress: string) => {
@@ -314,7 +318,7 @@ export const useTransferGoodsTransaction = (
 ) => {
   const { contract: dispatcherContract } = useContract({
     abi: dispatcherAbi,
-    address: dispatcherAddress,
+    address: influenceDispatcherAddress,
   })
   const { contract: swayContract } = useContract({
     abi: swayAbi,
@@ -403,7 +407,7 @@ export const useTransferGoodsTransaction = (
       [
         ...whitelistCalls,
         swayContract?.populateTransaction?.['increase_allowance']?.(
-          overfuelerAddress,
+          floodgateContractAddress,
           actionFee
         ),
         transferCall,
@@ -444,4 +448,86 @@ export const useCrewRefeeding = (
   return useContractWrite({
     calls: [call],
   })
+}
+
+export const useLotLeaseExtensions = (
+  lotLeases: {
+    lotId: number
+    crewId: number
+    addedDays: number
+    rate: bigint
+    recipient: string
+  }[]
+) => {
+  const swayContract = useSwayContract()
+
+  const leaseCalls = lotLeases.flatMap((lease) => {
+    const lotUuid = Entity.packEntity({
+      id: lease.lotId,
+      label: Entity.IDS.LOT,
+    })
+    const crewUuid = Entity.packEntity({
+      id: lease.crewId,
+      label: Entity.IDS.CREW,
+    })
+    const addedSeconds = BigInt(lease.addedDays) * 24n * 60n * 60n
+    const memo = [lotUuid, Permission.IDS.USE_LOT, crewUuid]
+    return [
+      System.getTransferWithConfirmationCall(
+        lease.recipient,
+        lease.rate * BigInt(lease.addedDays),
+        memo,
+        influenceDispatcherAddress,
+        swayAddress
+      ),
+      System.getRunSystemCall(
+        'ExtendPrepaidAgreement',
+        {
+          target: {
+            id: lease.lotId,
+            label: Entity.IDS.LOT,
+          },
+          permission: Permission.IDS.USE_LOT,
+          permitted: {
+            id: lease.crewId,
+            label: Entity.IDS.CREW,
+          },
+          added_term: addedSeconds,
+          caller_crew: {
+            id: lease.crewId,
+            label: Entity.IDS.CREW,
+          },
+        },
+        influenceDispatcherAddress
+      ),
+    ]
+  })
+
+  const floodgateFee =
+    BigInt(Math.round(1_000 * Math.sqrt(lotLeases.length))) * 1_000_000n
+
+  const leaseExtensionPrice = useMemo(
+    () =>
+      pipe(
+        lotLeases,
+        A.map((lease) => BigInt(lease.addedDays) * lease.rate),
+        A.reduce(0n, (a, b) => a + b)
+      ),
+    [lotLeases]
+  )
+
+  return {
+    leaseExtensionPrice,
+    floodgateFee,
+    contractWriteResult: useContractWrite({
+      calls: [
+        swayContract?.populateTransaction?.['increase_allowance']?.(
+          floodgateContractAddress,
+          floodgateFee
+        ),
+        floodgateContract.populateTransaction.collect_generic_fee(floodgateFee),
+        ...leaseCalls,
+      ],
+    }),
+  }
 }

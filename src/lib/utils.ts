@@ -71,6 +71,7 @@ export const Format = {
   volume: (liters: number) =>
     (liters / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 }) +
     'm³',
+  lotIndex: (lotIndex: number) => `#${lotIndex.toLocaleString()}`,
 }
 
 export const getCrewBonuses = (

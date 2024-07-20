@@ -26,7 +26,6 @@ export const TransferGoodsWizard = ({
     queryFn: () => getInventories(address, crew),
   })
   const [state, dispatch] = useTransferGoodsState()
-  console.log('contents', getDeliveriesContents(state.deliveries))
 
   return (
     <Wizard

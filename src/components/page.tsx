@@ -30,7 +30,7 @@ export const Page = ({
         <p className='text-center text-muted-foreground'>{subtitle}</p>
       )}
       <div
-        className={cn('w-full p-3 ', {
+        className={cn('w-full p-3', {
           'overflow-y-auto': scrollable,
           'md:h-[65vh]': !fullSize,
         })}

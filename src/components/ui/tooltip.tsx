@@ -31,22 +31,30 @@ TooltipContent.displayName = TooltipPrimitive.Content.displayName
 
 type StandardTooltipProps = {
   content: React.ReactNode
+  side?: TooltipPrimitive.TooltipContentProps['side']
 } & React.PropsWithChildren
 
-const StandardTooltip = ({ content, children }: StandardTooltipProps) => (
+const StandardTooltip = ({ content, side, children }: StandardTooltipProps) => (
   <TooltipProvider delayDuration={0}>
     <Tooltip>
       <TooltipTrigger>{children}</TooltipTrigger>
-      <TooltipContent>{content}</TooltipContent>
+      <TooltipContent side={side}>{content}</TooltipContent>
     </Tooltip>
   </TooltipProvider>
 )
 
 const InfoTooltip = ({
   children,
+  side,
   size,
-}: { size?: number } & PropsWithChildren) => (
-  <StandardTooltip content={<div className='max-w-64'>{children}</div>}>
+}: {
+  size?: number
+  side?: TooltipPrimitive.TooltipContentProps['side']
+} & PropsWithChildren) => (
+  <StandardTooltip
+    content={<div className='max-w-64'>{children}</div>}
+    side={side}
+  >
     <Info size={size} />
   </StandardTooltip>
 )
