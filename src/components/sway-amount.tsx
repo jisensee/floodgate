@@ -14,6 +14,7 @@ export const SwayAmount = ({
   convert,
   logoSize = 24,
 }: SwayAmountProps) => {
+  const roundedAmount = typeof amount === 'bigint' ? amount : Math.round(amount)
   return (
     <div className={cn('flex items-center gap-x-1', className)}>
       <NextImage
@@ -24,7 +25,9 @@ export const SwayAmount = ({
       />
       <span>
         {Math.round(
-          convert ? Number(BigInt(amount) / 1_000_000n) : Number(amount)
+          convert
+            ? Number(BigInt(roundedAmount) / 1_000_000n)
+            : Number(roundedAmount)
         ).toLocaleString()}
       </span>
     </div>

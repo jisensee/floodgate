@@ -58,33 +58,6 @@ export const ABI = [
   },
   {
     "type": "impl",
-    "name": "FixScrewedDataImpl",
-    "interface_name": "influenceoverfueler::FixScrewedDataTrait"
-  },
-  {
-    "type": "interface",
-    "name": "influenceoverfueler::FixScrewedDataTrait",
-    "items": [
-      {
-        "type": "function",
-        "name": "reset_crew_list",
-        "inputs": [
-          {
-            "name": "start_id",
-            "type": "core::integer::u64"
-          },
-          {
-            "name": "end_id",
-            "type": "core::integer::u64"
-          }
-        ],
-        "outputs": [],
-        "state_mutability": "external"
-      }
-    ]
-  },
-  {
-    "type": "impl",
     "name": "FloodgateApplicationInterfaceImpl",
     "interface_name": "influenceoverfueler::FloodgateApplicationInterfaceTrait"
   },
@@ -712,6 +685,18 @@ export const ABI = [
           {
             "name": "transfers",
             "type": "core::array::Array::<(influenceoverfueler::InfluenceInventory, core::array::Array::<influenceoverfueler::InfluenceInventoryItem>)>"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "collect_generic_fee",
+        "inputs": [
+          {
+            "name": "fee_amount",
+            "type": "core::integer::u64"
           }
         ],
         "outputs": [],

@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react'
 import { Eye, EyeOff, Plus, Save, Trash, X } from 'lucide-react'
-import { ProductType } from '@influenceth/sdk'
+import { Product, ProductType } from '@influenceth/sdk'
 import { A, pipe } from '@mobily/ts-belt'
 import { type Inventory } from './actions'
 import { Action, Delivery, getDeliveriesContents } from './state'
@@ -302,13 +302,15 @@ const ProductList = ({
   const shownProducts = delivery.source.contents
     .filter(({ product }) => {
       const selected =
-        delivery.contents.find((c) => c.product.i === product.i)?.amount ?? 0
+        delivery.contents.find((c) => c.product === product)?.amount ?? 0
       return !hideUnselected || selected > 0
     })
     .filter(
       ({ product }) =>
         productFilter === '' ||
-        product.name.toLowerCase().includes(productFilter.toLowerCase())
+        Product.getType(product)
+          .name.toLowerCase()
+          .includes(productFilter.toLowerCase())
     )
 
   return (
@@ -368,13 +370,12 @@ const ProductList = ({
         {shownProducts.length > 0 &&
           shownProducts.map(({ product, amount }) => {
             const selected =
-              delivery.contents.find((c) => c.product.i === product.i)
-                ?.amount ?? 0
+              delivery.contents.find((c) => c.product === product)?.amount ?? 0
             return (
               <ProductSelectionDialog
-                key={product.i}
+                key={product}
                 delivery={delivery}
-                product={product}
+                product={Product.getType(product)}
                 remainingMass={remainingMass}
                 remainingVolume={remainingVolume}
                 dispatch={dispatch}
@@ -388,7 +389,7 @@ const ProductList = ({
                   )}
                 >
                   <p className='absolute left-0 top-0 bg-background/75 p-1 text-xs text-foreground'>
-                    {product.name}
+                    {Product.getType(product).name}
                   </p>
                   <p
                     className={cn(
@@ -399,7 +400,7 @@ const ProductList = ({
                       ? `${Format.productMass({ product, amount: selected })} / ${Format.productMass({ product, amount })}`
                       : Format.productMass({ product, amount })}
                   </p>
-                  <ProductImage width={90} productId={product.i} />
+                  <ProductImage width={90} productId={product} />
                 </div>
               </ProductSelectionDialog>
             )
@@ -431,11 +432,13 @@ const ProductSelectionDialog = ({
   )
 
   const selectedMass =
-    delivery.contents.find((c) => c.product.i === product.i)?.amount ?? 0
+    delivery.contents.find((c) => c.product === product.i)?.amount ?? 0
 
   const totalMass =
-    delivery.source.contents.find((c) => c.product.i === product.i)?.amount ?? 0
-  const totalVolume = calcMassAndVolume([{ product, amount: totalMass }]).volume
+    delivery.source.contents.find((c) => c.product === product.i)?.amount ?? 0
+  const totalVolume = calcMassAndVolume([
+    { product: product.i, amount: totalMass },
+  ]).volume
 
   const [newAmount, setNewAmount] = useState(selectedMass)
 
@@ -447,7 +450,7 @@ const ProductSelectionDialog = ({
   }, [open])
 
   const { volume: newVolume } = calcMassAndVolume([
-    { product, amount: newAmount },
+    { product: product.i, amount: newAmount },
   ])
 
   const newRemainingMass = totalMass - newAmount
@@ -473,7 +476,7 @@ const ProductSelectionDialog = ({
       type: 'update-delivery',
       deliverySourceUuid: delivery.source.uuid,
       newContents: delivery.contents.map((productAmount) =>
-        productAmount.product.i === product.i
+        productAmount.product === product.i
           ? { ...productAmount, amount }
           : productAmount
       ),
@@ -543,8 +546,11 @@ const ProductSelectionDialog = ({
         </div>
         {newRemainingMass >= 0 && (
           <p className='text-sm'>
-            {Format.productMass({ product, amount: newRemainingMass })} (
-            {Format.volume(newRemainingVolume)}){' '}
+            {Format.productMass({
+              product: product.i,
+              amount: newRemainingMass,
+            })}{' '}
+            ({Format.volume(newRemainingVolume)}){' '}
             <span className='text-muted-foreground'>remaining</span>
           </p>
         )}

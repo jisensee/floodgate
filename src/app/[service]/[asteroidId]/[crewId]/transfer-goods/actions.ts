@@ -1,10 +1,10 @@
 'use server'
 
-import { Entity, Inventory, ShipType } from '@influenceth/sdk'
-import { ProductAmount } from 'influence-typed-sdk/api'
+import { Entity, Inventory, Ship, ShipType } from '@influenceth/sdk'
+import { ProductAmount, getEntityName } from 'influence-typed-sdk/api'
 import { A, pipe } from '@mobily/ts-belt'
 import { influenceApi } from '@/lib/influence-api'
-import { getBaseName, getStorageInventoryId } from '@/lib/utils'
+import { getStorageInventoryId } from '@/lib/utils'
 import { FloodgateCrew } from '@/lib/contract-types'
 
 type BaseInventory = {
@@ -44,7 +44,7 @@ export const getInventories = async (
     ships,
     A.concat(warehouses),
     A.keepMap((entity) => {
-      const name = entity.Name ?? getBaseName(entity)
+      const name = getEntityName(entity)
       const inventoryId = getStorageInventoryId(entity)
 
       const owningCrewId = entity.Control?.controller.id
@@ -54,7 +54,7 @@ export const getInventories = async (
       const inventory = entity.Inventories.find(
         (i) => i.inventoryType === inventoryId
       )
-      const lotIndex = entity.Location?.locations?.lot?.lotIndex
+      const lotIndex = entity.Location?.resolvedLocations?.lot?.lotIndex
       if (inventory === undefined || lotIndex === undefined) return
 
       const base = {
@@ -82,7 +82,7 @@ export const getInventories = async (
       return entity.Ship
         ? {
             type: 'ship',
-            shipType: entity.Ship.shipType,
+            shipType: Ship.getType(entity.Ship.shipType),
             ...base,
           }
         : { type: 'warehouse', ...base }

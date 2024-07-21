@@ -1,4 +1,11 @@
-import { Building, Crew, Crewmate, Inventory, Product } from '@influenceth/sdk'
+import {
+  Building,
+  Crew,
+  Crewmate,
+  Inventory,
+  Product,
+  Ship,
+} from '@influenceth/sdk'
 import { A, D, O, pipe } from '@mobily/ts-belt'
 import { type ClassValue, clsx } from 'clsx'
 import { InfluenceEntity, ProductAmount } from 'influence-typed-sdk/api'
@@ -57,13 +64,14 @@ export const Format = {
   distance: (kilometers: number) =>
     kilometers.toLocaleString(undefined, { maximumFractionDigits: 1 }) + 'km',
   productMass: (productAmount: ProductAmount) =>
-    productAmount.product.isAtomic
+    Product.getType(productAmount.product).isAtomic
       ? productAmount.amount.toLocaleString()
       : formatMass(productAmount.amount),
   mass: formatMass,
   volume: (liters: number) =>
     (liters / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 }) +
     'm³',
+  lotIndex: (lotIndex: number) => `#${lotIndex.toLocaleString()}`,
 }
 
 export const getCrewBonuses = (
@@ -77,9 +85,10 @@ export const getCrewBonuses = (
       crewmates,
       {
         population: station.Station?.population ?? 0,
-        stationType: station.Station?.stationType.i ?? 0,
+        stationType: station.Station?.stationType ?? 0,
       },
-      ((new Date().getTime() - (crew?.Crew?.lastFed?.getTime() ?? 0)) / 1000) *
+      ((new Date().getTime() - (crew?.Crew?.lastFedTimestamp?.getTime() ?? 0)) /
+        1000) *
         24
     )
 
@@ -97,7 +106,9 @@ export const getFoodRatio = (
   station: InfluenceEntity
 ) => {
   const timeSinceFed: number =
-    ((new Date().getTime() - (crew?.Crew?.lastFed?.getTime() ?? 0)) / 1000) * 24
+    ((new Date().getTime() - (crew?.Crew?.lastFedTimestamp?.getTime() ?? 0)) /
+      1000) *
+    24
   const consumption: number = getCrewBonuses(crew, crewmates, station)
     .foodConsumptionTime.totalBonus
   return Crew.getCurrentFoodRatio(timeSinceFed, consumption)
@@ -121,38 +132,27 @@ export const getFoodAmount = (warehouse: InfluenceEntity) =>
     warehouse.Inventories,
     A.find((i) => i.inventoryType === Inventory.IDS.WAREHOUSE_PRIMARY),
     O.map(D.prop('contents')),
-    O.mapNullable(A.find((c) => c.product.i === Product.IDS.FOOD)),
+    O.mapNullable(A.find((c) => c.product === Product.IDS.FOOD)),
     O.map(D.prop('amount')),
     O.getWithDefault<number>(0)
   )
 
-export const getBaseName = (influenceEntity: InfluenceEntity) => {
-  if (influenceEntity.Name) return influenceEntity.Name
-
-  if (influenceEntity.Ship) {
-    return `${influenceEntity.Ship.shipType.name}#${influenceEntity.id}`
-  }
-  if (influenceEntity.Building) {
-    return `${influenceEntity.Building.buildingType.name}#${influenceEntity.id}`
-  }
-  if (influenceEntity.Crew) {
-    return `Crew#${influenceEntity.id}`
-  }
-  return `Unknown#${influenceEntity.id}`
-}
-
 export const getStorageInventoryId = (influenceEntity: InfluenceEntity) => {
   if (influenceEntity.Ship)
-    return influenceEntity.Ship.shipType.cargoInventoryType
+    return Ship.getType(influenceEntity.Ship.shipType).cargoInventoryType
 
   if (influenceEntity.Building)
-    return influenceEntity.Building?.buildingType.i === Building.IDS.WAREHOUSE
+    return influenceEntity.Building?.buildingType === Building.IDS.WAREHOUSE
       ? Inventory.IDS.WAREHOUSE_PRIMARY
       : undefined
 }
 
 export const calcMassAndVolume = (contents: ProductAmount[]) =>
   A.reduce(contents, { mass: 0, volume: 0 }, (curr, next) => ({
-    mass: curr.mass + next.amount * (next.product.massPerUnit / 1000),
-    volume: curr.volume + next.amount * (next.product.volumePerUnit / 1000),
+    mass:
+      curr.mass +
+      next.amount * (Product.getType(next.product).massPerUnit / 1000),
+    volume:
+      curr.volume +
+      next.amount * (Product.getType(next.product).volumePerUnit / 1000),
   }))

@@ -1,9 +1,9 @@
 'use server'
 
 import { isFuture } from 'date-fns'
-import { Entity, Lot } from '@influenceth/sdk'
+import { Entity, Lot, Product, Ship } from '@influenceth/sdk'
 import { Inventory, ShipType } from '@influenceth/sdk'
-import { InfluenceEntity } from 'influence-typed-sdk/api'
+import { InfluenceEntity, getEntityName } from 'influence-typed-sdk/api'
 import { shortString } from 'starknet'
 import { A, F, G, O, pipe } from '@mobily/ts-belt'
 import { floodgateContract } from './lib/contracts'
@@ -70,13 +70,14 @@ export const getWarehouses = async (
   return warehouses
     .map((wh) => ({
       id: wh.id,
-      name: wh.Name ?? `Warehouse#${wh.id}`,
-      lotIndex: wh.Location?.locations?.lot?.lotIndex ?? 0,
+      name: getEntityName(wh),
+      lotIndex: wh.Location?.resolvedLocations?.lot?.lotIndex ?? 0,
       owningCrewId: wh.Control?.controller?.id ?? 0,
       fuelAmount:
         wh.Inventories.find(
           (i) => i.inventoryType === Inventory.IDS.WAREHOUSE_PRIMARY
-        )?.contents?.find((c) => c.product.i === 170)?.amount ?? 0,
+        )?.contents?.find((c) => c.product === Product.IDS.HYDROGEN_PROPELLANT)
+          ?.amount ?? 0,
     }))
     .filter((wh) => wh.fuelAmount > 0)
 }
@@ -96,11 +97,15 @@ const getFuelCapacity = (ship: ShipType) =>
 
 const getFuelAmount = (ship: InfluenceEntity) => {
   const propellantInventory = ship.Inventories.find(
-    (inv) => inv.inventoryType === ship.Ship?.shipType.propellantInventoryType
+    (inv) =>
+      inv.inventoryType ===
+      O.map(ship.Ship?.shipType, Ship.getType)?.propellantInventoryType
   )
 
   const fuel =
-    propellantInventory?.contents?.find((c) => c.product.i === 170)?.amount ?? 0
+    propellantInventory?.contents?.find(
+      (c) => c.product === Product.IDS.HYDROGEN_PROPELLANT
+    )?.amount ?? 0
   // Reserved mass is in grams for some reason, we want it in kg
   const incomingFuel = (propellantInventory?.reservedMass ?? 0) / 1_000
 
@@ -116,15 +121,15 @@ export const getShips = async (
 
   return ships
     .flatMap((ship) => {
-      const lotIndex = ship.Location?.locations?.lot?.lotIndex
+      const lotIndex = ship.Location?.resolvedLocations?.lot?.lotIndex
       return ship.Ship && lotIndex
         ? [
             {
               id: ship.id,
-              name: ship.Name ?? `Ship#${ship.id}`,
-              type: ship.Ship?.shipType,
+              name: getEntityName(ship),
+              type: Ship.getType(ship.Ship.shipType),
               fuelAmount: getFuelAmount(ship),
-              fuelCapacity: getFuelCapacity(ship.Ship.shipType),
+              fuelCapacity: getFuelCapacity(Ship.getType(ship.Ship.shipType)),
               owningCrewId: ship.Control?.controller?.id ?? 0,
               lotIndex,
             },
@@ -180,11 +185,11 @@ export const getFloodgateCrews = async (args?: GetCrewArgs) => {
       if (!crew) return
 
       const station = stations.find(
-        (s) => s.id === crew.Location?.locations?.building?.id
+        (s) => s.id === crew.Location?.resolvedLocations?.building?.id
       )
       if (!station) return
 
-      const asteroidId = crew.Location?.locations?.asteroid?.id ?? 1
+      const asteroidId = crew.Location?.resolvedLocations?.asteroid?.id ?? 1
       const asteroidName = asteroidNames.get(asteroidId) ?? ''
       const crewmates = allCrewmates.filter((c) =>
         crew.Crew?.roster?.includes(c.id)
@@ -220,7 +225,8 @@ export const getFloodgateCrew = async (crewId: number) => {
     apiCrew,
   ])
   const asteroidName =
-    asteroidNames.get(apiCrew.Location?.locations?.asteroid?.id ?? 1) ?? ''
+    asteroidNames.get(apiCrew.Location?.resolvedLocations?.asteroid?.id ?? 1) ??
+    ''
   const station = stations[0]
   if (!station) return
   return makeFloodgateCrew(
@@ -238,13 +244,13 @@ export const getCrewMetadata = async (apiCrews: InfluenceEntity[]) => {
       influenceApi.util.asteroidNames(
         pipe(
           apiCrews,
-          A.map((c) => c.Location?.locations?.asteroid?.id),
+          A.map((c) => c.Location?.resolvedLocations?.asteroid?.id),
           A.filter(G.isNotNullable)
         )
       ),
       pipe(
         apiCrews,
-        A.filterMap((c) => c.Location?.location?.ship?.id),
+        A.filterMap((c) => c.Location?.resolvedLocation?.ship?.id),
         F.ifElse(
           A.isNotEmpty,
           (shipIds) =>
@@ -257,7 +263,7 @@ export const getCrewMetadata = async (apiCrews: InfluenceEntity[]) => {
       ),
       pipe(
         apiCrews,
-        A.filterMap((c) => c.Location?.location?.building?.id),
+        A.filterMap((c) => c.Location?.resolvedLocation?.building?.id),
         F.ifElse(
           A.isNotEmpty,
           (shipIds) =>
@@ -292,11 +298,11 @@ const makeFloodgateCrew = (
   locked: registeredCrew.is_locked,
   managerAddress: BigInt(registeredCrew.manager_address),
   ownerAddress: BigInt(apiCrew?.Nft?.owner ?? 0),
-  name: apiCrew.Name ?? `Crew#${registeredCrew.crew_id}`,
-  asteroidId: apiCrew.Location?.locations?.asteroid?.id ?? 1,
+  name: getEntityName(apiCrew),
+  asteroidId: apiCrew.Location?.resolvedLocations?.asteroid?.id ?? 1,
   asteroidName,
-  stationName: station.Name ?? `Station#${station.id}`,
-  busyUntil: O.filter(apiCrew.Crew?.readyAt, isFuture) ?? undefined,
+  stationName: getEntityName(station),
+  busyUntil: O.filter(apiCrew.Crew?.readyAtTimestamp, isFuture) ?? undefined,
   crewmateIds: apiCrew.Crew?.roster ?? [],
   feedingConfig: {
     automaticFeedingEnabled: registeredCrew.is_automated_feeding_enabled,

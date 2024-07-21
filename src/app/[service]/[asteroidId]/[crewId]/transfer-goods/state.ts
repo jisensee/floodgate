@@ -96,7 +96,7 @@ export const getDeliveriesContents = (deliveries: Delivery[]) =>
     deliveries,
     A.map(D.prop('contents')),
     A.flat,
-    A.groupBy((p) => p.product.i),
+    A.groupBy((p) => p.product),
     D.values,
     A.keepMap(
       O.mapNullable((amounts) => {

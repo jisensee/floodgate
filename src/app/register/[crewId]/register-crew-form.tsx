@@ -1,6 +1,6 @@
 'use client'
 
-import { InfluenceEntity } from 'influence-typed-sdk/api'
+import { InfluenceEntity, getEntityName } from 'influence-typed-sdk/api'
 import { Cog, MapPin } from 'lucide-react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -55,7 +55,7 @@ const Form = ({
     <div className='flex flex-col items-center gap-y-8'>
       <div className='flex w-full flex-col gap-y-1'>
         <div className='flex w-full flex-col items-center justify-between md:flex-row'>
-          <h2>{crew.Name ?? crew.id}</h2>
+          <h2>{getEntityName(crew)}</h2>
           <div className='flex gap-x-2'>
             <MapPin />
             {station.Name ? station.Name + ', ' : ''}
@@ -83,7 +83,7 @@ const Form = ({
         icon={<Cog />}
         loading={isLoading}
       >
-        Register {crew.Name ?? ''}
+        Register {getEntityName(crew)}
       </Button>
     </div>
   )

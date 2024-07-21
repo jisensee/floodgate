@@ -5,13 +5,13 @@ import { ReactNode, useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { CircleCheck, Wheat } from 'lucide-react'
 import { P, match } from 'ts-pattern'
-import { InfluenceEntity } from 'influence-typed-sdk/api'
+import { InfluenceEntity, getEntityName } from 'influence-typed-sdk/api'
 import { F, pipe } from '@mobily/ts-belt'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { FloodgateCrew } from '@/lib/contract-types'
-import { Format, cn, getBaseName, getFoodAmount } from '@/lib/utils'
+import { Format, cn, getFoodAmount } from '@/lib/utils'
 import { getBuilding, getBuildingAtLot } from '@/actions'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -104,14 +104,14 @@ export const Refeed = ({ crew }: { crew: FloodgateCrew }) => {
         ))
         .with([{ type: 'found', foodAmount: 0 }, false], ([{ warehouse }]) => (
           <Alert variant='destructive' className='text-center'>
-            {getBaseName(warehouse)} has no food available.
+            {getEntityName(warehouse)} has no food available.
           </Alert>
         ))
         .with(
           [{ type: 'found', foodAmount: P.number.gt(0) }, false],
           ([result]) => (
             <div className='flex flex-col items-center gap-y-2'>
-              <p className='text-2xl'>{getBaseName(result.warehouse)}</p>
+              <p className='text-2xl'>{getEntityName(result.warehouse)}</p>
               <p className='text-success'>
                 {Format.mass(result.foodAmount)} Food available
               </p>

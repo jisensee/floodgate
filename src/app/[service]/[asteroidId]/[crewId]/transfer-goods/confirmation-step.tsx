@@ -1,4 +1,4 @@
-import { Asteroid, Entity } from '@influenceth/sdk'
+import { Asteroid, Entity, Product } from '@influenceth/sdk'
 import { ProductAmount } from 'influence-typed-sdk/api'
 import { Truck } from 'lucide-react'
 import { useWizard } from 'react-use-wizard'
@@ -249,10 +249,10 @@ const ProductTable = ({ productAmounts }: ProductTableProps) => {
         {productAmounts
           .filter(({ amount }) => amount > 0)
           .map(({ product, amount }) => (
-            <TableRow key={product.i}>
+            <TableRow key={product}>
               <TableCell className='flex items-center gap-x-2'>
-                <ProductImage width={25} productId={product.i} />
-                <span>{product.name}</span>
+                <ProductImage width={25} productId={product} />
+                <span>{Product.getType(product).name}</span>
               </TableCell>
               <TableCell>{Format.productMass({ product, amount })}</TableCell>
               <TableCell>
