@@ -1,5 +1,4 @@
 import { Connector, useBalance, useDisconnect } from '@starknet-react/core'
-import NextImage from 'next/image'
 import { FC, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { SwayAmount } from '@/components/sway-amount'
@@ -17,19 +16,26 @@ import { useAccountCrews } from '@/hooks/queries'
 import { Separator } from '@/components/ui/separator'
 import { useFeeBalance } from '@/hooks/contract'
 import { FeeBalance } from '@/components/fee-balance'
+import { WalletIcon } from '@/components/wallet-icon'
+import { cn, getWalletName } from '@/lib/utils'
 
 type AccountInfoProps = {
-  address: string
-  connector: Connector
+  address: `0x${string}`
+  connector?: Connector
+  walletId: string
 }
 
-export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
+export const AccountInfo: FC<AccountInfoProps> = ({
+  address,
+  connector,
+  walletId,
+}) => {
   const [open, setOpen] = useState(false)
   const { disconnect, status: disconnectStatus } = useDisconnect()
   const { data: swayBalance } = useBalance({
     address,
     watch: true,
-    token: env.NEXT_PUBLIC_SWAY_CONTRACT_ADDRESS,
+    token: env.NEXT_PUBLIC_SWAY_CONTRACT_ADDRESS as `0x${string}`,
   })
   const { data: crews } = useAccountCrews(address)
   const {
@@ -46,22 +52,22 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
     }
   }, [disconnectStatus])
 
+  const isWebWallet = walletId === 'argentWebWallet'
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           variant='outline'
-          className='flex flex-row items-center gap-x-3 border-primary'
+          className='group flex flex-row items-center gap-x-3 border-primary'
           size='sm'
         >
           {swayBalance && <SwayAmount amount={swayBalance.value} convert />}
           <div className='flex items-center gap-x-1'>
-            {connector.icon.dark && (
-              <NextImage
-                src={connector.icon.dark}
-                width={16}
-                height={16}
-                alt={connector.name}
+            {connector && (
+              <WalletIcon
+                icon={connector.icon}
+                className={cn({ 'invert group-hover:invert-0': isWebWallet })}
               />
             )}
             <Address address={address} shownCharacters={4} />
@@ -75,15 +81,13 @@ export const AccountInfo: FC<AccountInfoProps> = ({ address, connector }) => {
         <div className='flex flex-col items-center gap-y-5 overflow-hidden'>
           <div className='flex w-full flex-col gap-y-2 rounded-md border border-border p-3'>
             <div className='flex w-full items-center gap-x-2 text-xl'>
-              {connector.icon.dark && (
-                <NextImage
-                  src={connector.icon.dark}
-                  width={24}
-                  height={24}
-                  alt={connector.name}
+              {connector && (
+                <WalletIcon
+                  icon={connector.icon}
+                  className={cn({ invert: isWebWallet })}
                 />
               )}
-              <p>Connected {connector.name} Account</p>
+              <p>Connected {getWalletName(walletId)} Account</p>
             </div>
             <Address address={address} />
           </div>

@@ -156,3 +156,11 @@ export const calcMassAndVolume = (contents: ProductAmount[]) =>
       curr.volume +
       next.amount * (Product.getType(next.product).volumePerUnit / 1000),
   }))
+
+export const getWalletName = (connectorId: string) =>
+  ({
+    argentX: 'Argent X',
+    braavos: 'Braavos',
+    argentWebWallet: 'Argent Web Wallet',
+    argentMobile: 'Argent Mobile',
+  })[connectorId] ?? connectorId

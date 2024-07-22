@@ -33,12 +33,22 @@ export const Header = () => {
 }
 
 const WalletSection = () => {
-  const { address, connector } = useAccount()
+  const { account, connector } = useAccount()
+
+  const walletId =
+    connector?.id ??
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ((account as any)?.['walletProvider']?.id as string | undefined)
+
   return (
     <>
-      {!address && <ConnectWalletButton size='sm' />}
-      {address && connector && (
-        <AccountInfo address={address} connector={connector} />
+      {!account && <ConnectWalletButton size='sm' />}
+      {account && walletId && (
+        <AccountInfo
+          address={account.address as `0x${string}`}
+          connector={connector}
+          walletId={walletId}
+        />
       )}
     </>
   )

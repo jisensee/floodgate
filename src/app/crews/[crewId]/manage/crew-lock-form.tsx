@@ -11,7 +11,7 @@ export const CrewLockForm = ({ crew }: { crew: FloodgateCrew }) => {
   const { refresh } = useRouter()
 
   const {
-    write: toggleLocked,
+    send: toggleLocked,
     data,
     error,
     status,

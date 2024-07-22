@@ -9,13 +9,16 @@ export type RequireConnectedAccountProps = {
 
 export const RequireConnectedAccount = ({
   children,
-}: RequireConnectedAccountProps) =>
-  match(useAccount())
+}: RequireConnectedAccountProps) => {
+  const account = useAccount()
+  return match(account)
     .with(
       {
-        address: P.string,
+        account: {
+          address: P.string,
+        },
       },
-      ({ address }) => children(address)
+      ({ account: { address } }) => children(address)
     )
     .with({ status: P.union('connecting', 'reconnecting') }, () => null)
     .otherwise(() => (
@@ -23,3 +26,4 @@ export const RequireConnectedAccount = ({
         <ConnectWalletButton />
       </div>
     ))
+}

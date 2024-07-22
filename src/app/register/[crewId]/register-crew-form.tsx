@@ -38,7 +38,7 @@ const Form = ({
   const bonuses = getCrewBonuses(crew, crewmates, station)
   const [managerAddress, setManagerAddress] = useState(address)
   const {
-    write: register,
+    send: register,
     data,
     status,
     error,

@@ -1,9 +1,9 @@
 'use client'
 
-import NextImage from 'next/image'
 import { DialogTitle } from '@radix-ui/react-dialog'
 import { useConnect } from '@starknet-react/core'
 import { User } from 'lucide-react'
+import { WalletIcon } from './wallet-icon'
 import {
   Dialog,
   DialogContent,
@@ -11,9 +11,10 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Button, ButtonProps } from '@/components/ui/button'
+import { getWalletName } from '@/lib/utils'
 
 export const ConnectWalletButton = (props: ButtonProps) => {
-  const { connect, connectors, status } = useConnect()
+  const { connectors, status, connect } = useConnect()
 
   return (
     <Dialog>
@@ -33,23 +34,18 @@ export const ConnectWalletButton = (props: ButtonProps) => {
         </DialogHeader>
 
         <div className='flex flex-col gap-2'>
-          {connectors.map((connector) => (
-            <Button
-              key={connector.id}
-              className='gap-x-3'
-              onClick={() => connect({ connector })}
-            >
-              {connector.icon.dark && (
-                <NextImage
-                  src={connector.icon.dark}
-                  width={24}
-                  height={24}
-                  alt=''
-                />
-              )}
-              {connector.name}
-            </Button>
-          ))}
+          {connectors
+            .filter((connector) => connector.available())
+            .map((connector) => (
+              <Button
+                key={connector.id}
+                className='gap-x-3'
+                onClick={() => connect({ connector })}
+              >
+                <WalletIcon icon={connector.icon} />
+                {getWalletName(connector.id)}
+              </Button>
+            ))}
         </div>
       </DialogContent>
     </Dialog>

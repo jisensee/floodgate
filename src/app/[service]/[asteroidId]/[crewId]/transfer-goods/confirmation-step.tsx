@@ -77,7 +77,7 @@ export const ConfirmationStep = ({
   }
 
   const {
-    write: transferGoods,
+    send: transferGoods,
     data,
     status,
     error,

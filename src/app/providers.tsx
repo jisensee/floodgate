@@ -4,26 +4,43 @@ import { FC, PropsWithChildren } from 'react'
 import { mainnet, sepolia } from '@starknet-react/chains'
 import {
   StarknetConfig,
-  argent,
-  braavos,
   jsonRpcProvider,
   publicProvider,
-  useInjectedConnectors,
   voyager,
 } from '@starknet-react/core'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { O } from '@mobily/ts-belt'
-import { env } from '@/env'
+import { WebWalletConnector } from 'starknetkit/webwallet'
+import { InjectedConnector } from 'starknetkit/injected'
+import { ProviderInterface, ProviderOptions } from 'starknet'
 import { nodeUrl } from '@/lib/contracts'
+import { env } from '@/env'
 
 const queryClient = new QueryClient()
 
+class MyWebWalletConnector extends WebWalletConnector {
+  private address?: string
+
+  async connect() {
+    const result = await super.connect()
+    this.address = result.account
+    return result
+  }
+  async account(provider: ProviderOptions | ProviderInterface) {
+    const acc = await super.account(provider)
+    if (this.address) {
+      acc.address = this.address
+    }
+    return acc
+  }
+}
+
 export const Providers: FC<PropsWithChildren> = ({ children }) => {
-  const { connectors } = useInjectedConnectors({
-    recommended: [argent(), braavos()],
-    includeRecommended: 'onlyIfNoConnectors',
-    order: 'alphabetical',
-  })
+  const connectors = [
+    new MyWebWalletConnector({ url: 'https://web.argent.xyz' }),
+    new InjectedConnector({ options: { id: 'argentX' } }),
+    new InjectedConnector({ options: { id: 'braavos' } }),
+  ]
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -16,7 +16,7 @@ export const UnregisterForm = ({
   const isOwner = BigInt(address) === crew.ownerAddress
 
   const {
-    write: unregister,
+    send: unregister,
     data,
     status,
     error,
