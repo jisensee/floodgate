@@ -38,7 +38,10 @@ export const Confirmation: FC<ConfirmationProps> = ({
   const { goToStep } = useWizard()
   const devteamShare = useDevteamShare()
 
-  const overfuelBonus = Math.min(crew.bonuses.volumeCapacity.totalBonus, crew.bonuses.massCapacity.totalBonus);
+  const overfuelBonus = Math.min(
+    crew.bonuses.volumeCapacity.totalBonus,
+    crew.bonuses.massCapacity.totalBonus
+  )
   const missingFuel =
     selectedShip.fuelCapacity * overfuelBonus - selectedShip.fuelAmount
   const maxFuel = Math.min(missingFuel, selectedInventory.fuelAmount)
@@ -64,7 +67,7 @@ export const Confirmation: FC<ConfirmationProps> = ({
   })
 
   const {
-    write: fuelShip,
+    send: fuelShip,
     data,
     status: submitStatus,
     error: submitError,
@@ -94,13 +97,25 @@ export const Confirmation: FC<ConfirmationProps> = ({
     <div className='flex flex-col items-center gap-y-3'>
       <div className='flex flex-col items-center'>
         <div className='flex flex-col items-center gap-y-1 pb-3'>
-          <p>{selectedInventory.name}<span className='text-[#884FFF]'>{ selectedInventory.isPropellantBay ? ' (Propellant)' : '' }</span></p>
-          <InventoryImage label={selectedInventory.label} type={selectedInventory.type} size={150} />
+          <p>
+            {selectedInventory.name}
+            <span className='text-[#884FFF]'>
+              {selectedInventory.isPropellantBay ? ' (Propellant)' : ''}
+            </span>
+          </p>
+          <InventoryImage
+            label={selectedInventory.label}
+            type={selectedInventory.type}
+            size={150}
+          />
         </div>
         <MoveDown size={32} />
         <div className='flex flex-col items-center gap-y-1 pb-3'>
           <ShipImage type={selectedShip.type} size={150} />
-          <p>{selectedShip.name}<span className='text-[#884FFF]'> (Propellant)</span></p>
+          <p>
+            {selectedShip.name}
+            <span className='text-[#884FFF]'> (Propellant)</span>
+          </p>
           {!fuelSuccess && (
             <Progress
               className='h-2'

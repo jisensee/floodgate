@@ -38,13 +38,13 @@ const Wrapper = ({ address }: { address: string }) => {
   }, [feeBalance])
 
   const {
-    write: withdraw,
+    send: withdraw,
     data,
     status,
     error,
   } = useWithdrawFees(withdrawAmount)
 
-  const { write: withdrawDevteam, isPending: devteamWithdrawLoading } =
+  const { send: withdrawDevteam, isPending: devteamWithdrawLoading } =
     useDevteamWithdraw(devteamBalance, devteamIndex)
 
   const { isLoading } = useTransactionToast({

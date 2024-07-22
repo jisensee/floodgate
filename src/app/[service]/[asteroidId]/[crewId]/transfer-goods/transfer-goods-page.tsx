@@ -6,7 +6,7 @@ import { FloodgateCrew } from '@/lib/contract-types'
 import { ConnectWalletButton } from '@/components/connect-wallet-button'
 
 export const TransferGoodsPage = ({ crew }: { crew: FloodgateCrew }) => {
-  const { address } = useAccount()
+  const address = useAccount()?.account?.address
   const actionFee = crew.services.find(
     (s) => s.serviceType === 'TransferGoods' && s.enabled
   )?.actionSwayFee

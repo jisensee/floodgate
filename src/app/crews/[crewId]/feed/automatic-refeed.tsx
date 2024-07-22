@@ -253,7 +253,7 @@ const useRefeedTx = (
 
   const {
     data: txData,
-    write: refeedCrew,
+    send: refeedCrew,
     status: submitStatus,
     error: submitError,
   } = useCrewRefeeding({

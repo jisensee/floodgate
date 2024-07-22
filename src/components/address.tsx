@@ -2,7 +2,7 @@ import { useStarkName } from '@starknet-react/core'
 import { FC } from 'react'
 
 type AddressProps = {
-  address: string
+  address: `0x${string}`
   shownCharacters?: number
 }
 

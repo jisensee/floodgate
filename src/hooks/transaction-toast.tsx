@@ -1,4 +1,4 @@
-import { useWaitForTransaction } from '@starknet-react/core'
+import { useTransactionReceipt } from '@starknet-react/core'
 import { Check, CircleAlert, LoaderCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -23,7 +23,7 @@ export const useTransactionToast = ({
     isLoading: txLoading,
     error: txError,
     status: txStatus,
-  } = useWaitForTransaction({ hash: txHash, retry: true })
+  } = useTransactionReceipt({ hash: txHash, retry: true })
 
   const [toastId, setToastId] = useState<number | string | undefined>()
 

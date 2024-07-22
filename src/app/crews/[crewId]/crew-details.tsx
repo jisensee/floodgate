@@ -19,7 +19,7 @@ export const CrewDetails = ({
   showServices,
   showManageButton,
 }: CrewDetailsProps) => {
-  const { address } = useAccount()
+  const address = useAccount()?.account?.address
   const isManager = address && BigInt(address) === crew.managerAddress
 
   return (

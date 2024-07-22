@@ -1,6 +1,8 @@
 import { Contract, RpcProvider } from 'starknet'
 import { O } from '@mobily/ts-belt'
 import { ABI as floodgateAbi } from '../abis/floodgate'
+import dispatcherAbi from '../abis/influence-dispatcher.json'
+import swayAbi from '../abis/sway.json'
 import { env } from '@/env'
 
 export const nodeUrl = O.map(
@@ -14,8 +16,19 @@ const provider = new RpcProvider({
 })
 
 export const floodgateContract = new Contract(
-  // @ts-expect-error type
   floodgateAbi,
   env.NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS,
   provider
-).typed(floodgateAbi)
+).typedv2(floodgateAbi)
+
+export const influenceDispatcherContract = new Contract(
+  dispatcherAbi,
+  env.NEXT_PUBLIC_INFLUENCE_DISPATCHER_CONTRACT_ADDRESS,
+  provider
+)
+
+export const swayContract = new Contract(
+  swayAbi,
+  env.NEXT_PUBLIC_SWAY_CONTRACT_ADDRESS,
+  provider
+)

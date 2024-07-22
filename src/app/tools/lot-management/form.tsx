@@ -151,7 +151,7 @@ export const Form = ({
       variant='accent'
       disabled={!extendActive || selectionLimitReached}
       loading={isExtending}
-      onClick={() => contractWriteResult.write()}
+      onClick={() => contractWriteResult.send()}
     >
       {`Extend ${extendActive ? selectedLotIds.length + ' ' : ''}leases${extendActive ? ' for' : ''}`}
       {extendActive && (

@@ -13,7 +13,7 @@ export const ManagerForm = ({ crew }: { crew: FloodgateCrew }) => {
   )
 
   const {
-    write: setCrewManager,
+    send: setCrewManager,
     data,
     status,
     error,
@@ -27,7 +27,7 @@ export const ManagerForm = ({ crew }: { crew: FloodgateCrew }) => {
   })
 
   return (
-    <div className='flex flex-col items-center '>
+    <div className='flex flex-col items-center'>
       <div className='flex flex-col gap-y-2'>
         <p className='text-sm text-muted-foreground'>
           The manager address determines who can manage this crew and collect

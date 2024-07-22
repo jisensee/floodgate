@@ -39,7 +39,7 @@ export const CrewServicesConfigForm = ({ crew }: { crew: FloodgateCrew }) => {
   )
 
   const {
-    write: setServiceConfig,
+    send: setServiceConfig,
     data,
     status,
     error,

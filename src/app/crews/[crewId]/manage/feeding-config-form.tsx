@@ -33,7 +33,7 @@ export const FeedingConfigForm = ({
       : undefined
   )
   const {
-    write: setConfig,
+    send: setConfig,
     data,
     status,
     error,
