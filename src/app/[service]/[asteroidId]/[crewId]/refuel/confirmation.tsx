@@ -3,7 +3,8 @@ import { Fuel, MoveDown } from 'lucide-react'
 import { Asteroid } from '@influenceth/sdk'
 import { useWizard } from 'react-use-wizard'
 import { useQuery } from '@tanstack/react-query'
-import { ShipImage, WarehouseImage } from '@/components/asset-images'
+import { Ship, SourceInventory } from './actions'
+import { InventoryImage, ShipImage } from '@/components/asset-images'
 import { Progress } from '@/components/ui/progress'
 import { SwayAmount } from '@/components/sway-amount'
 import { Format, cn } from '@/lib/utils'
@@ -11,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { useDevteamShare, useFuelShipTransaction } from '@/hooks/contract'
 import { Slider } from '@/components/ui/slider'
 import { Label } from '@/components/ui/label'
-import { Ship, Warehouse, getAutomaticFeedingAmount } from '@/actions'
+import { getAutomaticFeedingAmount } from '@/actions'
 import { FloodgateCrew } from '@/lib/contract-types'
 import { useTransactionToast } from '@/hooks/transaction-toast'
 
@@ -22,7 +23,7 @@ export type ConfirmationProps = {
   crew: FloodgateCrew
   actionFee: bigint
   selectedShip: Ship
-  selectedWarehouse: Warehouse
+  selectedInventory: SourceInventory
   onReset: () => void
 }
 
@@ -30,7 +31,7 @@ export const Confirmation: FC<ConfirmationProps> = ({
   crew,
   actionFee,
   selectedShip,
-  selectedWarehouse,
+  selectedInventory: selectedInventory,
   onReset,
 }) => {
   const transportBonus = crew.bonuses.transportTime.totalBonus
@@ -40,19 +41,19 @@ export const Confirmation: FC<ConfirmationProps> = ({
   const overfuelBonus = Math.min(crew.bonuses.volumeCapacity.totalBonus, crew.bonuses.massCapacity.totalBonus);
   const missingFuel =
     selectedShip.fuelCapacity * overfuelBonus - selectedShip.fuelAmount
-  const maxFuel = Math.min(missingFuel, selectedWarehouse.fuelAmount)
+  const maxFuel = Math.min(missingFuel, selectedInventory.fuelAmount)
   const [usedFuel, setUsedFuel] = useState(maxFuel)
   const newFuelAmount = selectedShip.fuelAmount + usedFuel
   const newFuelPercentage = (newFuelAmount / selectedShip.fuelCapacity) * 100
   const distance = Asteroid.getLotDistance(
     1,
-    selectedWarehouse.lotIndex,
+    selectedInventory.lotIndex,
     selectedShip.lotIndex
   )
   const transferSeconds =
     Asteroid.getLotTravelTime(
       1,
-      selectedWarehouse.lotIndex,
+      selectedInventory.lotIndex,
       selectedShip.lotIndex,
       transportBonus
     ) / 24
@@ -68,10 +69,12 @@ export const Confirmation: FC<ConfirmationProps> = ({
     status: submitStatus,
     error: submitError,
   } = useFuelShipTransaction({
-    warehouseId: selectedWarehouse.id,
+    inventoryLabel: selectedInventory.label,
+    inventoryId: selectedInventory.id,
+    inventorySlot: selectedInventory.slot,
     shipId: selectedShip.id,
     contractCrewId: crew.id,
-    warehouseOwnerCrewId: selectedWarehouse.owningCrewId,
+    inventoryOwnerCrewId: selectedInventory.owningCrewId,
     shipOwnerCrewId: selectedShip.owningCrewId,
     fuelAmount: Math.floor(usedFuel),
     swayFee: actionFee,
@@ -91,13 +94,13 @@ export const Confirmation: FC<ConfirmationProps> = ({
     <div className='flex flex-col items-center gap-y-3'>
       <div className='flex flex-col items-center'>
         <div className='flex flex-col items-center gap-y-1 pb-3'>
-          <p>{selectedWarehouse.name}</p>
-          <WarehouseImage size={150} />
+          <p>{selectedInventory.name}<span className='text-[#884FFF]'>{ selectedInventory.isPropellantBay ? ' (Propellant)' : '' }</span></p>
+          <InventoryImage label={selectedInventory.label} type={selectedInventory.type} size={150} />
         </div>
         <MoveDown size={32} />
         <div className='flex flex-col items-center gap-y-1 pb-3'>
           <ShipImage type={selectedShip.type} size={150} />
-          <p>{selectedShip.name}</p>
+          <p>{selectedShip.name}<span className='text-[#884FFF]'> (Propellant)</span></p>
           {!fuelSuccess && (
             <Progress
               className='h-2'

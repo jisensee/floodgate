@@ -1,19 +1,18 @@
 'use server'
 
 import { isFuture } from 'date-fns'
-import { Entity, Lot, Product, Ship } from '@influenceth/sdk'
-import { Inventory, ShipType } from '@influenceth/sdk'
+import { Entity, Lot} from '@influenceth/sdk'
 import { InfluenceEntity, getEntityName } from 'influence-typed-sdk/api'
 import { shortString } from 'starknet'
 import { A, F, G, O, pipe } from '@mobily/ts-belt'
-import { floodgateContract } from './lib/contracts'
+import { floodgateContract } from '@/lib/contracts'
 import {
   FloodgateContractCrew,
   FloodgateCrew,
   FloodgateServiceType,
-} from './lib/contract-types'
-import { getCrewBonuses, getFoodRatio, getFoodAmount } from './lib/utils'
-import { env } from './env'
+} from '@/lib/contract-types'
+import { getCrewBonuses, getFoodRatio, getFoodAmount } from '@/lib/utils'
+import { env } from '@/env'
 import { influenceApi } from '@/lib/influence-api'
 
 export const getCrew = async (crewId: number) => {
@@ -54,92 +53,9 @@ export const getBuildingAtLot = async (asteroidId: number, lotIndex: number) =>
     })
     .then(A.head)
 
-export type Warehouse = {
-  id: number
+export type EntityType = {
+  type: number
   name: string
-  lotIndex: number
-  fuelAmount: number
-  owningCrewId: number
-}
-
-export const getWarehouses = async (
-  address: string,
-  asteroidId: number
-): Promise<Warehouse[]> => {
-  const warehouses = await influenceApi.util.warehouses(address, asteroidId)
-  return warehouses
-    .map((wh) => ({
-      id: wh.id,
-      name: getEntityName(wh),
-      lotIndex: wh.Location?.resolvedLocations?.lot?.lotIndex ?? 0,
-      owningCrewId: wh.Control?.controller?.id ?? 0,
-      fuelAmount:
-        wh.Inventories.find(
-          (i) => i.inventoryType === Inventory.IDS.WAREHOUSE_PRIMARY
-        )?.contents?.find((c) => c.product === Product.IDS.HYDROGEN_PROPELLANT)
-          ?.amount ?? 0,
-    }))
-    .filter((wh) => wh.fuelAmount > 0)
-}
-
-export type Ship = {
-  id: number
-  name: string
-  type: ShipType
-  fuelAmount: number
-  fuelCapacity: number
-  lotIndex: number
-  owningCrewId: number
-}
-
-const getFuelCapacity = (ship: ShipType) =>
-  Inventory.getType(ship.propellantInventoryType).massConstraint / 1_000
-
-const getFuelAmount = (ship: InfluenceEntity) => {
-  const propellantInventory = ship.Inventories.find(
-    (inv) =>
-      inv.inventoryType ===
-      O.map(ship.Ship?.shipType, Ship.getType)?.propellantInventoryType
-  )
-
-  const fuel =
-    propellantInventory?.contents?.find(
-      (c) => c.product === Product.IDS.HYDROGEN_PROPELLANT
-    )?.amount ?? 0
-  // Reserved mass is in grams for some reason, we want it in kg
-  const incomingFuel = (propellantInventory?.reservedMass ?? 0) / 1_000
-
-  return fuel + incomingFuel
-}
-
-export const getShips = async (
-  address: string,
-  asteroidId: number,
-  volumeBonus: number
-): Promise<Ship[]> => {
-  const ships = await influenceApi.util.ships(address, asteroidId)
-
-  return ships
-    .flatMap((ship) => {
-      const lotIndex = ship.Location?.resolvedLocations?.lot?.lotIndex
-      return ship.Ship && lotIndex
-        ? [
-            {
-              id: ship.id,
-              name: getEntityName(ship),
-              type: Ship.getType(ship.Ship.shipType),
-              fuelAmount: getFuelAmount(ship),
-              fuelCapacity: getFuelCapacity(Ship.getType(ship.Ship.shipType)),
-              owningCrewId: ship.Control?.controller?.id ?? 0,
-              lotIndex,
-            },
-          ]
-        : []
-    })
-    .filter((ship) => {
-      const overfueledCapacity = ship.fuelCapacity * volumeBonus
-      return ship.fuelAmount < overfueledCapacity
-    })
 }
 
 export type GetCrewArgs = {

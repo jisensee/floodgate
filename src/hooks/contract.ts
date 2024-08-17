@@ -36,10 +36,12 @@ const addFeedingCall = (
     : calls
 
 export const useFuelShipTransaction = (args: {
-  warehouseId: number
+  inventoryLabel: number
+  inventoryId: number
+  inventorySlot: number
   shipId: number
   contractCrewId: number
-  warehouseOwnerCrewId: number
+  inventoryOwnerCrewId: number
   shipOwnerCrewId: number
   swayFee: bigint
   fuelAmount: number
@@ -50,13 +52,13 @@ export const useFuelShipTransaction = (args: {
 
   const refuelCalls: Call[] = [
     dispatcherContract?.populateTransaction?.['run_system']?.('Whitelist', [
-      Entity.IDS.BUILDING,
-      args.warehouseId,
+      args.inventoryLabel,
+      args.inventoryId,
       Permission.IDS.REMOVE_PRODUCTS,
       Entity.IDS.CREW,
       args.contractCrewId,
       Entity.IDS.CREW,
-      args.warehouseOwnerCrewId,
+      args.inventoryOwnerCrewId,
     ]),
     dispatcherContract?.populateTransaction?.['run_system']?.('Whitelist', [
       Entity.IDS.SHIP,
@@ -74,9 +76,9 @@ export const useFuelShipTransaction = (args: {
     floodgateContract.populateTransaction.service_refuel_ship(
       args.contractCrewId,
       {
-        inventory_id: args.warehouseId,
-        inventory_type: Entity.IDS.BUILDING,
-        inventory_slot: 2,
+        inventory_id: args.inventoryId,
+        inventory_type: args.inventoryLabel,
+        inventory_slot: args.inventorySlot,
       },
       args.shipId,
       args.fuelAmount
@@ -84,13 +86,13 @@ export const useFuelShipTransaction = (args: {
     dispatcherContract?.populateTransaction?.['run_system']?.(
       'RemoveFromWhitelist',
       [
-        Entity.IDS.BUILDING,
-        args.warehouseId,
+        args.inventoryLabel,
+        args.inventoryId,
         Permission.IDS.REMOVE_PRODUCTS,
         Entity.IDS.CREW,
         args.contractCrewId,
         Entity.IDS.CREW,
-        args.warehouseOwnerCrewId,
+        args.inventoryOwnerCrewId,
       ]
     ),
     dispatcherContract?.populateTransaction?.['run_system']?.(

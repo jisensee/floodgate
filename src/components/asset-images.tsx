@@ -1,9 +1,30 @@
-import { Building, ShipType } from '@influenceth/sdk'
+import { Building, Entity, ShipType, Ship } from '@influenceth/sdk'
 import NextImage from 'next/image'
 import { makeInfluenceImageUrls } from 'influence-typed-sdk/images'
 import { FC } from 'react'
 import { A } from '@mobily/ts-belt'
 import { cn } from '@/lib/utils'
+
+type InventoryImageProps = {
+  label: number,
+  type: number,
+  size: number
+}
+
+export const InventoryImage: FC<InventoryImageProps> = ({label, type, size }) => {
+  let url = '', name = ''
+  switch(label) {
+    case Entity.IDS.SHIP:
+      url = imageUrls.ship(type, { w: size })
+      name = Ship.getType(type).name
+      break;
+    case Entity.IDS.BUILDING:
+      url = imageUrls.building(type, { w: size })
+      name = Building.getType(type).name
+      break;
+  }
+  return <NextImage src={url} width={size} height={0} alt={name} />
+}
 
 type ShipImageProps = {
   type: ShipType

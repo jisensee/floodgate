@@ -1,11 +1,11 @@
 import { Reducer, useReducer } from 'react'
-import { Ship, Warehouse } from '@/actions'
+import { Ship, SourceInventory } from './actions'
 
 export type State = {
   selectedShip?: Ship
-  selectedWarehouse?: Warehouse
+  selectedInventory?: SourceInventory
   ships: Ship[]
-  warehouses: Warehouse[]
+  inventories: SourceInventory[]
   dataLoading: boolean
 }
 
@@ -14,22 +14,22 @@ export type SelectShip = {
   ship: Ship
 }
 
-export type SelectWarehouse = {
-  type: 'select-warehouse'
-  warehouse: Warehouse
+export type SelectInventory = {
+  type: 'select-inventory'
+  inventory: SourceInventory
 }
 
 export type SetData = {
   type: 'set-data'
   ships: Ship[]
-  warehouses: Warehouse[]
+  inventories: SourceInventory[]
 }
 
 export type Reset = {
   type: 'reset'
 }
 
-export type Action = SelectShip | SelectWarehouse | SetData | Reset
+export type Action = SelectShip | SelectInventory | SetData | Reset
 
 export const useRefuelWizardState = () =>
   useReducer<Reducer<State, Action>>(
@@ -39,24 +39,24 @@ export const useRefuelWizardState = () =>
           return {
             ...state,
             selectedShip: action.ship,
-            selectedWarehouse: undefined,
+            selectedInventory: undefined,
           }
-        case 'select-warehouse':
-          return { ...state, selectedWarehouse: action.warehouse }
+        case 'select-inventory':
+          return { ...state, selectedInventory: action.inventory }
         case 'set-data':
           return {
             ...state,
             ships: action.ships,
-            warehouses: action.warehouses,
+            inventories: action.inventories,
             dataLoading: false,
           }
         case 'reset':
           return {
             ...state,
             selectedShip: undefined,
-            selectedWarehouse: undefined,
+            selectedInventory: undefined,
           }
       }
     },
-    { ships: [], warehouses: [], dataLoading: true }
+    { ships: [], inventories: [], dataLoading: true }
   )

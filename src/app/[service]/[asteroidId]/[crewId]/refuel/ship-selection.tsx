@@ -1,6 +1,6 @@
 import { FC } from 'react'
+import { Ship } from './actions'
 import { Format, cn } from '@/lib/utils'
-import { Ship } from '@/actions'
 import { ShipImage } from '@/components/asset-images'
 import { Progress } from '@/components/ui/progress'
 
