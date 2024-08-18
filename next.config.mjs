@@ -3,6 +3,8 @@ const nextConfig = {
   experimental: {
     typedRoutes: true,
   },
+  // workaround for weird issue where influence sdk leads to js errors in production build
+  swcMinify: false,
   images: {
     dangerouslyAllowSVG: true,
     remotePatterns: [

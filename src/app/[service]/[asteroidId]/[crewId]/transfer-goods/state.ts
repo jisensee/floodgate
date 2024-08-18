@@ -2,7 +2,7 @@ import { A, D, N, O, pipe } from '@mobily/ts-belt'
 import { ProductAmount } from 'influence-typed-sdk/api'
 import { Reducer, useReducer } from 'react'
 import { P, match } from 'ts-pattern'
-import { Inventory } from './actions'
+import { Inventory } from '@/inventory-actions'
 
 export type InventoryType = 'ship' | 'warehouse'
 
@@ -71,13 +71,13 @@ const reducer: Reducer<State, Action> = (currentState, action) =>
       deliveries: A.removeFirstBy(
         currentState.deliveries,
         action.deliverySourceUuid,
-        (delivery, sourceUuid) => delivery.source.uuid === sourceUuid
+        (delivery, sourceUuid) => delivery.source.entity.uuid === sourceUuid
       ),
     }))
     .with({ type: 'update-delivery' }, (action) => ({
       ...currentState,
       deliveries: currentState.deliveries.map((delivery) =>
-        delivery.source.uuid === action.deliverySourceUuid
+        delivery.source.entity.uuid === action.deliverySourceUuid
           ? { ...delivery, contents: action.newContents }
           : delivery
       ),

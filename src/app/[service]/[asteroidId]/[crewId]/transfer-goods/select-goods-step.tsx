@@ -6,9 +6,16 @@ import {
   useState,
 } from 'react'
 import { Eye, EyeOff, Plus, Save, Trash, X } from 'lucide-react'
-import { Product, ProductType } from '@influenceth/sdk'
-import { A, pipe } from '@mobily/ts-belt'
-import { type Inventory } from './actions'
+import {
+  Building,
+  Entity,
+  Inventory as SdkInventory,
+  Product,
+  ProductType,
+  Ship,
+} from '@influenceth/sdk'
+import { A, O, flow, pipe } from '@mobily/ts-belt'
+import { ProductAmount } from 'influence-typed-sdk/api'
 import { Action, Delivery, getDeliveriesContents } from './state'
 import { InventoryCard } from './inventory-card'
 import {
@@ -22,6 +29,7 @@ import { Button } from '@/components/ui/button'
 import {
   ProductImage,
   ShipImage,
+  TankFarmImage,
   WarehouseImage,
 } from '@/components/asset-images'
 import {
@@ -36,6 +44,8 @@ import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
 import { StandardTooltip } from '@/components/ui/tooltip'
 import { FloodgateCrew } from '@/lib/contract-types'
+import { Inventory } from '@/inventory-actions'
+import { Alert } from '@/components/ui/alert'
 
 export type SelectGoodsStepProps = {
   inventories: Inventory[]
@@ -57,9 +67,9 @@ export const SelectGoodsStep = ({
 
   const availableSources = inventories.filter(
     (i) =>
-      destination.uuid !== i.uuid &&
+      destination.entity.uuid !== i.entity.uuid &&
       i.contents.length > 0 &&
-      !deliveries.find((d) => d.source.uuid === i.uuid)
+      !deliveries.find((d) => d.source.entity.uuid === i.entity.uuid)
   )
   const { remainingDestinationMass, remainingDestinationVolume } =
     useDeliveryImpact(destination, deliveries, crew)
@@ -82,7 +92,7 @@ export const SelectGoodsStep = ({
               source: i,
             })
             setAddSourceDialogOpen(false)
-            setOpenDeliveries((prev) => [...prev, i.uuid])
+            setOpenDeliveries((prev) => [...prev, i.entity.uuid])
           }}
         />
       </div>
@@ -93,15 +103,19 @@ export const SelectGoodsStep = ({
       >
         {deliveries.map((delivery) => (
           <AccordionItem
-            key={delivery.source.uuid}
-            value={delivery.source.uuid}
+            key={delivery.source.entity.uuid}
+            value={delivery.source.entity.uuid}
           >
             <AccordionTrigger className='pb-2'>
-              <DeliveryCard key={delivery.source.uuid} delivery={delivery} />
+              <DeliveryCard
+                key={delivery.source.entity.uuid}
+                delivery={delivery}
+              />
             </AccordionTrigger>
             <AccordionContent>
               <ProductList
                 delivery={delivery}
+                destination={destination}
                 remainingMass={remainingDestinationMass}
                 remainingVolume={remainingDestinationVolume}
                 dispatch={dispatch}
@@ -122,8 +136,8 @@ const useDeliveryImpact = (
   const { mass: destMass, volume: destVolume } = calcMassAndVolume(
     destination.contents
   )
-  const usedDestinationMass = destMass + destination.reservedMass
-  const usedDestinationVolume = destVolume + destination.reservedVolume
+  const usedDestinationMass = destMass + destination.reservedMass / 1000
+  const usedDestinationVolume = destVolume + destination.reservedVolume / 1000
 
   const { mass: deliveryMass, volume: deliveryVolume } = calcMassAndVolume(
     getDeliveriesContents(deliveries)
@@ -173,7 +187,7 @@ const DestinationPreview = ({
 
   return (
     <div className='flex flex-col gap-y-1'>
-      <h3>{destination.name}</h3>
+      <h3>{destination.entity.name}</h3>
       <div>
         <p>
           Mass: {Format.mass(newDestinationMass)} /{' '}
@@ -220,24 +234,30 @@ const DestinationPreview = ({
   )
 }
 
+const getInventoryImage = (inventory: Inventory) => {
+  if (inventory.entity.label === Entity.IDS.SHIP) {
+    return <ShipImage type={Ship.getType(inventory.entity.type)} size={100} />
+  }
+  return inventory.entity.type === Building.IDS.WAREHOUSE ? (
+    <WarehouseImage size={100} />
+  ) : (
+    <TankFarmImage size={100} />
+  )
+}
+
 type DeliveryCardProps = {
   delivery: Delivery
 }
 const DeliveryCard = ({ delivery }: DeliveryCardProps) => {
   const { source, contents } = delivery
-  const image =
-    source.type === 'ship' ? (
-      <ShipImage type={source.shipType} size={100} />
-    ) : (
-      <WarehouseImage size={100} />
-    )
+  const image = getInventoryImage(source)
 
   const selectedCount = contents.filter((c) => c.amount > 0).length
   return (
     <div className='flex gap-x-2 text-left text-base font-normal'>
       {image}
       <div className='flex flex-col gap-y-1'>
-        <p className='font-bold'>{source.name}</p>
+        <p className='font-bold'>{source.entity.name}</p>
         <p>
           {selectedCount} / {source.contents.length} items selected
         </p>
@@ -273,7 +293,7 @@ const AddSourceDialog = ({
           sources,
           A.map((source) => (
             <InventoryCard
-              key={source.uuid}
+              key={source.entity.uuid + source.inventoryType}
               inventory={source}
               onSelect={() => onSelect(source)}
             />
@@ -286,12 +306,14 @@ const AddSourceDialog = ({
 
 type ProductListProps = {
   delivery: Delivery
+  destination: Inventory
   remainingMass: number
   remainingVolume: number
   dispatch: Dispatch<Action>
 }
 const ProductList = ({
   delivery,
+  destination,
   remainingMass,
   remainingVolume,
   dispatch,
@@ -299,7 +321,24 @@ const ProductList = ({
   const [productFilter, setProductFilter] = useState('')
   const [hideUnselected, setHideUnselected] = useState(false)
 
+  const allowedProducts =
+    pipe(
+      destination.inventoryType,
+      SdkInventory.getType,
+      (s) => s.productConstraints ?? undefined,
+      O.map(flow(Object.keys, A.map(parseInt)))
+    ) ?? []
+
+  const hasProductConstraints = allowedProducts.length > 0
+  const hasForbiddenProducts =
+    hasProductConstraints &&
+    delivery.source.contents.some((c) => !allowedProducts.includes(c.product))
+
+  const isAllowedProduct = (product: ProductAmount) =>
+    !hasProductConstraints || allowedProducts.includes(product.product)
+
   const shownProducts = delivery.source.contents
+    .filter(isAllowedProduct)
     .filter(({ product }) => {
       const selected =
         delivery.contents.find((c) => c.product === product)?.amount ?? 0
@@ -344,13 +383,19 @@ const ProductList = ({
           onClick={() =>
             dispatch({
               type: 'remove-delivery',
-              deliverySourceUuid: delivery.source.uuid,
+              deliverySourceUuid: delivery.source.entity.uuid,
             })
           }
         >
           Remove
         </Button>
       </div>
+      {hasForbiddenProducts && (
+        <Alert variant='warning'>
+          Not all products are shown since the destination has product
+          restrictions.
+        </Alert>
+      )}
       <div className='fit flex flex-wrap gap-1'>
         {shownProducts.length === 0 && (
           <div className='flex w-full flex-col items-center gap-y-2 py-3'>
@@ -474,7 +519,7 @@ const ProductSelectionDialog = ({
   const saveAmount = (amount: number) => {
     dispatch({
       type: 'update-delivery',
-      deliverySourceUuid: delivery.source.uuid,
+      deliverySourceUuid: delivery.source.entity.uuid,
       newContents: delivery.contents.map((productAmount) =>
         productAmount.product === product.i
           ? { ...productAmount, amount }
