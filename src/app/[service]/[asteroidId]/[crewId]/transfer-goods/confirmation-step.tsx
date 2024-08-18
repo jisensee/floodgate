@@ -1,10 +1,9 @@
-import { Asteroid, Entity, Product } from '@influenceth/sdk'
+import { Asteroid, Product } from '@influenceth/sdk'
 import { ProductAmount } from 'influence-typed-sdk/api'
 import { Truck } from 'lucide-react'
 import { useWizard } from 'react-use-wizard'
 import { A, D, pipe } from '@mobily/ts-belt'
 import { useQuery } from '@tanstack/react-query'
-import { type Inventory } from './actions'
 import { Delivery, getDeliveriesContents } from './state'
 import { useDevteamShare, useTransferGoodsTransaction } from '@/hooks/contract'
 import { Button } from '@/components/ui/button'
@@ -32,6 +31,7 @@ import { InfoTooltip } from '@/components/ui/tooltip'
 import { FeeBreakdown } from '@/components/fee-breakdown'
 import { Separator } from '@/components/ui/separator'
 import { getAutomaticFeedingAmount } from '@/actions'
+import { Inventory } from '@/inventory-actions'
 
 export type ConfirmationStepProps = {
   crew: FloodgateCrew
@@ -63,14 +63,14 @@ export const ConfirmationStep = ({
   const getDeliveryDistance = (delivery: Delivery) => {
     const distance = Asteroid.getLotDistance(
       crew.asteroidId,
-      delivery.source.lotIndex,
-      destination.lotIndex
+      delivery.source.entity.lotIndex,
+      destination.entity.lotIndex
     )
     const travelTime =
       Asteroid.getLotTravelTime(
         crew.asteroidId,
-        delivery.source.lotIndex,
-        destination.lotIndex,
+        delivery.source.entity.lotIndex,
+        destination.entity.lotIndex,
         crew.bonuses.transportTime.totalBonus
       ) / 24
     return { distance, travelTime }
@@ -85,21 +85,17 @@ export const ConfirmationStep = ({
     crew.id,
     actionFee,
     {
-      owningCrewId: destination.owningCrewId,
-      inventoryId: destination.id,
-      inventoryType:
-        destination.type === 'ship' ? Entity.IDS.SHIP : Entity.IDS.BUILDING,
+      owningCrewId: destination.entity.owningCrewId,
+      inventoryId: destination.entity.id,
+      inventoryType: destination.entity.label,
       inventorySlot: 2,
     },
     deliveries.map((delivery) => ({
       source: {
-        inventoryId: delivery.source.id,
-        inventoryType:
-          delivery.source.type === 'ship'
-            ? Entity.IDS.SHIP
-            : Entity.IDS.BUILDING,
+        inventoryId: delivery.source.entity.id,
+        inventoryType: delivery.source.entity.label,
         inventorySlot: 2,
-        owningCrewId: delivery.source.owningCrewId,
+        owningCrewId: delivery.source.entity.owningCrewId,
       },
       contents: delivery.contents.filter((c) => c.amount > 0),
     })),
@@ -129,7 +125,7 @@ export const ConfirmationStep = ({
       <p className='text-2xl'>
         {deliverySuccess ? 'Sent' : 'Sending'} {actualDeliveries.length}{' '}
         {pluralize(actualDeliveries.length, 'delivery', 'deliveries')} to{' '}
-        {destination.name}
+        {destination.entity.name}
       </p>
       {deliverySuccess ? (
         <Button
@@ -195,11 +191,11 @@ export const ConfirmationStep = ({
 
               return (
                 <AccordionItem
-                  key={delivery.source.uuid}
-                  value={delivery.source.uuid}
+                  key={delivery.source.entity.uuid}
+                  value={delivery.source.entity.uuid}
                 >
                   <AccordionTrigger>
-                    {delivery.source.name}, {selectedItems}{' '}
+                    {delivery.source.entity.name}, {selectedItems}{' '}
                     {pluralize(selectedItems, 'item')}
                   </AccordionTrigger>
                   <AccordionContent>

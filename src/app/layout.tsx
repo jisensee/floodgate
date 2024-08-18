@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { StrictMode } from 'react'
 import NextLink from 'next/link'
 import { SiGithub } from '@icons-pack/react-simple-icons'
 import { Inter } from 'next/font/google'
@@ -24,19 +25,21 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang='en' className='h-full'>
-      <body className={cn(inter.className, 'h-full')}>
-        <Analytics />
-        <Providers>
-          <div className='flex h-full flex-col'>
-            <Header />
-            <div className='flex-grow'>{children}</div>
-            <Footer />
-            <Toaster />
-          </div>
-        </Providers>
-      </body>
-    </html>
+    <StrictMode>
+      <html lang='en' className='h-full'>
+        <body className={cn(inter.className, 'h-full')}>
+          <Analytics />
+          <Providers>
+            <div className='flex h-full flex-col'>
+              <Header />
+              <div className='flex-grow'>{children}</div>
+              <Footer />
+              <Toaster />
+            </div>
+          </Providers>
+        </body>
+      </html>
+    </StrictMode>
   )
 }
 

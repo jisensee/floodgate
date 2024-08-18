@@ -40,6 +40,10 @@ export const getInventories = async (
     influenceApi.util.ships(address, crew.asteroidId),
     influenceApi.util.warehouses(address, crew.asteroidId),
   ])
+  console.log(
+    'warehouses',
+    warehouses.map((w) => w.id)
+  )
   return pipe(
     ships,
     A.concat(warehouses),

@@ -2,7 +2,6 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { P, match } from 'ts-pattern'
-import { getInventories } from './actions'
 import { getDeliveriesContents, useTransferGoodsState } from './state'
 import { SelectDestinationStep } from './select-destination-step'
 import { SelectGoodsStep } from './select-goods-step'
@@ -10,6 +9,7 @@ import { ConfirmationStep } from './confirmation-step'
 import { FloodgateCrew } from '@/lib/contract-types'
 import { Wizard } from '@/components/ui/wizard'
 import { Skeleton } from '@/components/ui/skeleton'
+import { getInventories } from '@/inventory-actions'
 
 export type TransferGoodsWizardProps = {
   address: string
@@ -23,7 +23,7 @@ export const TransferGoodsWizard = ({
 }: TransferGoodsWizardProps) => {
   const result = useQuery({
     queryKey: ['ships-warehouses', address, crew.asteroidId],
-    queryFn: () => getInventories(address, crew),
+    queryFn: () => getInventories(address, crew.asteroidId),
   })
   const [state, dispatch] = useTransferGoodsState()
 

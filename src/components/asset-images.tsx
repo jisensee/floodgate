@@ -6,22 +6,27 @@ import { A } from '@mobily/ts-belt'
 import { cn } from '@/lib/utils'
 
 type InventoryImageProps = {
-  label: number,
-  type: number,
+  label: number
+  type: number
   size: number
 }
 
-export const InventoryImage: FC<InventoryImageProps> = ({label, type, size }) => {
-  let url = '', name = ''
-  switch(label) {
+export const InventoryImage: FC<InventoryImageProps> = ({
+  label,
+  type,
+  size,
+}) => {
+  let url = '',
+    name = ''
+  switch (label) {
     case Entity.IDS.SHIP:
       url = imageUrls.ship(type, { w: size })
       name = Ship.getType(type).name
-      break;
+      break
     case Entity.IDS.BUILDING:
       url = imageUrls.building(type, { w: size })
       name = Building.getType(type).name
-      break;
+      break
   }
   return <NextImage src={url} width={size} height={0} alt={name} />
 }
@@ -40,6 +45,13 @@ export const ShipImage: FC<ShipImageProps> = ({ type, size }) => {
 
 type WarehouseImageProps = {
   size: number
+}
+
+export const TankFarmImage: FC<WarehouseImageProps> = ({ size }) => {
+  const url = imageUrls.building(Building.IDS.TANK_FARM, {
+    w: 100,
+  })
+  return <NextImage src={url} width={size} height={size} alt='Tank Farm' />
 }
 
 export const WarehouseImage: FC<WarehouseImageProps> = ({ size }) => {

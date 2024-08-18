@@ -1,7 +1,7 @@
 import { Dispatch } from 'react'
-import { type Inventory } from './actions'
 import { InventoryCard } from './inventory-card'
 import { Action } from './state'
+import { Inventory } from '@/inventory-actions'
 
 export type SelectDestinationStepProps = {
   inventories: Inventory[]
@@ -18,9 +18,9 @@ export const SelectDestinationStep = ({
     <div className='flex flex-col gap-y-1'>
       {inventories.map((inventory) => (
         <InventoryCard
-          key={inventory.id}
+          key={inventory.entity.uuid + inventory.inventoryType}
           inventory={inventory}
-          selected={destination?.uuid === inventory.uuid}
+          selected={destination?.entity.uuid === inventory.entity.uuid}
           onSelect={() =>
             dispatch({
               type: 'select-destination',
