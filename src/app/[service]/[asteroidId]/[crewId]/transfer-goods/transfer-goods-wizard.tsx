@@ -10,7 +10,6 @@ import { FloodgateCrew } from '@/lib/contract-types'
 import { Wizard } from '@/components/ui/wizard'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getInventories, Inventory } from '@/inventory-actions'
-import { Entity } from '@influenceth/sdk'
 
 export type TransferGoodsWizardProps = {
   address: string

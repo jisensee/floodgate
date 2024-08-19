@@ -42,20 +42,6 @@ const isStorageBuildingInventory = (inventoryType: number) =>
     Inventory.IDS.TANK_FARM_PRIMARY as number,
   ].includes(inventoryType)
 
-const isConstructionSite = (inventoryType: number) =>
-  [
-    Inventory.IDS.WAREHOUSE_SITE,
-    Inventory.IDS.TANK_FARM_SITE,
-    Inventory.IDS.EXTRACTOR_SITE,
-    Inventory.IDS.REFINERY_SITE,
-    Inventory.IDS.FACTORY_SITE,
-    Inventory.IDS.BIOREACTOR_SITE,
-    Inventory.IDS.SHIPYARD_SITE,
-    Inventory.IDS.SPACEPORT_SITE,
-    Inventory.IDS.MARKETPLACE_SITE,
-    Inventory.IDS.HABITAT_SITE as number,
-  ].includes(inventoryType)
-
 const isValidInventory = (inventoryType: number) =>
   isShipPropellantBay(inventoryType) ||
   isShipCargoBay(inventoryType) ||
