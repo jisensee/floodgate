@@ -18,9 +18,9 @@ export const SelectDestinationStep = ({
     <div className='flex flex-col gap-y-1'>
       {inventories.map((inventory) => (
         <InventoryCard
-          key={inventory.entity.uuid + inventory.inventoryType}
+          key={inventory.inventoryUuid}
           inventory={inventory}
-          selected={destination?.entity.uuid === inventory.entity.uuid}
+          selected={destination?.inventoryUuid === inventory.inventoryUuid}
           onSelect={() =>
             dispatch({
               type: 'select-destination',

@@ -6,6 +6,7 @@ import { EntityInventory } from 'influence-typed-sdk/api'
 import { influenceApi } from '@/lib/influence-api'
 
 export type Inventory = EntityInventory & {
+  inventoryUuid: string,
   entity: {
     label: number
     type: number
@@ -20,7 +21,7 @@ export type Inventory = EntityInventory & {
   volumeCapacity: number
 }
 
-const isPropellantBay = (inventoryType: number) =>
+const isShipPropellantBay = (inventoryType: number) =>
   [
     Inventory.IDS.PROPELLANT_LARGE,
     Inventory.IDS.PROPELLANT_MEDIUM,
@@ -28,12 +29,37 @@ const isPropellantBay = (inventoryType: number) =>
     Inventory.IDS.PROPELLANT_TINY as number,
   ].includes(inventoryType)
 
-const isValidInventory = (inventoryType: number) =>
-  isPropellantBay(inventoryType) ||
+const isShipCargoBay = (inventoryType: number) =>
+  [
+    Inventory.IDS.CARGO_SMALL,
+    Inventory.IDS.CARGO_MEDIUM,
+    Inventory.IDS.CARGO_LARGE as number,
+  ].includes(inventoryType)
+
+const isStorageBuildingInventory = (inventoryType: number) =>
   [
     Inventory.IDS.WAREHOUSE_PRIMARY,
     Inventory.IDS.TANK_FARM_PRIMARY as number,
   ].includes(inventoryType)
+
+const isConstructionSite = (inventoryType: number) =>
+  [
+    Inventory.IDS.WAREHOUSE_SITE,
+    Inventory.IDS.TANK_FARM_SITE,
+    Inventory.IDS.EXTRACTOR_SITE,
+    Inventory.IDS.REFINERY_SITE,
+    Inventory.IDS.FACTORY_SITE,
+    Inventory.IDS.BIOREACTOR_SITE,
+    Inventory.IDS.SHIPYARD_SITE,
+    Inventory.IDS.SPACEPORT_SITE,
+    Inventory.IDS.MARKETPLACE_SITE,
+    Inventory.IDS.HABITAT_SITE as number,
+  ].includes(inventoryType)
+
+const isValidInventory = (inventoryType: number) =>
+  isShipPropellantBay(inventoryType) ||
+  isShipCargoBay(inventoryType) ||
+  isStorageBuildingInventory(inventoryType)
 
 const getEntityType = (entity: InfluenceEntity) => {
   switch (entity.label) {
@@ -61,6 +87,7 @@ export const getInventories = async (
     ).map((i) => {
       const inventoryType = Inventory.getType(i.inventoryType)
       return {
+        inventoryUuid: (entity.uuid ?? '') + '-' + i.slot,
         entity: {
           label: entity.label,
           type: entityType,
@@ -70,7 +97,7 @@ export const getInventories = async (
           lotIndex: entity.Location?.resolvedLocations?.lot?.lotIndex ?? 0,
           owningCrewId: entity.Control?.controller?.id ?? 0,
         },
-        isPropellantBay: isPropellantBay(i.inventoryType),
+        isPropellantBay: isShipPropellantBay(i.inventoryType),
         massCapacity: inventoryType.massConstraint / 1000,
         volumeCapacity: inventoryType.volumeConstraint / 1000,
         ...i,

@@ -88,13 +88,13 @@ export const ConfirmationStep = ({
       owningCrewId: destination.entity.owningCrewId,
       inventoryId: destination.entity.id,
       inventoryType: destination.entity.label,
-      inventorySlot: 2,
+      inventorySlot: destination.slot,
     },
     deliveries.map((delivery) => ({
       source: {
         inventoryId: delivery.source.entity.id,
         inventoryType: delivery.source.entity.label,
-        inventorySlot: 2,
+        inventorySlot: delivery.source.slot,
         owningCrewId: delivery.source.entity.owningCrewId,
       },
       contents: delivery.contents.filter((c) => c.amount > 0),
@@ -191,8 +191,8 @@ export const ConfirmationStep = ({
 
               return (
                 <AccordionItem
-                  key={delivery.source.entity.uuid}
-                  value={delivery.source.entity.uuid}
+                  key={delivery.source.inventoryUuid}
+                  value={delivery.source.inventoryUuid}
                 >
                   <AccordionTrigger>
                     {delivery.source.entity.name}, {selectedItems}{' '}

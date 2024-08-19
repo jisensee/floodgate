@@ -67,9 +67,9 @@ export const SelectGoodsStep = ({
 
   const availableSources = inventories.filter(
     (i) =>
-      destination.entity.uuid !== i.entity.uuid &&
+      destination.inventoryUuid !== i.inventoryUuid &&
       i.contents.length > 0 &&
-      !deliveries.find((d) => d.source.entity.uuid === i.entity.uuid)
+      !deliveries.find((d) => d.source.inventoryUuid === i.inventoryUuid)
   )
   const { remainingDestinationMass, remainingDestinationVolume } =
     useDeliveryImpact(destination, deliveries, crew)
@@ -92,7 +92,7 @@ export const SelectGoodsStep = ({
               source: i,
             })
             setAddSourceDialogOpen(false)
-            setOpenDeliveries((prev) => [...prev, i.entity.uuid])
+            setOpenDeliveries((prev) => [...prev, i.inventoryUuid])
           }}
         />
       </div>
@@ -103,12 +103,12 @@ export const SelectGoodsStep = ({
       >
         {deliveries.map((delivery) => (
           <AccordionItem
-            key={delivery.source.entity.uuid}
-            value={delivery.source.entity.uuid}
+            key={delivery.source.inventoryUuid}
+            value={delivery.source.inventoryUuid}
           >
             <AccordionTrigger className='pb-2'>
               <DeliveryCard
-                key={delivery.source.entity.uuid}
+                key={delivery.source.inventoryUuid}
                 delivery={delivery}
               />
             </AccordionTrigger>
@@ -293,7 +293,7 @@ const AddSourceDialog = ({
           sources,
           A.map((source) => (
             <InventoryCard
-              key={source.entity.uuid + source.inventoryType}
+              key={source.inventoryUuid}
               inventory={source}
               onSelect={() => onSelect(source)}
             />
@@ -383,7 +383,7 @@ const ProductList = ({
           onClick={() =>
             dispatch({
               type: 'remove-delivery',
-              deliverySourceUuid: delivery.source.entity.uuid,
+              deliverySourceUuid: delivery.source.inventoryUuid
             })
           }
         >
@@ -519,7 +519,7 @@ const ProductSelectionDialog = ({
   const saveAmount = (amount: number) => {
     dispatch({
       type: 'update-delivery',
-      deliverySourceUuid: delivery.source.entity.uuid,
+      deliverySourceUuid: delivery.source.inventoryUuid,
       newContents: delivery.contents.map((productAmount) =>
         productAmount.product === product.i
           ? { ...productAmount, amount }
