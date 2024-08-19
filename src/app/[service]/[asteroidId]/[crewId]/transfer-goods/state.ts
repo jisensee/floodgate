@@ -71,13 +71,13 @@ const reducer: Reducer<State, Action> = (currentState, action) =>
       deliveries: A.removeFirstBy(
         currentState.deliveries,
         action.deliverySourceUuid,
-        (delivery, sourceUuid) => delivery.source.entity.uuid === sourceUuid
+        (delivery, sourceUuid) => delivery.source.inventoryUuid === sourceUuid
       ),
     }))
     .with({ type: 'update-delivery' }, (action) => ({
       ...currentState,
       deliveries: currentState.deliveries.map((delivery) =>
-        delivery.source.entity.uuid === action.deliverySourceUuid
+        delivery.source.inventoryUuid === action.deliverySourceUuid
           ? { ...delivery, contents: action.newContents }
           : delivery
       ),

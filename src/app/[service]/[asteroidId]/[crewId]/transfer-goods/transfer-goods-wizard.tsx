@@ -9,12 +9,19 @@ import { ConfirmationStep } from './confirmation-step'
 import { FloodgateCrew } from '@/lib/contract-types'
 import { Wizard } from '@/components/ui/wizard'
 import { Skeleton } from '@/components/ui/skeleton'
-import { getInventories } from '@/inventory-actions'
+import { getInventories, Inventory } from '@/inventory-actions'
+import { Entity } from '@influenceth/sdk'
 
 export type TransferGoodsWizardProps = {
   address: string
   crew: FloodgateCrew
   actionFee: bigint
+}
+
+const inventorySorting = (a: Inventory, b: Inventory) => {
+  if (a.entity.id == b.entity.id) return a.isPropellantBay ? 1 : -1
+  if (a.entity.label == b.entity.label) return (a.entity.name > b.entity.name) ? 1 : -1
+  return b.entity.label - a.entity.label
 }
 
 export const TransferGoodsWizard = ({
@@ -62,14 +69,14 @@ export const TransferGoodsWizard = ({
         .with({ data: P.nonNullable }, ({ data: inventories }) => [
           <SelectDestinationStep
             key='1'
-            inventories={inventories}
+            inventories={inventories.sort((a, b) => inventorySorting(a, b))}
             destination={state.destination}
             dispatch={dispatch}
           />,
           state.destination ? (
             <SelectGoodsStep
               key='2'
-              inventories={inventories}
+              inventories={inventories.filter((i) => i.contents.length > 0).filter((i) => i.inventoryUuid != state.destination?.inventoryUuid).sort((a, b) => inventorySorting(a, b))}
               destination={state.destination}
               deliveries={state.deliveries}
               crew={crew}
@@ -81,7 +88,7 @@ export const TransferGoodsWizard = ({
           state.destination ? (
             <ConfirmationStep
               key='3'
-              inventories={inventories}
+              inventories={inventories.filter((i) => i.contents.length > 0).filter((i) => i.inventoryUuid != state.destination?.inventoryUuid).sort((a, b) => inventorySorting(a, b))}
               destination={state.destination}
               deliveries={state.deliveries}
               crew={crew}

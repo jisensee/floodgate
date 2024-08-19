@@ -1,10 +1,5 @@
-import { Building, Entity, Ship } from '@influenceth/sdk'
 import { Format, calcMassAndVolume, cn } from '@/lib/utils'
-import {
-  ShipImage,
-  TankFarmImage,
-  WarehouseImage,
-} from '@/components/asset-images'
+import { InventoryImage } from '@/components/asset-images'
 import type { Inventory } from '@/inventory-actions'
 
 export type InventoryCardProps = {
@@ -13,24 +8,11 @@ export type InventoryCardProps = {
   onSelect?: () => void
 }
 
-const getInventoryImage = (inventory: Inventory) => {
-  if (inventory.entity.label === Entity.IDS.SHIP) {
-    return <ShipImage type={Ship.getType(inventory.entity.type)} size={100} />
-  }
-  return inventory.entity.type === Building.IDS.WAREHOUSE ? (
-    <WarehouseImage size={100} />
-  ) : (
-    <TankFarmImage size={100} />
-  )
-}
-
 export const InventoryCard = ({
   inventory,
   selected,
   onSelect,
 }: InventoryCardProps) => {
-  const image = getInventoryImage(inventory)
-
   const { mass, volume } = calcMassAndVolume(inventory.contents)
 
   const usedMass = inventory.reservedMass / 1000 + mass
@@ -49,9 +31,12 @@ export const InventoryCard = ({
       onClick={onSelect}
     >
       <div className='flex gap-x-2'>
-        {image}
+      <InventoryImage label={inventory.entity.label} type={inventory.entity.type} size={100} />
         <div className='flex flex-col gap-y-1'>
-          <p className='font-bold'>{inventory.entity.name}</p>
+        <p className='font-bold'>
+          {inventory.entity.name}
+          <span className='font-normal text-[#884FFF]'>{ inventory.isPropellantBay ? ' (Propellant)' : '' }</span>
+        </p>
           <p className='text-muted-foreground'>
             Mass: {Format.mass(usedMass)} /{' '}
             {Format.mass(inventory.massCapacity)} ({usedMassPercent}%)
