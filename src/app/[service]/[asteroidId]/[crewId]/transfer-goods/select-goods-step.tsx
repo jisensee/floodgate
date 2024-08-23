@@ -46,6 +46,10 @@ import { StandardTooltip } from '@/components/ui/tooltip'
 import { FloodgateCrew } from '@/lib/contract-types'
 import { Inventory } from '@/inventory-actions'
 import { Alert } from '@/components/ui/alert'
+import {
+  InventoryFilters,
+  useInventoryFilters,
+} from '@/components/inventory-filters'
 
 export type SelectGoodsStepProps = {
   inventories: Inventory[]
@@ -277,32 +281,38 @@ const AddSourceDialog = ({
   onOpenChange,
   sources,
   onSelect,
-}: AddSourceDialogProps) => (
-  <Dialog open={open} onOpenChange={onOpenChange}>
-    <DialogTrigger asChild>
-      <Button icon={<Plus />} onClick={() => onOpenChange(true)}>
-        Add source
-      </Button>
-    </DialogTrigger>
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle className='text-2xl'>Add source</DialogTitle>
-      </DialogHeader>
-      <div className='max-h-[80vh] overflow-y-auto'>
-        {pipe(
-          sources,
-          A.map((source) => (
-            <InventoryCard
-              key={source.inventoryUuid}
-              inventory={source}
-              onSelect={() => onSelect(source)}
-            />
-          ))
-        )}
-      </div>
-    </DialogContent>
-  </Dialog>
-)
+}: AddSourceDialogProps) => {
+  const { filteredInventories, filtersProps } = useInventoryFilters(sources)
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogTrigger asChild>
+        <Button icon={<Plus />} onClick={() => onOpenChange(true)}>
+          Add source
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className='text-2xl'>Add source</DialogTitle>
+        </DialogHeader>
+        <div className='flex max-h-[80vh] flex-col gap-y-2 overflow-y-auto p-1'>
+          <InventoryFilters {...filtersProps} />
+          <div className='flex flex-col gap-y-1'>
+            {pipe(
+              filteredInventories,
+              A.map((source) => (
+                <InventoryCard
+                  key={source.inventoryUuid}
+                  inventory={source}
+                  onSelect={() => onSelect(source)}
+                />
+              ))
+            )}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
 
 type ProductListProps = {
   delivery: Delivery
@@ -383,7 +393,7 @@ const ProductList = ({
           onClick={() =>
             dispatch({
               type: 'remove-delivery',
-              deliverySourceUuid: delivery.source.inventoryUuid
+              deliverySourceUuid: delivery.source.inventoryUuid,
             })
           }
         >
