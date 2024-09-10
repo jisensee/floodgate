@@ -43,22 +43,13 @@ export const ShipImage: FC<ShipImageProps> = ({ type, size }) => {
   return <NextImage src={url} width={size} height={0} alt={type.name} />
 }
 
-type WarehouseImageProps = {
+export type BuildingImageProps = {
+  buildingId: number
   size: number
 }
-
-export const TankFarmImage: FC<WarehouseImageProps> = ({ size }) => {
-  const url = imageUrls.building(Building.IDS.TANK_FARM, {
-    w: 100,
-  })
-  return <NextImage src={url} width={size} height={size} alt='Tank Farm' />
-}
-
-export const WarehouseImage: FC<WarehouseImageProps> = ({ size }) => {
-  const url = imageUrls.building(Building.IDS.WAREHOUSE, {
-    w: 100,
-  })
-  return <NextImage src={url} width={size} height={size} alt='Warehouse' />
+export const BuildingImage = ({ buildingId, size }: BuildingImageProps) => {
+  const url = imageUrls.building(buildingId, { w: size })
+  return <NextImage src={url} width={size} height={size} alt='Building' />
 }
 
 export const AsteroidImage = ({ id, width }: { id: number; width: number }) => (

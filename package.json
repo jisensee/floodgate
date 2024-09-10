@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@icons-pack/react-simple-icons": "^9.6.0",
-    "@influenceth/sdk": "2.3.0",
+    "@influenceth/sdk": "2.3.4",
     "@mobily/ts-belt": "^3.13.1",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-checkbox": "^1.1.1",
@@ -39,7 +39,8 @@
     "date-fns": "^3.6.0",
     "elastic-builder": "^2.29.0",
     "get-starknet-core": "^3.3.3",
-    "influence-typed-sdk": "2.5.6",
+    "influence-typed-sdk": "2.5.10",
+    "jotai": "^2.9.3",
     "lucide-react": "^0.408.0",
     "next": "^14.2.6",
     "next-themes": "^0.3.0",

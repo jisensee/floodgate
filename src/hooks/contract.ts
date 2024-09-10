@@ -1,4 +1,8 @@
-import { useReadContract, useSendTransaction } from '@starknet-react/core'
+import {
+  useAccount,
+  useReadContract,
+  useSendTransaction,
+} from '@starknet-react/core'
 import { ArgsOrCalldata, Call, cairo } from 'starknet'
 import { Entity, Permission, System } from '@influenceth/sdk'
 import { ProductAmount } from 'influence-typed-sdk/api'
@@ -8,6 +12,7 @@ import { ABI as floodgateAbi } from '../abis/floodgate'
 import { env } from '@/env'
 import {
   floodgateContract,
+  getGenericFeeCalls,
   influenceDispatcherContract,
   swayContract,
 } from '@/lib/contracts'
@@ -46,7 +51,7 @@ export const useFuelShipTransaction = (args: {
   autoFeedingAmount: number
 }) => {
   const refuelCalls: Call[] = [
-    influenceDispatcherContract?.populateTransaction?.['run_system']?.(
+    influenceDispatcherContract.populateTransaction['run_system']?.(
       'Whitelist',
       [
         args.inventoryLabel,
@@ -58,7 +63,7 @@ export const useFuelShipTransaction = (args: {
         args.inventoryOwnerCrewId,
       ]
     ),
-    influenceDispatcherContract?.populateTransaction?.['run_system']?.(
+    influenceDispatcherContract.populateTransaction['run_system']?.(
       'Whitelist',
       [
         Entity.IDS.SHIP,
@@ -70,7 +75,7 @@ export const useFuelShipTransaction = (args: {
         args.shipOwnerCrewId,
       ]
     ),
-    swayContract?.populateTransaction?.['increase_allowance']?.(
+    swayContract.populateTransaction['increase_allowance']?.(
       floodgateContractAddress,
       args.swayFee
     ),
@@ -84,7 +89,7 @@ export const useFuelShipTransaction = (args: {
       args.shipId,
       args.fuelAmount
     ),
-    influenceDispatcherContract?.populateTransaction?.['run_system']?.(
+    influenceDispatcherContract.populateTransaction['run_system']?.(
       'RemoveFromWhitelist',
       [
         args.inventoryLabel,
@@ -96,7 +101,7 @@ export const useFuelShipTransaction = (args: {
         args.inventoryOwnerCrewId,
       ]
     ),
-    influenceDispatcherContract?.populateTransaction?.['run_system']?.(
+    influenceDispatcherContract.populateTransaction['run_system']?.(
       'RemoveFromWhitelist',
       [
         Entity.IDS.SHIP,
@@ -122,7 +127,7 @@ export const useFuelShipTransaction = (args: {
 }
 
 const useDelegateCrewCall = (crewId: number, targetAddress: string) => {
-  return influenceDispatcherContract?.populateTransaction?.['run_system']?.(
+  return influenceDispatcherContract.populateTransaction['run_system']?.(
     'DelegateCrew',
     [targetAddress, Entity.IDS.CREW, crewId]
   )
@@ -215,6 +220,16 @@ const useDevteamBalance = (address: string) => {
   } else {
     return [0n, 0] as const
   }
+}
+
+export const useIsDevTeam = () => {
+  const { address } = useAccount()
+  const { data: address1 } = useFloodgateContractRead('get_devteam_address_one')
+  const { data: address2 } = useFloodgateContractRead('get_devteam_address_two')
+
+  return (
+    address && (BigInt(address) === address1 || BigInt(address) === address2)
+  )
 }
 
 export const useFeeBalance = (address: string) => {
@@ -331,7 +346,7 @@ export const useTransferGoodsTransaction = (
 
   const whitelistCalls = transfers
     .map(({ source }) =>
-      influenceDispatcherContract?.populateTransaction?.['run_system']?.(
+      influenceDispatcherContract.populateTransaction['run_system']?.(
         'Whitelist',
         [
           source.inventoryType,
@@ -345,7 +360,7 @@ export const useTransferGoodsTransaction = (
       )
     )
     .concat([
-      influenceDispatcherContract?.populateTransaction?.['run_system']?.(
+      influenceDispatcherContract.populateTransaction['run_system']?.(
         'Whitelist',
         [
           destination.inventoryType,
@@ -360,7 +375,7 @@ export const useTransferGoodsTransaction = (
     ])
   const removeFromWhitelistCalls = transfers
     .flatMap(({ source }) => [
-      influenceDispatcherContract?.populateTransaction?.['run_system']?.(
+      influenceDispatcherContract.populateTransaction['run_system']?.(
         'RemoveFromWhitelist',
         [
           source.inventoryType,
@@ -374,7 +389,7 @@ export const useTransferGoodsTransaction = (
       ),
     ])
     .concat([
-      influenceDispatcherContract?.populateTransaction?.['run_system']?.(
+      influenceDispatcherContract.populateTransaction['run_system']?.(
         'RemoveFromWhitelist',
         [
           destination.inventoryType,
@@ -445,6 +460,8 @@ export const useLotLeaseExtensions = (
     recipient: string
   }[]
 ) => {
+  const isDevTeam = useIsDevTeam()
+
   const leaseCalls = lotLeases.flatMap((lease) => {
     const lotUuid = Entity.packEntity({
       id: lease.lotId,
@@ -487,8 +504,11 @@ export const useLotLeaseExtensions = (
     ]
   })
 
-  const floodgateFee =
-    BigInt(Math.round(1_000 * Math.sqrt(lotLeases.length))) * 1_000_000n
+  const { fee: floodgateFee, calls: feeCalls } = getGenericFeeCalls(
+    1_000,
+    lotLeases.length,
+    isDevTeam
+  )
 
   const leaseExtensionPrice = useMemo(
     () =>
@@ -504,14 +524,7 @@ export const useLotLeaseExtensions = (
     leaseExtensionPrice,
     floodgateFee,
     contractWriteResult: useSendTransaction({
-      calls: [
-        swayContract?.populateTransaction?.['increase_allowance']?.(
-          floodgateContractAddress,
-          floodgateFee
-        ),
-        floodgateContract.populateTransaction.collect_generic_fee(floodgateFee),
-        ...leaseCalls,
-      ],
+      calls: [...feeCalls, ...leaseCalls],
     }),
   }
 }

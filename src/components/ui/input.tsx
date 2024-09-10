@@ -1,5 +1,7 @@
 import * as React from 'react'
 
+import { X } from 'lucide-react'
+import { Button } from './button'
 import { cn } from '@/lib/utils'
 
 export interface InputProps
@@ -7,11 +9,20 @@ export interface InputProps
   leadingIcon?: React.ReactNode
   endIcon?: React.ReactNode
   inputClassName?: string
+  onClear?: () => void
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
-    { className, inputClassName, type, leadingIcon, endIcon, ...props },
+    {
+      className,
+      inputClassName,
+      type,
+      leadingIcon,
+      endIcon,
+      onClear,
+      ...props
+    },
     ref
   ) => {
     return (
@@ -23,6 +34,15 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <div className='absolute inset-y-0 right-2 flex items-center'>
             {endIcon}
           </div>
+        )}
+        {onClear && (
+          <Button
+            className='absolute inset-y-0 right-1 flex items-center hover:bg-transparent hover:text-primary'
+            variant='ghost'
+            onClick={onClear}
+          >
+            <X />
+          </Button>
         )}
         <input
           type={type}

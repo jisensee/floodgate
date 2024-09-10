@@ -32,3 +32,21 @@ export const swayContract = new Contract(
   env.NEXT_PUBLIC_SWAY_CONTRACT_ADDRESS,
   provider
 )
+
+export const getGenericFeeCalls = (
+  baseFee: number,
+  multiplier: number,
+  isDevTeam?: boolean
+) => {
+  const fee = BigInt(Math.round(baseFee * Math.sqrt(multiplier))) * 1_000_000n
+  const calls = isDevTeam
+    ? []
+    : [
+        swayContract.populateTransaction['increase_allowance']?.(
+          floodgateContract.address,
+          fee
+        ),
+        floodgateContract.populateTransaction.collect_generic_fee(fee),
+      ]
+  return { calls, fee }
+}

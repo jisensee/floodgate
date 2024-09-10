@@ -15,14 +15,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-const formatMass = (kilograms: number) => {
-  if (kilograms < 1000) {
-    return `${kilograms}kg`
+const formatMass = (kilograms: number, unit?: 'kg' | 't' | 'kt' | 'mt') => {
+  if ((kilograms < 1000 && !unit) || unit === 'kg') {
+    return `${kilograms.toLocaleString()}kg`
   }
-  if (kilograms < 1_000_000) {
-    return Math.round(kilograms / 1000) + 't'
+  if ((kilograms < 1_000_000 && !unit) || unit === 't') {
+    return Math.round(kilograms / 1000).toLocaleString() + 't'
   }
-  if (kilograms < 1_000_000_000) {
+  if ((kilograms < 1_000_000_000 && !unit) || unit === 'kt') {
     return (
       (kilograms / 1_000_000).toLocaleString(undefined, {
         maximumFractionDigits: 1,
@@ -37,7 +37,7 @@ const formatMass = (kilograms: number) => {
 }
 
 export const Format = {
-  duration: (seconds: number) => {
+  duration: (seconds: number, partLimit?: number) => {
     if (seconds === 0) {
       return '0s'
     }
@@ -59,7 +59,7 @@ export const Format = {
     if (remainingSeconds > 0) {
       parts.push(`${remainingSeconds}s`)
     }
-    return parts.join(' ')
+    return pipe(parts, A.take(partLimit ?? parts.length), A.join(' '))
   },
   distance: (kilometers: number) =>
     kilometers.toLocaleString(undefined, { maximumFractionDigits: 1 }) + 'km',
