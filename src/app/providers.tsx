@@ -2,6 +2,7 @@
 
 import { FC, PropsWithChildren } from 'react'
 import { mainnet, sepolia } from '@starknet-react/chains'
+import { Provider as JotaiProvider } from 'jotai'
 import {
   StarknetConfig,
   jsonRpcProvider,
@@ -43,22 +44,24 @@ export const Providers: FC<PropsWithChildren> = ({ children }) => {
   ]
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <StarknetConfig
-        chains={env.NEXT_PUBLIC_CHAIN === 'mainnet' ? [mainnet] : [sepolia]}
-        provider={O.mapWithDefault(nodeUrl, publicProvider(), (nodeUrl) =>
-          jsonRpcProvider({
-            rpc: () => ({
-              nodeUrl,
-            }),
-          })
-        )}
-        connectors={connectors}
-        explorer={voyager}
-        autoConnect
-      >
-        {children}
-      </StarknetConfig>
-    </QueryClientProvider>
+    <JotaiProvider>
+      <QueryClientProvider client={queryClient}>
+        <StarknetConfig
+          chains={env.NEXT_PUBLIC_CHAIN === 'mainnet' ? [mainnet] : [sepolia]}
+          provider={O.mapWithDefault(nodeUrl, publicProvider(), (nodeUrl) =>
+            jsonRpcProvider({
+              rpc: () => ({
+                nodeUrl,
+              }),
+            })
+          )}
+          connectors={connectors}
+          explorer={voyager}
+          autoConnect
+        >
+          {children}
+        </StarknetConfig>
+      </QueryClientProvider>
+    </JotaiProvider>
   )
 }

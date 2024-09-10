@@ -1,7 +1,7 @@
 'use client'
 
 import { InfluenceEntity, getEntityName } from 'influence-typed-sdk/api'
-import { Entity, Product } from '@influenceth/sdk'
+import { Building, Entity, Product } from '@influenceth/sdk'
 import { useMemo, useState } from 'react'
 import { Save } from 'lucide-react'
 import { FloodgateCrew } from '@/lib/contract-types'
@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { InfoTooltip } from '@/components/ui/tooltip'
 import { Format, cn, getFoodAmount } from '@/lib/utils'
-import { ProductImage, WarehouseImage } from '@/components/asset-images'
+import { BuildingImage, ProductImage } from '@/components/asset-images'
 import { Input } from '@/components/ui/input'
 import { useSetFeedingConfig } from '@/hooks/contract'
 import { useTransactionToast } from '@/hooks/transaction-toast'
@@ -158,7 +158,7 @@ const WarehouseEntry = ({
       })}
       onClick={enabled ? onSelect : undefined}
     >
-      <WarehouseImage size={100} />
+      <BuildingImage buildingId={Building.IDS.WAREHOUSE} size={100} />
       <div className='flex flex-col gap-y-1'>
         <p className='text-base font-bold'>{getEntityName(warehouse)}</p>
         <div className='flex items-center gap-x-2'>

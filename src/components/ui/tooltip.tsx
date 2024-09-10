@@ -32,10 +32,16 @@ TooltipContent.displayName = TooltipPrimitive.Content.displayName
 type StandardTooltipProps = {
   content: React.ReactNode
   side?: TooltipPrimitive.TooltipContentProps['side']
+  withDelay?: boolean
 } & React.PropsWithChildren
 
-const StandardTooltip = ({ content, side, children }: StandardTooltipProps) => (
-  <TooltipProvider delayDuration={0}>
+const StandardTooltip = ({
+  content,
+  side,
+  withDelay,
+  children,
+}: StandardTooltipProps) => (
+  <TooltipProvider delayDuration={withDelay ? 500 : 0}>
     <Tooltip>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
       <TooltipContent side={side}>{content}</TooltipContent>

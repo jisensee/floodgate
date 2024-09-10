@@ -7,7 +7,6 @@ import {
 } from 'react'
 import { Eye, EyeOff, Plus, Save, Trash, X } from 'lucide-react'
 import {
-  Building,
   Entity,
   Inventory as SdkInventory,
   Product,
@@ -27,10 +26,9 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import {
+  BuildingImage,
   ProductImage,
   ShipImage,
-  TankFarmImage,
-  WarehouseImage,
 } from '@/components/asset-images'
 import {
   Accordion,
@@ -242,11 +240,7 @@ const getInventoryImage = (inventory: Inventory) => {
   if (inventory.entity.label === Entity.IDS.SHIP) {
     return <ShipImage type={Ship.getType(inventory.entity.type)} size={100} />
   }
-  return inventory.entity.type === Building.IDS.WAREHOUSE ? (
-    <WarehouseImage size={100} />
-  ) : (
-    <TankFarmImage size={100} />
-  )
+  return <BuildingImage buildingId={inventory.entity.type} size={100} />
 }
 
 type DeliveryCardProps = {

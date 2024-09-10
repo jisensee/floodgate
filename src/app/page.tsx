@@ -1,7 +1,7 @@
 import NextLink from 'next/link'
 import { Route } from 'next'
 import { A, D, F, O, pipe } from '@mobily/ts-belt'
-import { LandPlot } from 'lucide-react'
+import { LandPlot, Pickaxe } from 'lucide-react'
 import { ReactNode } from 'react'
 import { getFloodgateCrews } from '@/actions'
 import { Page } from '@/components/page'
@@ -11,6 +11,7 @@ import { FloodgateServiceType } from '@/lib/contract-types'
 import { SwayAmount } from '@/components/sway-amount'
 import { getServiceData } from '@/components/service-button'
 import { Separator } from '@/components/ui/separator'
+import { Badge } from '@/components/ui/badge'
 
 export const dynamic = 'force-dynamic'
 
@@ -66,6 +67,14 @@ export default async function Home() {
         <Separator className='w-3/5' />
         <h1>Tools</h1>
         <ServiceLink
+          link='/tools/mining-companion'
+          icon={<Pickaxe />}
+          title='Mining Companion'
+          description='Manage extractors and core samples.'
+          floorPrice={BigInt(200 * 1e6)}
+          isNew
+        />
+        <ServiceLink
           link='/tools/lot-management'
           icon={<LandPlot />}
           title='Lot management'
@@ -101,6 +110,7 @@ type ServiceLinkProps = {
   title: string
   description: string
   floorPrice: bigint
+  isNew?: boolean
 }
 const ServiceLink = ({
   link,
@@ -108,11 +118,17 @@ const ServiceLink = ({
   title,
   description,
   floorPrice,
+  isNew,
 }: ServiceLinkProps) => (
   <NextLink
-    className='hover:ring-3 flex w-full flex-col items-center gap-y-2 rounded-md border p-3 ring-1 hover:ring-primary'
+    className='relative flex w-full flex-col items-center gap-y-2 overflow-hidden rounded-md border p-3 ring-1 hover:ring-2 hover:ring-primary'
     href={link}
   >
+    {isNew && (
+      <Badge className='text-md absolute right-2 top-2' variant='secondary'>
+        🎉 New
+      </Badge>
+    )}
     <div className='flex items-center gap-x-3'>
       {icon}
       <p className='text-lg'>{title}</p>
