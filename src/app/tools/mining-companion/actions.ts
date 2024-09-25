@@ -7,7 +7,6 @@ import {
   Crewmate,
   Deposit,
   Entity,
-  Inventory,
   Lot,
   Product,
 } from '@influenceth/sdk'
@@ -18,8 +17,9 @@ import {
   InfluenceEntity,
   searchResponseSchema,
 } from 'influence-typed-sdk/api'
-import { A, D, F, flow, pipe } from '@mobily/ts-belt'
+import { A, D, F, pipe } from '@mobily/ts-belt'
 import { influenceApi } from '@/lib/influence-api'
+import { getInventories } from '@/inventory-actions'
 
 export type MiningCompanionData = Awaited<
   ReturnType<typeof getMiningCompanionData>
@@ -27,7 +27,7 @@ export type MiningCompanionData = Awaited<
 
 export type MiningCompanionExtractor = MiningCompanionData['extractors'][number]
 export type CoreDrillWarehouse =
-  MiningCompanionData['coreDrillWarehouses'][number]
+  MiningCompanionData['coreDrillInventories'][number]
 export type MiningCompanionCrew = MiningCompanionData['crews'][number]
 
 export const getMiningCompanionData = async (address: string) => {
@@ -35,11 +35,11 @@ export const getMiningCompanionData = async (address: string) => {
   const crewIds = crews.map(D.prop('id'))
 
   const stations = await getCrewStations(crews)
-  const [extractorsByLot, assembledCrews, coreDrillWarehouses] =
+  const [extractorsByLot, assembledCrews, coreDrillInventories] =
     await Promise.all([
       getExtractorsByLot(crewIds),
       assembleCrews(crews, stations),
-      getCoreDrillWarehouses(crewIds),
+      getCoreDrillInventories(address),
     ])
   const lotUuids = [...extractorsByLot.keys()]
   const asteroidIds = pipe(
@@ -86,7 +86,7 @@ export const getMiningCompanionData = async (address: string) => {
   return {
     crews: assembledCrews,
     asteroidNames,
-    coreDrillWarehouses,
+    coreDrillInventories: coreDrillInventories,
     stations,
     extractors: pipe(
       lotUuids,
@@ -122,50 +122,20 @@ export const getMiningCompanionData = async (address: string) => {
   }
 }
 
-const getCoreDrillWarehouses = async (crewIds: number[]) =>
-  influenceApi
-    .search({
-      index: 'building',
-      request: esb
-        .requestBodySearch()
-        .size(999)
-        .query(
-          esb
-            .boolQuery()
-            .must([
-              esb.termQuery('Building.buildingType', Building.IDS.WAREHOUSE),
-              esb.termsQuery('Control.controller.id', crewIds),
-            ])
-        ),
-      options: {
-        responseSchema: searchResponseSchema(entitySchema),
-      },
-    })
-    .then(
-      flow(
-        (r) => r.hits.hits,
-        A.map(D.prop('_source')),
-        A.filterMap((wh) => {
-          const primaryInventory = wh.Inventories?.find(
-            (i) => i.inventoryType === Inventory.IDS.WAREHOUSE_PRIMARY
-          )
-          return primaryInventory
-            ? {
-                id: wh.id,
-                slot: primaryInventory.slot,
-                name: getEntityName(wh),
-                lotId: wh.Location?.resolvedLocations?.lot?.id ?? 0,
-                asteroidId: wh.Location?.resolvedLocations?.asteroid?.id ?? 0,
-                coreDrills:
-                  primaryInventory.contents.find(
-                    (c) => c.product === Product.IDS.CORE_DRILL
-                  )?.amount ?? 0,
-              }
-            : undefined
-        }),
-        A.filter((wh) => wh.coreDrills > 0)
-      )
-    )
+const getCoreDrillInventories = async (address: string) => {
+  return (await getInventories(address))
+    .filter((i) => i.contents?.find((c) => c.product === Product.IDS.CORE_DRILL)?.amount ?? 0 > 0)
+    .map(i => {
+    return {
+      id: i.entity.id,
+      slot: i.slot,
+      name: i.entity.name,
+      lotId: i.entity.lotIndex,
+      asteroidId: i.entity.asteroidId,
+      coreDrills: i.contents?.find((c) => c.product === Product.IDS.CORE_DRILL)?.amount ?? 0
+    }
+  })
+}
 
 const getCrewStations = async (crews: InfluenceEntity[]) => {
   const shipIds = pipe(

@@ -14,6 +14,7 @@ export type Inventory = EntityInventory & {
     uuid: string
     name: string
     lotIndex: number
+    asteroidId: number
     owningCrewId: number
   }
   isPropellantBay: boolean
@@ -58,7 +59,7 @@ const getEntityType = (entity: InfluenceEntity) => {
 
 export const getInventories = async (
   ownerAddress: string,
-  asteroidId: number
+  asteroidId?: number
 ): Promise<Inventory[]> => {
   const [ships, warehouses] = await Promise.all([
     influenceApi.util.ships(ownerAddress, asteroidId),
@@ -80,6 +81,7 @@ export const getInventories = async (
           uuid: entity.uuid ?? '',
           id: entity.id,
           name: getEntityName(entity),
+          asteroidId: entity.Location?.resolvedLocations?.asteroid?.id ?? 0,
           lotIndex: entity.Location?.resolvedLocations?.lot?.lotIndex ?? 0,
           owningCrewId: entity.Control?.controller?.id ?? 0,
         },

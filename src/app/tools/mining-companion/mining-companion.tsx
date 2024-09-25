@@ -83,7 +83,7 @@ const Wrapper = ({ address }: { address: string }) => {
 
   return (
     <AsyncData result={result} onLoading={loadingUi}>
-      {({ extractors, asteroidNames, crews, coreDrillWarehouses }) => (
+      {({ extractors, asteroidNames, crews, coreDrillInventories: coreDrillWarehouses }) => (
         <div className='flex flex-col gap-y-2'>
           <FilterRow
             filters={state.filters}
