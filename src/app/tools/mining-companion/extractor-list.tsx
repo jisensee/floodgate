@@ -2,7 +2,7 @@ import { A, pipe } from '@mobily/ts-belt'
 import { Dispatch } from 'react'
 import { match } from 'ts-pattern'
 import {
-  CoreDrillWarehouse,
+  CoreDrillInventory,
   MiningCompanionCrew,
   MiningCompanionExtractor,
 } from './actions'
@@ -13,7 +13,7 @@ import { Sorting } from '@/components/sort-dropdown'
 export type ExtractorListProps = {
   extractors: MiningCompanionExtractor[]
   crews: MiningCompanionCrew[]
-  coreDrillWarehouses: CoreDrillWarehouse[]
+  coreDrillInventories: CoreDrillInventory[]
   filters: Filters
   state: State
   dispatch: Dispatch<Action>
@@ -42,7 +42,7 @@ const extractorSort = (
 export const ExtractorList = ({
   extractors,
   crews,
-  coreDrillWarehouses,
+  coreDrillInventories: coreDrillInventories,
   filters,
   state,
   dispatch,
@@ -67,7 +67,7 @@ export const ExtractorList = ({
                 c.Location?.resolvedLocations?.asteroid?.id ===
                 extractor.asteroidId
             )}
-            coreDrillWarehouses={coreDrillWarehouses.filter(
+            coreDrillInventories={coreDrillInventories.filter(
               (c) => c.asteroidId === extractor.asteroidId
             )}
             state={state}

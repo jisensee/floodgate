@@ -1,4 +1,4 @@
-import { Asteroid, Deposit, Entity, Lot, Product } from '@influenceth/sdk'
+import { Asteroid, Deposit, Lot, Product } from '@influenceth/sdk'
 import { Dispatch, useMemo, useState } from 'react'
 import { A, N, O, pipe } from '@mobily/ts-belt'
 import { getEntityName } from 'influence-typed-sdk/api'
@@ -6,13 +6,13 @@ import { ClockArrowUp, Minus, Plus, TrendingUp } from 'lucide-react'
 import { isFuture } from 'date-fns'
 import { differenceInSeconds } from 'date-fns/fp'
 import {
-  CoreDrillWarehouse,
+  CoreDrillInventory,
   MiningCompanionCrew,
   MiningCompanionExtractor,
 } from './actions'
 import { Action } from './state'
 import {
-  useCoreDrillWarehouse,
+  useCoreDrillInventory,
   useSampleCrew,
   useSampleResource,
 } from './hooks'
@@ -39,7 +39,7 @@ export type AddSampleProps = {
   dispatch: Dispatch<Action>
   extractor: MiningCompanionExtractor
   crews: MiningCompanionCrew[]
-  coreDrillWarehouses: CoreDrillWarehouse[]
+  coreDrillInventories: CoreDrillInventory[]
   onClose: () => void
 }
 
@@ -47,7 +47,7 @@ export const AddSample = ({
   dispatch,
   extractor,
   crews,
-  coreDrillWarehouses,
+  coreDrillInventories: coreDrillInventories,
   onClose,
 }: AddSampleProps) => {
   const [sampleCount, setSampleCount] = useState(1)
@@ -56,15 +56,15 @@ export const AddSample = ({
     extractor.lotId,
     extractor.resourceAbundances[0]?.resource
   )
-  const { warehouseId, setWarehouseId } = useCoreDrillWarehouse(
+  const { inventoryId, setInventoryId } = useCoreDrillInventory(
     extractor.lotId,
-    coreDrillWarehouses[0]?.id
+    coreDrillInventories[0]?.id
   )
 
   const { crewId, setCrewId } = useSampleCrew(extractor.lotId, crews[0]?.id)
 
-  const selectedWarehouse = coreDrillWarehouses.find(
-    (wh) => wh.id === warehouseId
+  const selectedInventory = coreDrillInventories.find(
+    (i) => i.id === inventoryId
   )
   const sampleDetails = useMemo(() => {
     const crew = crews.find((c) => c.id === crewId)
@@ -87,7 +87,7 @@ export const AddSample = ({
   }, [crews, crewId, resource, extractor.resourceAbundances])
 
   const onQueueSample = () => {
-    if (crewId && resource && selectedWarehouse) {
+    if (crewId && resource && selectedInventory) {
       dispatch({
         type: 'queue-samples',
         samples: A.make(sampleCount, {
@@ -97,9 +97,9 @@ export const AddSample = ({
           asteroidName: extractor.asteroidName,
           extractorName: extractor.name,
           origin: {
-            id: selectedWarehouse.id,
-            slot: selectedWarehouse.slot,
-            label: Entity.IDS.BUILDING,
+            id: selectedInventory.id,
+            slot: selectedInventory.slot,
+            label: selectedInventory.label,
           },
         }),
       })
@@ -116,10 +116,10 @@ export const AddSample = ({
         selectedResource={resource}
         onResourceChage={setResource}
       />
-      <WarehouseSelect
-        warehouses={coreDrillWarehouses}
-        selectedWarehouse={warehouseId}
-        onWarehouseChange={setWarehouseId}
+      <InventorySelect
+        inventories={coreDrillInventories}
+        selectedInventory={inventoryId}
+        onInventoryChange={setInventoryId}
       />
       <CrewSelect
         crews={crews}
@@ -162,7 +162,7 @@ export const AddSample = ({
         <Button
           className='w-40'
           onClick={onQueueSample}
-          disabled={!crewId || !resource || !warehouseId}
+          disabled={!crewId || !resource || !inventoryId}
         >
           Queue {sampleCount} {pluralize(sampleCount, 'sample')}
         </Button>
@@ -295,29 +295,29 @@ const CrewSelect = ({
   )
 }
 
-type WarehouseSelectProps = {
-  warehouses: CoreDrillWarehouse[]
-  selectedWarehouse?: number
-  onWarehouseChange: (warehouse: number) => void
+type InventorySelectProps = {
+  inventories: CoreDrillInventory[]
+  selectedInventory?: number
+  onInventoryChange: (inventory: number) => void
 }
-const WarehouseSelect = ({
-  warehouses,
-  selectedWarehouse,
-  onWarehouseChange,
-}: WarehouseSelectProps) => (
+const InventorySelect = ({
+  inventories,
+  selectedInventory,
+  onInventoryChange,
+}: InventorySelectProps) => (
   <div>
     <Label>Core Drill Source</Label>
     <Select
-      value={selectedWarehouse?.toString()}
-      onValueChange={(v) => onWarehouseChange(parseInt(v))}
+      value={selectedInventory?.toString()}
+      onValueChange={(v) => onInventoryChange(parseInt(v))}
     >
       <SelectTrigger>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        {warehouses.map((wh) => (
-          <SelectItem key={wh.id} value={wh.id.toString()}>
-            {wh.name} - {wh.coreDrills} remaining
+        {inventories.map((i) => (
+          <SelectItem key={i.id} value={i.id.toString()}>
+            {i.name} - {i.coreDrills} remaining
           </SelectItem>
         ))}
       </SelectContent>

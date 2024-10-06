@@ -71,7 +71,7 @@ const sampleCrews = atomWithStorage<Record<number, number>>(
   'miningCompanionSampleCrews',
   {}
 )
-const coreDrillWarehouses = atomWithStorage<Record<number, number>>(
+const coreDrillInventories = atomWithStorage<Record<number, number>>(
   'miningCompanionCoreDrillWarehouses',
   {}
 )
@@ -90,16 +90,16 @@ export const useSampleCrew = (lotId: number, defaultCrewId?: number) => {
   }
 }
 
-export const useCoreDrillWarehouse = (
+export const useCoreDrillInventory = (
   lotId: number,
-  defaultWarehouseId?: number
+  defaultInventoryId?: number
 ) => {
-  const [warehouses, setWarehouses] = useAtom(coreDrillWarehouses)
+  const [inventories, setInventories] = useAtom(coreDrillInventories)
 
   return {
-    warehouseId: warehouses[lotId] ?? defaultWarehouseId,
-    setWarehouseId: (warehouseId: number) =>
-      setWarehouses(D.set(lotId, warehouseId)),
+    inventoryId: inventories[lotId] ?? defaultInventoryId,
+    setInventoryId: (inventoryId: number) =>
+      setInventories(D.set(lotId, inventoryId)),
   }
 }
 

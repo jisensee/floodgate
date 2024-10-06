@@ -9,7 +9,7 @@ import {
   ShoppingCart,
 } from 'lucide-react'
 import {
-  CoreDrillWarehouse,
+  CoreDrillInventory,
   MiningCompanionCrew,
   MiningCompanionExtractor,
 } from './actions'
@@ -25,14 +25,14 @@ import { cn, pluralize } from '@/lib/utils'
 export type ExtractorProps = {
   extractor: MiningCompanionExtractor
   crews: MiningCompanionCrew[]
-  coreDrillWarehouses: CoreDrillWarehouse[]
+  coreDrillInventories: CoreDrillInventory[]
   state: State
   dispatch: Dispatch<Action>
 }
 export const Extractor = ({
   extractor,
   crews,
-  coreDrillWarehouses,
+  coreDrillInventories,
   state,
   dispatch,
 }: ExtractorProps) => {
@@ -56,7 +56,7 @@ export const Extractor = ({
         dispatch={dispatch}
         extractor={extractor}
         crews={crews}
-        coreDrillWarehouses={coreDrillWarehouses}
+        coreDrillInventories={coreDrillInventories}
         onClose={() => setAddSampleOpen(false)}
       />
     </Dialog>
