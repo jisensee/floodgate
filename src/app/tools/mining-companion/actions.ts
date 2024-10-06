@@ -26,7 +26,7 @@ export type MiningCompanionData = Awaited<
 >
 
 export type MiningCompanionExtractor = MiningCompanionData['extractors'][number]
-export type CoreDrillWarehouse =
+export type CoreDrillInventory =
   MiningCompanionData['coreDrillInventories'][number]
 export type MiningCompanionCrew = MiningCompanionData['crews'][number]
 
@@ -129,6 +129,7 @@ const getCoreDrillInventories = async (address: string) => {
     return {
       id: i.entity.id,
       slot: i.slot,
+      label: i.entity.label,
       name: i.entity.name,
       lotId: i.entity.lotIndex,
       asteroidId: i.entity.asteroidId,
