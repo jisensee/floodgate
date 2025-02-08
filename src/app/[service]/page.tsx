@@ -15,11 +15,10 @@ import { pluralize } from '@/lib/utils'
 
 export const dynamic = 'force-dynamic'
 
-export default async function ServicePage({
-  params,
-}: {
-  params: { service: string }
+export default async function ServicePage(props: {
+  params: Promise<{ service: string }>
 }) {
+  const params = await props.params
   const service = floodGateServiceTypes.find((s) => s === params.service)
   if (!service) {
     notFound()
@@ -43,7 +42,7 @@ export default async function ServicePage({
           ({ asteroidId, asteroidName, crewCount, swayFee }) => (
             <Link
               key={asteroidId}
-              className='flex gap-x-3 rounded-md p-2 ring-1 hover:ring-2'
+              className='ring-ring flex gap-x-3 rounded-md p-2 ring-1 hover:ring-2'
               href={`/${service}/${asteroidId}` as Route}
             >
               <AsteroidImage id={asteroidId} width={150} />

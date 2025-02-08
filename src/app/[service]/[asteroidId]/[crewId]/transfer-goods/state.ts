@@ -89,7 +89,7 @@ const reducer: Reducer<State, Action> = (currentState, action) =>
     .exhaustive()
 
 export const useTransferGoodsState = () =>
-  useReducer<Reducer<State, Action>>(reducer, { deliveries: [] })
+  useReducer(reducer, { deliveries: [] })
 
 export const getDeliveriesContents = (deliveries: Delivery[]) =>
   pipe(

@@ -3,7 +3,7 @@ import {
   useReadContract,
   useSendTransaction,
 } from '@starknet-react/core'
-import { ArgsOrCalldata, Call, cairo } from 'starknet'
+import { Call, cairo } from 'starknet'
 import { Entity, Permission, System } from '@influenceth/sdk'
 import { ProductAmount } from 'influence-typed-sdk/api'
 import { useMemo } from 'react'
@@ -195,27 +195,45 @@ export const useSetCrewManager = (crewId: number, managerAddress: string) =>
     ],
   })
 
-const useFloodgateContractRead = (
-  functionName: string,
-  args: ArgsOrCalldata = []
-) =>
-  useReadContract({
-    abi: [...floodgateAbi],
-    watch: true,
-    address: env.NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS as `0x${string}`,
-    functionName,
-    args,
+const readFloodgateContractProps = {
+  abi: [...floodgateAbi],
+  watch: true,
+  address: env.NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS as `0x${string}`,
+}
+
+const useDevteamAddresses = () => {
+  const { data: address1 } = useReadContract({
+    ...readFloodgateContractProps,
+    functionName: 'get_devteam_address_one',
+  })
+  const { data: address2 } = useReadContract({
+    ...readFloodgateContractProps,
+    functionName: 'get_devteam_address_two',
   })
 
-const useDevteamBalance = (address: string) => {
-  const { data: address1 } = useFloodgateContractRead('get_devteam_address_one')
-  const { data: address2 } = useFloodgateContractRead('get_devteam_address_two')
-  const { data: balance1 } = useFloodgateContractRead('get_devteam_balance_one')
-  const { data: balance2 } = useFloodgateContractRead('get_devteam_balance_two')
+  return { address1, address2 }
+}
 
-  if (BigInt(address) === address1 && balance1 !== undefined) {
+const useDevteamBalances = () => {
+  const { data: balance1 } = useReadContract({
+    ...readFloodgateContractProps,
+    functionName: 'get_devteam_balance_one',
+  })
+  const { data: balance2 } = useReadContract({
+    ...readFloodgateContractProps,
+    functionName: 'get_devteam_balance_two',
+  })
+
+  return { balance1, balance2 }
+}
+
+const useDevteamBalance = (address: string) => {
+  const { address1, address2 } = useDevteamAddresses()
+  const { balance1, balance2 } = useDevteamBalances()
+
+  if (address === address1 && balance1 !== undefined) {
     return [BigInt(balance1.toString()), 1] as const
-  } else if (BigInt(address) === address2 && balance2 !== undefined) {
+  } else if (address === address2 && balance2 !== undefined) {
     return [BigInt(balance2.toString()), 2] as const
   } else {
     return [0n, 0] as const
@@ -224,17 +242,18 @@ const useDevteamBalance = (address: string) => {
 
 export const useIsDevTeam = () => {
   const { address } = useAccount()
-  const { data: address1 } = useFloodgateContractRead('get_devteam_address_one')
-  const { data: address2 } = useFloodgateContractRead('get_devteam_address_two')
+  const { address1, address2 } = useDevteamAddresses()
 
-  return (
-    address && (BigInt(address) === address1 || BigInt(address) === address2)
-  )
+  return address && (address === address1 || address === address2)
 }
 
 export const useFeeBalance = (address: string) => {
   const devteamBalance = useDevteamBalance(address)
-  const { data } = useFloodgateContractRead('get_current_balance', [address])
+  const { data } = useReadContract({
+    ...readFloodgateContractProps,
+    functionName: 'get_current_balance',
+    args: [address],
+  })
 
   return {
     feeBalance: data ? BigInt(data.toString()) : 0n,

@@ -1,4 +1,4 @@
-import { Reducer, useReducer } from 'react'
+import { useReducer } from 'react'
 import { Ship, SourceInventory } from './actions'
 
 export type State = {
@@ -32,8 +32,8 @@ export type Reset = {
 export type Action = SelectShip | SelectInventory | SetData | Reset
 
 export const useRefuelWizardState = () =>
-  useReducer<Reducer<State, Action>>(
-    (state, action) => {
+  useReducer(
+    (state: State, action: Action) => {
       switch (action.type) {
         case 'select-ship':
           return {

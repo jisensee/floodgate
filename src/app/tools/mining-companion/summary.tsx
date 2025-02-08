@@ -41,7 +41,7 @@ export const Summary = ({ state, fee, onClose }: SummaryProps) => {
         {D.toPairs(data).map(([asteroid, extractorData]) => (
           <div key={asteroid}>
             <h3>{asteroid}</h3>
-            <div className='grid grid-cols-[auto,1fr] items-center gap-x-3 gap-y-1'>
+            <div className='grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-1'>
               {D.toPairs(extractorData).map(([extractor, samples]) => (
                 <ExtractorEntry
                   key={extractor}

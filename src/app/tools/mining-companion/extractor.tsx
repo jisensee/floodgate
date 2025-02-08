@@ -91,9 +91,9 @@ export const Extractor = ({
 
   return (
     <div
-      className={cn('flex flex-col gap-y-1 rounded-md px-2 py-1', {
+      className={cn('ring-ring flex flex-col gap-y-1 rounded-md px-2 py-1', {
         'ring-1': queuedSamples === 0,
-        'ring-2 ring-accent': queuedSamples > 0,
+        'ring-accent ring-2': queuedSamples > 0,
       })}
     >
       <div className='flex items-center justify-between gap-x-3'>

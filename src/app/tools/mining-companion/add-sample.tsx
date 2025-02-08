@@ -128,7 +128,7 @@ export const AddSample = ({
         onCrewChange={setCrewId}
       />
       {sampleDetails && (
-        <div className='grid grid-cols-[min-content,1fr] gap-x-5 gap-y-1'>
+        <div className='grid grid-cols-[min-content_1fr] gap-x-5 gap-y-1'>
           <p className='whitespace-nowrap'>Discovery Minimum</p>
           <p>{Format.mass(sampleDetails.lower / 1_000)}</p>
           <p className='whitespace-nowrap'>Discovery Maximum</p>

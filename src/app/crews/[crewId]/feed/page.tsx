@@ -6,11 +6,12 @@ import { Page } from '@/components/page'
 import { CrewImages } from '@/components/asset-images'
 import { FoodStatus } from '@/components/food-status'
 
-export default async function CrewFeedPage({
-  params,
-}: {
-  params: { crewId: string }
-}) {
+export default async function CrewFeedPage(
+  props: {
+    params: Promise<{ crewId: string }>
+  }
+) {
+  const params = await props.params;
   const crew = await getFloodgateCrew(parseInt(params.crewId))
   if (!crew) notFound()
 

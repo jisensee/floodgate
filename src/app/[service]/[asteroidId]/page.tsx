@@ -9,11 +9,12 @@ import { CrewCard } from '@/components/crew-card'
 
 export const dynamic = 'force-dynamic'
 
-export default async function ServiceCrewsPage({
-  params,
-}: {
-  params: { service: string; asteroidId: string }
-}) {
+export default async function ServiceCrewsPage(
+  props: {
+    params: Promise<{ service: string; asteroidId: string }>
+  }
+) {
+  const params = await props.params;
   const serviceType = floodGateServiceTypes.find((s) => s === params.service)
   if (!serviceType) {
     notFound()

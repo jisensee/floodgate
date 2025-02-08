@@ -6,11 +6,12 @@ import { influenceApi } from '@/lib/influence-api'
 
 export const dynamic = 'force-dynamic'
 
-export default async function RegisterCrewPage({
-  params,
-}: {
-  params: { crewId: string }
-}) {
+export default async function RegisterCrewPage(
+  props: {
+    params: Promise<{ crewId: string }>
+  }
+) {
+  const params = await props.params;
   const crew = await influenceApi.entity({
     id: parseInt(params.crewId, 10),
     label: Entity.IDS.CREW,

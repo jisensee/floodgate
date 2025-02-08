@@ -43,7 +43,7 @@ export const CrewCard = ({
   const card = (
     <div
       className={cn(
-        'flex w-full flex-col gap-y-2 rounded-md p-2 ring-1 hover:ring-2'
+        'ring-ring flex w-full flex-col gap-y-2 rounded-md p-2 ring-1 hover:ring-2'
       )}
     >
       <div className={'flex w-full flex-row items-start gap-x-3'}>

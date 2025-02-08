@@ -17,7 +17,7 @@ import { Separator } from '@/components/ui/separator'
 import { useFeeBalance } from '@/hooks/contract'
 import { FeeBalance } from '@/components/fee-balance'
 import { WalletIcon } from '@/components/wallet-icon'
-import { cn, getWalletName } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 
 type AccountInfoProps = {
   address: `0x${string}`
@@ -87,7 +87,7 @@ export const AccountInfo: FC<AccountInfoProps> = ({
                   className={cn({ invert: isWebWallet })}
                 />
               )}
-              <p>Connected {getWalletName(walletId)} Account</p>
+              <p>Connected {connector?.name} Account</p>
             </div>
             <Address address={address} />
           </div>
