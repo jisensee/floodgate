@@ -9,11 +9,12 @@ import { influenceApi } from '@/lib/influence-api'
 
 export const dynamic = 'force-dynamic'
 
-export default async function CrewsActionPage({
-  params,
-}: {
-  params: { service: string; asteroidId: string; crewId: string }
-}) {
+export default async function CrewsActionPage(
+  props: {
+    params: Promise<{ service: string; asteroidId: string; crewId: string }>
+  }
+) {
+  const params = await props.params;
   const service = floodGateServiceTypes.find((s) => s === params.service)
   if (!service) {
     notFound()

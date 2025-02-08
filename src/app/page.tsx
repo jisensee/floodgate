@@ -3,6 +3,7 @@ import { Route } from 'next'
 import { A, D, F, O, pipe } from '@mobily/ts-belt'
 import { LandPlot, Pickaxe } from 'lucide-react'
 import { ReactNode } from 'react'
+import { Badge } from '@/components/ui/badge'
 import { getFloodgateCrews } from '@/actions'
 import { Page } from '@/components/page'
 import { Button } from '@/components/ui/button'
@@ -11,7 +12,6 @@ import { FloodgateServiceType } from '@/lib/contract-types'
 import { SwayAmount } from '@/components/sway-amount'
 import { getServiceData } from '@/components/service-button'
 import { Separator } from '@/components/ui/separator'
-import { Badge } from '@/components/ui/badge'
 
 export const dynamic = 'force-dynamic'
 
@@ -48,7 +48,7 @@ export default async function Home() {
           Hire specialized crews from all over the belt and use handy tools.
         </p>
         <div className='flex flex-col items-center gap-y-3'>
-          <p className='text-2xl text-primary'>What would you like to do?</p>
+          <p className='text-primary text-2xl'>What would you like to do?</p>
           <div className='flex max-w-[36rem] flex-col gap-y-3'>
             {availableServices.map(({ service, floorSwayFee }) => (
               <ServiceOption
@@ -121,11 +121,11 @@ const ServiceLink = ({
   isNew,
 }: ServiceLinkProps) => (
   <NextLink
-    className='relative flex w-full flex-col items-center gap-y-2 overflow-hidden rounded-md border p-3 ring-1 hover:ring-2 hover:ring-primary'
+    className='hover:ring-primary ring-ring relative flex w-full flex-col items-center gap-y-2 overflow-hidden rounded-md p-3 ring-1 hover:ring-2'
     href={link}
   >
     {isNew && (
-      <Badge className='text-md absolute right-2 top-2' variant='secondary'>
+      <Badge className='text-md absolute top-2 right-2' variant='secondary'>
         🎉 New
       </Badge>
     )}
@@ -133,7 +133,7 @@ const ServiceLink = ({
       {icon}
       <p className='text-lg'>{title}</p>
     </div>
-    <p className='text-center text-sm text-muted-foreground'>{description}</p>
+    <p className='text-muted-foreground text-center text-sm'>{description}</p>
     <div className='flex items-center gap-x-2'>
       <p className='text-sm font-semibold'>Starting at</p>
       <SwayAmount amount={floorPrice} convert />

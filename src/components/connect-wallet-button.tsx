@@ -11,7 +11,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Button, ButtonProps } from '@/components/ui/button'
-import { getWalletName } from '@/lib/utils'
 
 export const ConnectWalletButton = (props: ButtonProps) => {
   const { connectors, status, connect } = useConnect()
@@ -43,7 +42,7 @@ export const ConnectWalletButton = (props: ButtonProps) => {
                 onClick={() => connect({ connector })}
               >
                 <WalletIcon icon={connector.icon} />
-                {getWalletName(connector.id)}
+                {connector.name}
               </Button>
             ))}
         </div>

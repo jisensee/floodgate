@@ -10,11 +10,12 @@ import { influenceApi } from '@/lib/influence-api'
 
 export const dynamic = 'force-dynamic'
 
-export default async function CrewManagementPage({
-  params,
-}: {
-  params: { crewId: string }
-}) {
+export default async function CrewManagementPage(
+  props: {
+    params: Promise<{ crewId: string }>
+  }
+) {
+  const params = await props.params;
   const crew = await getFloodgateCrew(parseInt(params.crewId, 10))
 
   if (!crew) {

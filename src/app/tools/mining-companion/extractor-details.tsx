@@ -38,7 +38,7 @@ export const ExtractorDetails = ({
       <h3>
         <ShoppingCart className='inline' /> Queued Samples
       </h3>
-      <div className='grid grid-cols-[auto,1fr] items-center gap-x-5'>
+      <div className='grid grid-cols-[auto_1fr] items-center gap-x-5'>
         {pendingSamples.map((s) => (
           <Fragment key={s.uuid}>
             <div className='flex items-center gap-x-2'>
@@ -68,7 +68,7 @@ export const ExtractorDetails = ({
         <Check className='inline' /> Ready Samples
       </h3>
       <div>
-        <div className='grid grid-cols-[auto,1fr] items-center gap-x-5'>
+        <div className='grid grid-cols-[auto_1fr] items-center gap-x-5'>
           {availableSamples.map((sample) => (
             <Fragment key={sample.finishTime}>
               <div className='flex items-center gap-x-2'>
@@ -94,7 +94,7 @@ export const ExtractorDetails = ({
         <Hourglass className='inline' /> Samples In Progress
       </h3>
       <div>
-        <div className='grid grid-cols-[auto,1fr] items-center gap-x-5'>
+        <div className='grid grid-cols-[auto_1fr] items-center gap-x-5'>
           {samplesInProgress.map((sample) => (
             <Fragment key={sample.finishTime}>
               <div className='flex items-center gap-x-2'>

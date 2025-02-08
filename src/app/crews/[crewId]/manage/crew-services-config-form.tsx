@@ -68,7 +68,7 @@ export const CrewServicesConfigForm = ({ crew }: { crew: FloodgateCrew }) => {
 
   return (
     <div className='flex flex-col items-center gap-y-3'>
-      <div className='grid w-full grid-cols-[min-content,1fr] items-center gap-x-3 gap-y-2'>
+      <div className='grid w-full grid-cols-[min-content_1fr] items-center gap-x-3 gap-y-2'>
         <p className='col-span-2 text-sm text-muted-foreground'>
           Configure which services others can use with this crew.
         </p>

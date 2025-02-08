@@ -13,10 +13,9 @@ export type WalletIconProps = {
 }
 export const WalletIcon = ({ icon, className }: WalletIconProps) =>
   pipe(
-    typeof icon === 'string' ? icon : icon.light ?? icon.dark,
+    typeof icon === 'string' ? icon : (icon.light ?? icon.dark),
     O.map(getIconUrl),
     O.mapWithDefault(<Fragment />, (iconUrl) => (
-      // eslint-disable-next-line react/jsx-key
       <NextImage
         className={className}
         src={iconUrl}

@@ -6,11 +6,12 @@ import { Page } from '@/components/page'
 
 export const dynamic = 'force-dynamic'
 
-export default async function CrewDetailPage({
-  params,
-}: {
-  params: { crewId: string }
-}) {
+export default async function CrewDetailPage(
+  props: {
+    params: Promise<{ crewId: string }>
+  }
+) {
+  const params = await props.params;
   const crew = await getFloodgateCrew(parseInt(params.crewId, 10))
 
   if (!crew) {

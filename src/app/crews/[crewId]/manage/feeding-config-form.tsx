@@ -54,7 +54,7 @@ export const FeedingConfigForm = ({
 
   return (
     <div className='flex flex-col gap-y-2'>
-      <div className='grid grid-cols-[min-content,1fr] gap-x-5 gap-y-2'>
+      <div className='grid grid-cols-[min-content_1fr] gap-x-5 gap-y-2'>
         <div className='flex items-center gap-x-3'>
           <Label htmlFor='enabled' className='text-base'>
             Automatic Feeding
