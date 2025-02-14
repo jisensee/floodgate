@@ -205,10 +205,12 @@ const useDevteamAddresses = () => {
   const { data: address1 } = useReadContract({
     ...readFloodgateContractProps,
     functionName: 'get_devteam_address_one',
+    args: [],
   })
   const { data: address2 } = useReadContract({
     ...readFloodgateContractProps,
     functionName: 'get_devteam_address_two',
+    args: [],
   })
 
   return { address1, address2 }
@@ -218,10 +220,12 @@ const useDevteamBalances = () => {
   const { data: balance1 } = useReadContract({
     ...readFloodgateContractProps,
     functionName: 'get_devteam_balance_one',
+    args: [],
   })
   const { data: balance2 } = useReadContract({
     ...readFloodgateContractProps,
     functionName: 'get_devteam_balance_two',
+    args: [],
   })
 
   return { balance1, balance2 }
@@ -231,9 +235,17 @@ const useDevteamBalance = (address: string) => {
   const { address1, address2 } = useDevteamAddresses()
   const { balance1, balance2 } = useDevteamBalances()
 
-  if (address === address1 && balance1 !== undefined) {
+  if (
+    address1 &&
+    BigInt(address) === BigInt(address1) &&
+    balance1 !== undefined
+  ) {
     return [BigInt(balance1.toString()), 1] as const
-  } else if (address === address2 && balance2 !== undefined) {
+  } else if (
+    address2 &&
+    BigInt(address) === BigInt(address2) &&
+    balance2 !== undefined
+  ) {
     return [BigInt(balance2.toString()), 2] as const
   } else {
     return [0n, 0] as const
@@ -244,7 +256,11 @@ export const useIsDevTeam = () => {
   const { address } = useAccount()
   const { address1, address2 } = useDevteamAddresses()
 
-  return address && (address === address1 || address === address2)
+  return (
+    address !== undefined &&
+    ((address1 !== undefined && BigInt(address) === BigInt(address1)) ||
+      (address2 !== undefined && BigInt(address) === BigInt(address2)))
+  )
 }
 
 export const useFeeBalance = (address: string) => {
@@ -282,6 +298,7 @@ export const useDevteamShare = () => {
     abi: [...floodgateAbi],
     address: env.NEXT_PUBLIC_FLOODGATE_CONTRACT_ADDRESS as `0x${string}`,
     functionName: 'get_devteam_share',
+    args: [],
   })
   return data ? Number(data.toString()) / 1_000 : undefined
 }
